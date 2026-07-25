@@ -1,8 +1,26 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import fileSystem from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { PruneBacklog } from "./prune-backlog.mjs";
 
 const { pruneBacklog } = PruneBacklog;
+
+const SEED_TEMPLATE_PATH = path.join(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "../../../assets/instructions/templates/backlog/tasks.md",
+);
+
+/**
+ * Reads the shipped template rather than a fixture: a template edit that breaks
+ * the function's contract must fail here, not in a consumer's first prune.
+ */
+const readSeedTemplate = () => {
+  const templateContent = fileSystem.readFileSync(SEED_TEMPLATE_PATH, "utf8");
+  return templateContent;
+};
 
 const buildBacklog = (doneEntries, trailingSection = "") => {
   const header =
@@ -155,6 +173,22 @@ describe("PruneBacklog.pruneBacklog()", () => {
     const actualDrift = actual.drift;
 
     assert.equal(actualDrift, expected);
+  });
+
+  it("should not report drift on the seed template a fresh project starts from", () => {
+    const input = readSeedTemplate();
+
+    const expectedDrift = undefined;
+    const expectedRemoved = 0;
+
+    const actual = pruneBacklog(input, 3);
+    const actualDrift = actual.drift;
+    const actualRemoved = actual.removed;
+    const actualPruned = actual.pruned;
+
+    assert.equal(actualDrift, expectedDrift);
+    assert.equal(actualRemoved, expectedRemoved);
+    assert.equal(actualPruned, input);
   });
 
   it("should not report drift when every entry is dropped by keepCount zero", () => {

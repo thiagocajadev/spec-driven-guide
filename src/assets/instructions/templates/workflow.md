@@ -87,7 +87,7 @@
 1. **Task Summary**: One sentence per completed task.
 2. **Changelog**: ONE entry per completed task. Every artifact-producing cycle gets recorded.
    - `feat:` → `### Added` | `fix:` → `### Fixed` | `docs:` → `### Fixed` | `land:` → `### Added`
-3. **Backlog Sync**: Finished tasks → `## Done` in `tasks.md`. Then run `npm run prune` — keeps last 3 entries in `## Done` (SSOT for history = CHANGELOG + git log).
+3. **Backlog Sync**: Finished tasks → `## Done` in `tasks.md`, each as `- [DONE] ...`. Then run `npm run prune` — keeps last 3 entries in `## Done` (SSOT for history = CHANGELOG + git log).
 4. **Objective Update**: Update `## Now` in `tasks.md` with next objective or clear it.
 5. **Map Reset**: Overwrite `impact-map.md` with idle state. Missing → skip.
 6. **Lint**: Run linter, block commit if errors remain.
@@ -104,7 +104,7 @@
 
 `.ai/backlog/tasks.md` is the SSOT for work state. Any agent, any session can continue.
 
-**Checkpoint** (after each atomic task): Mark `[DONE]` → `## Done`. Next task → `## Active` as `[IN_PROGRESS]` with context note.
+**Checkpoint** (after each atomic task): Mark `- [DONE]` → `## Done`, bullet included — `prune` only recognizes entries with it. Next task → `## Active` as `- [IN_PROGRESS]` with context note.
 
 **Proactive Handoff** (approaching limit): Write checkpoint. Announce: _"Approaching context limit. Saved checkpoint. Start new session."_
 

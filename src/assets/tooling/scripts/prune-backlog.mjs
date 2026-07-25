@@ -146,14 +146,16 @@ function collectEntryIndices(doneBlock) {
 }
 
 /**
- * `_(placeholder)_` is the backlog's explicit "deliberately empty" marker —
- * it is an answer, not drift.
+ * The backlog marks a deliberately empty section two ways — `_(placeholder)_`
+ * in a live file, `<!-- comment -->` in the seed template. Both are an answer,
+ * not drift; a fresh project must prune clean before its first entry exists.
  */
 function collectUnrecognizedLines(doneBlock) {
   const unrecognized = doneBlock.filter((line) => {
     const trimmed = line.trim();
     const isBlank = trimmed.length === 0;
-    const isPlaceholder = trimmed.startsWith("_(");
+    const isPlaceholder =
+      trimmed.startsWith("_(") || trimmed.startsWith("<!--");
 
     const isMeaningful = !isBlank && !isPlaceholder;
     return isMeaningful;

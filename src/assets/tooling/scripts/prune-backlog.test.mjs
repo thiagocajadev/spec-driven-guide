@@ -9,6 +9,10 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const SCRIPT_PATH = path.join(__dirname, "prune-backlog.mjs");
+const SEED_TEMPLATE_PATH = path.join(
+  __dirname,
+  "../../instructions/templates/backlog/tasks.md",
+);
 
 function makeTempProject() {
   const projectDir = fileSystem.mkdtempSync(
@@ -38,6 +42,15 @@ function runScript(projectDir, args = []) {
 
 function cleanup(projectDir) {
   fileSystem.rmSync(projectDir, { recursive: true, force: true });
+}
+
+/**
+ * Reads the shipped template rather than a fixture: a template edit that breaks
+ * the script's contract must fail here, not in a consumer's first prune.
+ */
+function readSeedTemplate() {
+  const templateContent = fileSystem.readFileSync(SEED_TEMPLATE_PATH, "utf8");
+  return templateContent;
 }
 
 function buildTasksWithDone(entryCount) {
@@ -199,6 +212,34 @@ describe("prune-backlog.mjs", () => {
     } finally {
       cleanup(projectDir);
     }
+  });
+
+  it("should stay quiet on the seed template a fresh project starts from", () => {
+    const { projectDir, backlogDir } = makeTempProject();
+    const inputContent = readSeedTemplate();
+    const tasksPath = writeTasks(backlogDir, inputContent);
+
+    const expectedContent = inputContent;
+
+    try {
+      const stdout = runScript(projectDir, ["--keep", "3"]);
+      const actualContent = fileSystem.readFileSync(tasksPath, "utf8");
+      const actualIncludesNothingToPrune = stdout.includes("Nothing to prune");
+
+      assert.ok(actualIncludesNothingToPrune);
+      assert.equal(actualContent, expectedContent);
+    } finally {
+      cleanup(projectDir);
+    }
+  });
+
+  it("should model the bulleted DONE marker in the seed template", () => {
+    const templateContent = readSeedTemplate();
+
+    const expectedMarker = "<!-- - [DONE] description -->";
+    const actualIncludesMarker = templateContent.includes(expectedMarker);
+
+    assert.ok(actualIncludesMarker);
   });
 
   it("should exit 1 when tasks.md is missing", () => {

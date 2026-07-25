@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [6.0.3] - 2026-07-25
+
+### Fixed
+
+- **A freshly initialized project failed its own first `prune`.** `init` writes a `## Done` section holding `<!-- [DONE] description -->`, and `prune-backlog` read that comment as content it could not parse: `Format drift in "## Done"`, exit 1, on output the CLI had just generated and nobody had edited. The drift detector shipped in `6.0.2` was right to be loud, but it only knew one way to say "deliberately empty" — the `_(placeholder)_` form a live backlog uses — and the seed template speaks the other. Both are now an answer rather than drift, in each of the two independent implementations: `src/engine/bin/lifecycle/prune-backlog.mjs` behind `npm run prune`, and `src/assets/tooling/scripts/prune-backlog.mjs` shipped to consumers. Genuine drift still exits 1, quoting the offending line.
+
+- **The `- [DONE]` bullet was enforced by the script and modeled nowhere.** `prune` has always required the bullet, in both copies — `startsWith("- [DONE]")` in one, `/^-\s+\[DONE\]/` in the other — while every artifact the agent reads before writing an entry showed the marker bare. The seed `tasks.md` template modeled `[DONE]`, `[IN_PROGRESS]` and `[TODO]` without it, and `workflow.md` instructed `Mark [DONE] → ## Done` in the Task Handoff checkpoint and named no format at all in Phase END step 3. An agent imitating its own templates therefore wrote entries the script would refuse to recognize, and the failure surfaced cycles later as unexplained drift. Template and instructions now state the bullet everywhere the agent looks. The regression tests seed from the shipped template file itself rather than a fixture, so a future template edit that breaks the script's contract fails in this repository instead of in a consumer's first prune.
+
+- **The `brace-expansion` override no longer covered the advisory it was written for.** [GHSA-mh99-v99m-4gvg](https://github.com/advisories/GHSA-mh99-v99m-4gvg) widened its affected range to `<=5.0.7`, which swallowed the `^1.1.16` pin and put six high-severity findings back into `npm audit` through the ESLint toolchain. The override now points at `^5.0.8`; the package ships dual CJS/ESM and requires Node 20 or newer, so CJS `minimatch@3.1.5` still resolves and the toolchain is unaffected. Development dependencies only — no consumer of the published package was ever exposed.
+
 ## [6.0.2] - 2026-07-22
 
 ### Fixed
