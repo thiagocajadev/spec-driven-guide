@@ -4,6 +4,7 @@
 
 ## Success Patterns
 
+- **Fenced HTML in a canon file needs `<!-- prettier-ignore -->`** (2026-08-02, v6.2.0): `prettier --write` formats embedded code inside a fenced block whose language it recognizes. A banner example under ` ```html ` came back as the `><img` continuation form with every `<br>` turned into `<br />`, contradicting the rules table three lines below it. The guard is one comment line above the fence, and the check is running the formatter against a copy and diffing, since `lint-staged` reformats on commit and the rewrite would land silently.
 - **Revealing Module Pattern**: All library modules now follow the `const X = {}; export { X }` pattern. This enforces better encapsulation and clear public interfaces compared to inline exports.
 - **[S] tasks run single-agent**: Explicit rule in `agent-roles.md` — Planning role executes CODE+TEST directly for `[S]` tasks, skipping the Fast agent spawn to reduce latency and token usage.
 - **Selective Lazy Loading**: Injected Knowledge nodes via `Step 0` in `sdg-feat` and `sdg-fix`. This keeps the initial context lean (Token Discipline) while ensuring critical technical memory is available exactly when needed.

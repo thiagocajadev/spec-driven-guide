@@ -60,6 +60,8 @@ Perennial artifacts (READMEs, guides, technical docs, learning material) open in
 
 Skip the concepts table only when the doc has fewer than three technical terms, or is a pure changelog or index. The intro paragraph never gets skipped.
 
+A README opens with a banner above the H1: logo, title, tagline, badges. `writing-readme.md` holds the rules for that block, and the sequence above starts at the first paragraph under it.
+
 ## How to write
 
 - **Active, direct sentences**. Break long ideas into short clauses. Avoid chains of "-ing" or "-ndo" forms.

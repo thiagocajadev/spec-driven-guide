@@ -1,6 +1,6 @@
 {
   "name": "sdg-agents",
-  "version": "6.1.0",
+  "version": "6.2.0",
   "description": "AI-Native Governance Framework: router-model instruction set with on-demand skills, 8 Engineering Laws, and multi-agent support for Claude, Cursor, Copilot, Gemini, Codex, Windsurf, and Roo Code.",
   "type": "module",
   "main": "./src/engine/bin/index.mjs",

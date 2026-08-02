@@ -3,6 +3,7 @@
 Executing documentation for: $ARGUMENTS.
 
 > **Load now**: `.ai/instructions/templates/workflow.md`, `.ai/skills/writing-soul.md`, `.ai/skills/checklist-soul.md`
+> **Load also**, when the cycle touches a README: `.ai/skills/writing-readme.md`. It governs the banner above the first paragraph; the soul governs every line below it.
 
 ## Phase: SPEC — MODE: PLANNING
 

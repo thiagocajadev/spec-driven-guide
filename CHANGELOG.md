@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [6.2.0] - 2026-08-02
+
+### Added
+
+- **A skill for the one part of a README the soul never governed: the banner.** `writing-soul.md` starts at the first paragraph, so the block above it, the logo, the title, the tagline, the live link and the badge row, was written from memory on every cycle and came out different each time. `writing-readme.md` states it as seven rules, each one observed in at least two repositories rather than proposed from a template: a square logo carrying `width` and `height` both, since a missing dimension lets the page reflow while the image loads; the title as `<h1 align="center">` inside the block, because a markdown `#` above it leaves the title outside the centering; one sentence of tagline, then `<br>`, then the link to the translation; a live link only when the project is published; every badge on `shields.io` with `style=flat-square` and wrapped in an `<a>` that opens what it reports; the badge row ordered identity and status, then stack, then meta; and a bare `<br>` after `</div>`, without which the first paragraph sits flush against the badges. Part 2 hands everything below the banner back to the soul and restates the three rules that decide how a README reads. Four conventions that had diverged across repositories are settled here: the translated README lives at the repository root as `README.<language-tag>.md`, the badge row sits below the title, the skill ships the full skeleton as a block to copy, and the `| Area | Stack |` table is documented as the variant for documentation repositories, where a flat row would wrap over several lines. The skill loads on a `docs:` cycle that touches a README, alongside the soul and the checklist, and it stays out of `SKILL_CATALOG` for the same reason they do.
+
+- **The shipped skeleton survives a formatter.** `prettier` reformats fenced `html`, and it rewrote the banner example into the `><img` continuation form and turned every `<br>` into `<br />`, leaving the example contradicting the rules table three lines below it. The block now carries `<!-- prettier-ignore -->`, verified by running the formatter against a copy and diffing, and the skill says so in one line, because a reader copying the skeleton into a repository with `prettier` inherits the same rewrite.
+
 ## [6.1.0] - 2026-08-02
 
 ### Added
