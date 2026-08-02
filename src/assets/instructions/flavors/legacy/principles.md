@@ -1,6 +1,6 @@
 # Legacy Architecture Principles
 
-> Inherits Security, Reliability, NarrativeCascade from staff-dna.md.
+> Inherits Security, Reliability, Narrative from code-style.md.
 
 ## Pipeline
 
@@ -23,7 +23,7 @@ UI file (.vb, .cs, .java) = Mute Shell. Displays only what Service provides.
 
 ## Service Responsibility (Anti-God-Object)
 
-- **NarrativeCascade**: Entry point first, orchestration above implementation. Each method orchestrates OR implements — never both.
+- **Narrative**: Read the code like a story. High-level intent at the top, implementation details below. Entry point first, orchestration above implementation. Each method orchestrates OR implements, never both.
 - **Delegation**: Specific Service classes per feature area (Vertical Slice approach) to avoid monolithic files.
 
 ## SQL Hardening

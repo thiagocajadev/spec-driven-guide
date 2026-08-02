@@ -4,7 +4,7 @@ import { NARRATIVE_CHECKLIST } from "../../config/governance.mjs";
 import { FsUtils } from "../../lib/core/fs-utils.mjs";
 
 /**
- * Narrative Auditor — Narrative Cascade compliance tool.
+ * Narrative Auditor: code-as-a-story compliance tool.
  */
 
 const PROJECT_ROOT = process.cwd();
@@ -26,7 +26,7 @@ async function orchestrateNarrativeAudit() {
 
 function printHeader() {
   console.log(`\n${"─".repeat(50)}`);
-  console.log("  📖 SDG NARRATIVE AUDIT — Narrative Cascade Compliance");
+  console.log("  📖 SDG NARRATIVE AUDIT: Code as a Story");
   console.log(`${"─".repeat(50)}\n`);
 }
 

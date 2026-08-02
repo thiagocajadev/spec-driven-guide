@@ -1,6 +1,6 @@
 # Architecture Flavor: LITE
 
-> Inherits Security, Reliability, NarrativeCascade from staff-dna.md.
+> Inherits Security, Reliability, Narrative from code-style.md.
 > For small-scale projects and experimental scripts where layered complexity is a liability.
 
 ## Core Principles
@@ -15,7 +15,7 @@
 
 Even in a single file:
 
-- **NarrativeCascade**: Entry point first. Each function orchestrates OR implements — never both. Callers above callees.
+- **Narrative**: Read the code like a story. High-level intent at the top, implementation details below. Entry point first, callers above callees. Each function orchestrates OR implements, never both.
 - **Explaining Returns**: Assign results to named variable (`const userFound = ...`) before returning.
 - **Resilience**: Prefer Result Pattern for business logic / complex failure paths. Don't force it for trivial logic where idiomatic error handling is clearer.
 

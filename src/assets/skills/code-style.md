@@ -2,7 +2,7 @@
 
 <ruleset name="CodeStyle">
 
-> Load in **Phase CODE**. SQL aesthetics in `sql-style.md`; UI copy voice in `writing-soul.md`; visual density deep dive in `visual-density.md`.
+> Load in **Phase CODE**. SQL aesthetics in `sql-style.md`; UI copy voice in `writing-soul.md`; visual density in depth in `visual-density.md`.
 
 ## Security first
 
@@ -25,7 +25,7 @@
 | Principle           | Rule                                                                                                  |
 | :------------------ | :---------------------------------------------------------------------------------------------------- |
 | English source      | Code is universal; short, unambiguous English names                                                   |
-| Narrative code      | Code tells the story; if it needs a comment to be understood, naming failed                           |
+| Narrative code      | Read the code like a story: high-level intent at the top, implementation details below                |
 | Clean entry point   | `run()` / `start()` / `init()` as headline caller — single-statement OR `const x = call(); return x;` |
 | Vertical signature  | ≤3 params per line; 4+ → object. Destructure in body, not in signature                                |
 | Orchestrator on top | Caller visible before details (top-down)                                                              |
@@ -41,18 +41,18 @@
 
 ## Readability — flow, visual density, and names
 
-| Principle             | Rule                                                                                                                             |
-| :-------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
-| Early return          | Exit early on failure; no `else` after `return`; max 2 indent levels                                                             |
-| Control flow          | Tool matches shape: guards / lookup table / `switch` / `Map` / ternary. `===` always; SLA per function                           |
-| Braced guards         | Every `if` / `else` / `for` / `while` body wrapped in `{ }` (enforced by `curly: all`)                                           |
-| Visual density        | 1 blank between groups, 0 within, never 2+. Wall-of-tight and double-blank are equal violations (deep dive: `visual-density.md`) |
-| Expressive names      | Domain intent over storage detail — banned verbs / nouns / abbreviations (see anchors)                                           |
-| Boolean prefix        | `is` / `has` / `can` / `should` / `did` / `needs` / `supports` / `allows`                                                        |
-| Import aliasing       | Single-letter or meaningless imports renamed at the import site                                                                  |
-| Code as documentation | WHY-only one-liner; multi-line WHY = refactor signal; drift compacts, never accumulates                                          |
-| Template literals     | `` `${a}-${b}` `` over `+` for dynamic strings                                                                                   |
-| No magic values       | Named constants; expressions whose surface declares output (`new Date().toISOString().split('T').at(0)`)                         |
+| Principle             | Rule                                                                                                                            |
+| :-------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| Early return          | Exit early on failure; no `else` after `return`; max 2 indent levels                                                            |
+| Control flow          | Tool matches shape: guards / lookup table / `switch` / `Map` / ternary. `===` always; SLA per function                          |
+| Braced guards         | Every `if` / `else` / `for` / `while` body wrapped in `{ }` (enforced by `curly: all`)                                          |
+| Visual density        | 1 blank between groups, 0 within, never 2+. Wall-of-tight and double-blank are equal violations (in depth: `visual-density.md`) |
+| Expressive names      | Domain intent over storage detail — banned verbs / nouns / abbreviations (see anchors)                                          |
+| Boolean prefix        | `is` / `has` / `can` / `should` / `did` / `needs` / `supports` / `allows`                                                       |
+| Import aliasing       | Single-letter or meaningless imports renamed at the import site                                                                 |
+| Code as documentation | WHY-only one-liner; multi-line WHY = refactor signal; drift compacts, never accumulates                                         |
+| Template literals     | `` `${a}-${b}` `` over `+` for dynamic strings                                                                                  |
+| No magic values       | Named constants; expressions whose surface declares output (`new Date().toISOString().split('T').at(0)`)                        |
 
 **Anchors**
 

@@ -72,12 +72,22 @@ instead of it.
 ### `hooks/writing-lint.mjs`
 
 Advisory PostToolUse hook. Scans Markdown writes (Write / Edit / MultiEdit)
-against the banlists from `writing-soul.md` (banned adverbs, openers,
-emphasis, jargon). Banlists are English-only — project artifacts ship in
-English. Scope: `src/assets/skills/*.md`,
-`docs/**.md`, `README*.md`, `CHANGELOG.md`. Working-state files
-(`tasks.md`, `context.md`, `impact-map.md`, `stack.md`, `troubleshoot.md`,
-`learned.md`) are excluded. Always exits 0; reports go to stderr.
+against the lexicons that ship beside the writing soul.
+
+The rules live in `skills/writing-soul.md`, in English. The instances live in
+`skills/lexicon/<language>.md`, one file per language, and the hook loads every
+lexicon it finds. Adding a term is a text edit, never a code change, and a
+document written in any language with a lexicon gets the same gate. The hook
+resolves the lexicon from the project root, trying `.ai/skills/lexicon/` and
+then `src/assets/skills/lexicon/`.
+
+Scope: `src/assets/skills/*.md`, `src/content/**.md` and `.mdx`, `docs/**.md`,
+`README*.md`, `CHANGELOG.md`. Working-state files (`tasks.md`, `context.md`,
+`impact-map.md`, `stack.md`, `troubleshoot.md`, `learned.md`) are excluded, and
+so is the lexicon tree, which is a list of banned terms by definition.
+
+Always exits 0; reports go to stderr. When no lexicon resolves, the hook says so
+and names every path it tried, because a run that loaded no list proves nothing.
 
 ## Activation recipes
 
@@ -270,8 +280,8 @@ Or ask your agent: "wire Biome into my project."
 
 ### Activate writing-lint hook
 
-Advisory hook that scans Markdown writes against the writing-soul banlists.
-Reports to stderr; never blocks the tool call.
+Advisory hook that scans Markdown writes against the lexicons in
+`.ai/skills/lexicon/`. Reports to stderr; never blocks the tool call.
 
 1. Copy the hook script into the project:
 
@@ -302,11 +312,16 @@ chmod +x .claude/hooks/writing-lint.mjs
 ```
 
 3. Test by editing a scoped file (e.g. `docs/test.md`) with a banned term.
-   Stderr should show `<file>:<line> — banned <category>: "<term>"`.
+   Stderr should show `<file>:<line> <class> (<language>): "<term>"`, plus
+   `→ "<replacement>"` when the lexicon records one.
 
-**Scope** (positive match): `src/assets/skills/*.md`, `docs/**.md`,
-`README*.md`, `CHANGELOG.md`.
+**Scope** (positive match): `src/assets/skills/*.md`, `src/content/**.md` and
+`.mdx`, `docs/**.md`, `README*.md`, `CHANGELOG.md`.
 **Excluded** (working state): `tasks.md`, `context.md`, `impact-map.md`,
-`stack.md`, `troubleshoot.md`, `learned.md`.
+`stack.md`, `troubleshoot.md`, `learned.md`, plus `checklist-soul.md` and the
+lexicon tree, which quote banned instances by design.
+
+**Adding a language**: drop `lexicon/<language>.md` next to the existing ones,
+using the same `## Class` headings the soul declares. No code change.
 
 Or ask your agent: "wire the writing-lint hook."

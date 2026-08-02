@@ -1,17 +1,22 @@
 #!/usr/bin/env node
 /**
- * writing-lint — advisory PostToolUse hook for Markdown writes.
+ * writing-lint: advisory PostToolUse hook for Markdown writes.
  *
- * Reads Claude Code's hook JSON from stdin, scans Write/Edit/MultiEdit
- * content against the banlists derived from .ai/skills/writing-soul.md
- * (conceptual SSOT). Hits are reported to stderr; exit code is always 0
- * so the hook stays advisory and never blocks a tool call.
+ * Reads Claude Code's hook JSON from stdin and scans Write/Edit/MultiEdit
+ * content against the lexicon files that ship beside the writing soul.
+ * Hits go to stderr; the exit code is always 0, so the hook stays advisory
+ * and never blocks a tool call.
  *
- * Scope: src/assets/skills/*.md, docs/**.md, top-level README*.md, CHANGELOG.md.
- * Working-state files (tasks.md, context.md, impact-map.md, stack.md,
- * troubleshoot.md, learned.md) are excluded.
+ * The rules live in skills/writing-soul.md, in English. The instances live
+ * in skills/lexicon/<language>.md, one file per language. Adding a term is
+ * a text edit here, never a code change, and a document written in any
+ * language with a lexicon gets the same gate.
  *
- * Project artifacts are English-only, so all banlists are English-only.
+ * Scope: skills markdown, docs, top-level README, CHANGELOG, and the
+ * content tree where a project keeps its posts. Working-state files
+ * (tasks.md, context.md, impact-map.md, stack.md, troubleshoot.md,
+ * learned.md) are excluded, and so is the lexicon itself, which is a list
+ * of banned terms by definition.
  */
 
 import process from "node:process";
@@ -19,53 +24,29 @@ import path from "node:path";
 import fileSystem from "node:fs";
 import { fileURLToPath } from "node:url";
 
-const BANNED_ADVERBS = [
-  "really",
-  "just",
-  "literally",
-  "genuinely",
-  "simply",
-  "actually",
-  "deeply",
-  "truly",
-  "fundamentally",
-  "inherently",
-  "importantly",
-  "crucially",
-];
-
-const BANNED_OPENERS = [
-  "Here's the thing:",
-  "The uncomfortable truth is",
-  "Let me be clear",
-  "Let me walk you through",
-  "In this section, we'll",
-];
-
-const BANNED_EMPHASIS = [
-  "Full stop.",
-  "This matters because",
-  "Make no mistake",
-  "Let that sink in.",
-];
-
-const BANNED_JARGON = [
-  "navigate",
-  "unpack",
-  "deep dive",
-  "game-changer",
-  "moving forward",
-  "circle back",
-  "landscape",
+/**
+ * why: the hook is copied to .claude/hooks/ on install, so resolving from
+ * import.meta.url points at the wrong tree. The project root is the only
+ * anchor both the installed copy and the maintainer copy agree on.
+ */
+const LEXICON_CANDIDATE_DIRECTORIES = [
+  path.join(".ai", "skills", "lexicon"),
+  path.join("src", "assets", "skills", "lexicon"),
 ];
 
 const SCOPE_REGEXES = [
   /(^|\/)src\/assets\/skills\/[^/]+\.md$/,
+  /(^|\/)src\/content\/.*\.mdx?$/,
   /(^|\/)docs\/.*\.md$/,
   /(^|\/)README[^/]*\.md$/,
   /(^|\/)CHANGELOG\.md$/,
 ];
 
+/**
+ * why: working state is not prose, and checklist-soul.md quotes real defects
+ * to teach the classes that detect them. A document whose job is to catalogue
+ * banned instances cannot be scanned for banned instances, same as the lexicon.
+ */
 const EXCLUDED_BASENAMES = new Set([
   "tasks.md",
   "context.md",
@@ -73,9 +54,229 @@ const EXCLUDED_BASENAMES = new Set([
   "stack.md",
   "troubleshoot.md",
   "learned.md",
+  "checklist-soul.md",
 ]);
 
 const SUPPORTED_TOOLS = new Set(["Write", "Edit", "MultiEdit"]);
+
+const CLASS_HEADING_PATTERN = /^##\s+(.+?)\s*$/;
+const INSTANCE_PATTERN = /^-\s+(.+?)\s*$/;
+const FENCE_PATTERN = /^\s*```/;
+const SUGGESTION_SEPARATOR = /\s*(?:→|->)\s*/;
+
+async function run() {
+  await orchestrateLint();
+}
+
+async function orchestrateLint() {
+  const payload = await readStdinJson();
+
+  if (!payload) {
+    process.exit(0);
+  }
+
+  const toolInput = payload.tool_input;
+  const filePath = toolInput?.file_path;
+
+  if (!isScopedPath(filePath)) {
+    process.exit(0);
+  }
+
+  const content = extractContent(payload.tool_name, toolInput);
+
+  if (content === null) {
+    process.exit(0);
+  }
+
+  reportScan(content, filePath);
+
+  process.exit(0);
+}
+
+function reportScan(content, filePath) {
+  const catalog = loadLexiconCatalog(process.cwd());
+
+  if (catalog.entries.length === 0) {
+    warnLexiconGap(catalog);
+    return;
+  }
+
+  const hits = scanContent(content, filePath, catalog);
+
+  if (hits.length === 0) {
+    return;
+  }
+
+  const hitReport = `${formatHits(hits)}\n`;
+  process.stderr.write(hitReport);
+}
+
+function loadLexiconCatalog(projectRoot) {
+  const attemptedPaths = LEXICON_CANDIDATE_DIRECTORIES.map((candidate) =>
+    path.join(projectRoot, candidate),
+  );
+
+  const lexiconDirectory = attemptedPaths.find(isReadableDirectory) ?? null;
+
+  if (lexiconDirectory === null) {
+    const missingCatalog = { entries: [], directory: null, attemptedPaths };
+    return missingCatalog;
+  }
+
+  const entries = collectLexiconEntries(lexiconDirectory);
+
+  const loadedCatalog = {
+    entries,
+    directory: lexiconDirectory,
+    attemptedPaths,
+  };
+
+  return loadedCatalog;
+}
+
+function isReadableDirectory(candidatePath) {
+  if (!fileSystem.existsSync(candidatePath)) {
+    const isMissing = false;
+    return isMissing;
+  }
+
+  const isDirectory = fileSystem.statSync(candidatePath).isDirectory();
+  return isDirectory;
+}
+
+function collectLexiconEntries(lexiconDirectory) {
+  const fileNames = fileSystem
+    .readdirSync(lexiconDirectory)
+    .filter((fileName) => fileName.endsWith(".md"))
+    .sort();
+
+  const entries = [];
+
+  for (const fileName of fileNames) {
+    const language = path.basename(fileName, ".md");
+    const lexiconPath = path.join(lexiconDirectory, fileName);
+
+    const content = readFileOrEmpty(lexiconPath);
+
+    entries.push(...parseLexiconMarkdown(content, language));
+  }
+
+  return entries;
+}
+
+function readFileOrEmpty(lexiconPath) {
+  try {
+    const content = fileSystem.readFileSync(lexiconPath, "utf8");
+    return content;
+  } catch {
+    const unreadableContent = "";
+    return unreadableContent;
+  }
+}
+
+/**
+ * A `##` heading opens a defect class and every bullet under it is one
+ * instance. Bullets inside a fenced block are documentation of the format,
+ * not instances, so fences are skipped.
+ */
+function parseLexiconMarkdown(content, language) {
+  const lines = content.split("\n");
+  const entries = [];
+
+  let currentClassName = null;
+  let isInsideFence = false;
+
+  for (const line of lines) {
+    if (FENCE_PATTERN.test(line)) {
+      isInsideFence = !isInsideFence;
+      continue;
+    }
+
+    const headingMatch = isInsideFence
+      ? null
+      : line.match(CLASS_HEADING_PATTERN);
+
+    if (headingMatch) {
+      currentClassName = headingMatch[1];
+      continue;
+    }
+
+    const instance = readInstance(line, isInsideFence, currentClassName);
+
+    if (instance !== null) {
+      entries.push(buildEntry(instance, currentClassName, language));
+    }
+  }
+
+  return entries;
+}
+
+function readInstance(line, isInsideFence, currentClassName) {
+  if (isInsideFence || currentClassName === null) {
+    const notAnInstance = null;
+    return notAnInstance;
+  }
+
+  const instanceMatch = line.match(INSTANCE_PATTERN);
+
+  if (!instanceMatch) {
+    const notAnInstance = null;
+    return notAnInstance;
+  }
+
+  const instance = instanceMatch[1];
+  return instance;
+}
+
+function buildEntry(instance, className, language) {
+  const [term, suggestion] = splitInstance(instance);
+  const matcher = buildTermMatcher(term);
+
+  const entry = { term, suggestion, className, language, matcher };
+  return entry;
+}
+
+function splitInstance(instance) {
+  const separatorIndex = instance.search(SUGGESTION_SEPARATOR);
+
+  if (separatorIndex === -1) {
+    const withoutSuggestion = [instance.trim(), null];
+    return withoutSuggestion;
+  }
+
+  const term = instance.slice(0, separatorIndex).trim();
+  const remainder = instance.slice(separatorIndex);
+  const suggestion = remainder.replace(SUGGESTION_SEPARATOR, "").trim();
+
+  const splitInstanceParts = [term, suggestion];
+  return splitInstanceParts;
+}
+
+/**
+ * why: \b is ASCII-only in JavaScript, so it misfires on accented terms.
+ * Unicode lookarounds give the same boundary for every language, and a term
+ * that starts or ends in punctuation is matched as a plain substring.
+ */
+function buildTermMatcher(term) {
+  const escapedTerm = escapeRegex(term);
+  const hasLeadingWordCharacter = /^[\p{L}\p{N}]/u.test(term);
+  const hasTrailingWordCharacter = /[\p{L}\p{N}]$/u.test(term);
+
+  const leadingBoundary = hasLeadingWordCharacter ? "(?<![\\p{L}\\p{N}])" : "";
+  const trailingBoundary = hasTrailingWordCharacter ? "(?![\\p{L}\\p{N}])" : "";
+
+  const matcher = new RegExp(
+    `${leadingBoundary}${escapedTerm}${trailingBoundary}`,
+    "iu",
+  );
+
+  return matcher;
+}
+
+function escapeRegex(value) {
+  const escaped = value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return escaped;
+}
 
 function isScopedPath(filePath) {
   if (typeof filePath !== "string" || filePath.length === 0) {
@@ -90,8 +291,20 @@ function isScopedPath(filePath) {
     return isExcluded;
   }
 
+  if (isLexiconPath(filePath)) {
+    const isLexicon = false;
+    return isLexicon;
+  }
+
   const isInScope = SCOPE_REGEXES.some((regex) => regex.test(filePath));
   return isInScope;
+}
+
+function isLexiconPath(filePath) {
+  const normalizedPath = filePath.split(path.sep).join("/");
+
+  const isInLexiconTree = normalizedPath.includes("/skills/lexicon/");
+  return isInLexiconTree;
 }
 
 function extractContent(toolName, toolInput) {
@@ -118,7 +331,7 @@ function extractContent(toolName, toolInput) {
   return multiEditContent;
 }
 
-function scanContent(content, filePath) {
+function scanContent(content, filePath, catalog) {
   if (typeof content !== "string" || content.length === 0) {
     const noHits = [];
     return noHits;
@@ -129,56 +342,25 @@ function scanContent(content, filePath) {
 
   for (let lineIndex = 0; lineIndex < lines.length; lineIndex += 1) {
     const line = lines[lineIndex];
-    collectHitsForLine(line, lineIndex + 1, filePath, hits);
+    collectHitsForLine(line, lineIndex + 1, filePath, catalog, hits);
   }
 
   return hits;
 }
 
-function collectHitsForLine(line, lineNumber, filePath, hits) {
-  for (const adverb of BANNED_ADVERBS) {
-    const adverbRegex = new RegExp(`\\b${escapeRegex(adverb)}\\b`, "i");
-
-    if (adverbRegex.test(line)) {
+function collectHitsForLine(line, lineNumber, filePath, catalog, hits) {
+  for (const entry of catalog.entries) {
+    if (entry.matcher.test(line)) {
       hits.push({
         filePath,
         line: lineNumber,
-        term: adverb,
-        category: "adverb",
+        term: entry.term,
+        suggestion: entry.suggestion,
+        className: entry.className,
+        language: entry.language,
       });
     }
   }
-
-  pushPhraseHits(BANNED_OPENERS, "opener", line, lineNumber, filePath, hits);
-  pushPhraseHits(BANNED_EMPHASIS, "emphasis", line, lineNumber, filePath, hits);
-
-  for (const jargon of BANNED_JARGON) {
-    const jargonRegex = new RegExp(`\\b${escapeRegex(jargon)}\\b`, "i");
-
-    if (jargonRegex.test(line)) {
-      hits.push({
-        filePath,
-        line: lineNumber,
-        term: jargon,
-        category: "jargon",
-      });
-    }
-  }
-}
-
-function pushPhraseHits(phrases, category, line, lineNumber, filePath, hits) {
-  const lowerLine = line.toLowerCase();
-
-  for (const phrase of phrases) {
-    if (lowerLine.includes(phrase.toLowerCase())) {
-      hits.push({ filePath, line: lineNumber, term: phrase, category });
-    }
-  }
-}
-
-function escapeRegex(value) {
-  const escaped = value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return escaped;
 }
 
 function formatHits(hits) {
@@ -188,8 +370,44 @@ function formatHits(hits) {
 }
 
 function formatHit(hit) {
-  const formattedLine = `${hit.filePath}:${hit.line} — banned ${hit.category}: "${hit.term}"`;
+  const suggestionSuffix = describeSuggestion(hit.suggestion);
+  const location = `${hit.filePath}:${hit.line}`;
+  const classLabel = `${hit.className} (${hit.language})`;
+
+  const formattedLine = `${location} ${classLabel}: "${hit.term}"${suggestionSuffix}`;
   return formattedLine;
+}
+
+function describeSuggestion(suggestion) {
+  if (!suggestion) {
+    const noSuggestion = "";
+    return noSuggestion;
+  }
+
+  const suggestionSuffix = ` → "${suggestion}"`;
+  return suggestionSuffix;
+}
+
+/**
+ * why: a silent zero-hit run and a run that never loaded a list look
+ * identical on stderr. The second one proves nothing, so it says so.
+ */
+function warnLexiconGap(catalog) {
+  const reason = describeLexiconGap(catalog);
+  const attemptedList = catalog.attemptedPaths.join(", ");
+
+  const warning = `writing-lint: ${reason}. Tried: ${attemptedList}. Nothing was checked.\n`;
+  process.stderr.write(warning);
+}
+
+function describeLexiconGap(catalog) {
+  if (catalog.directory === null) {
+    const missingDirectory = "no lexicon directory found";
+    return missingDirectory;
+  }
+
+  const emptyDirectory = `no instances parsed from ${catalog.directory}`;
+  return emptyDirectory;
 }
 
 async function readStdinJson() {
@@ -213,41 +431,13 @@ async function readStdinJson() {
   }
 }
 
-async function run() {
-  const payload = await readStdinJson();
-
-  if (!payload) {
-    process.exit(0);
-  }
-
-  const toolName = payload.tool_name;
-  const toolInput = payload.tool_input;
-  const filePath = toolInput?.file_path;
-
-  if (!isScopedPath(filePath)) {
-    process.exit(0);
-  }
-
-  const content = extractContent(toolName, toolInput);
-
-  if (content === null) {
-    process.exit(0);
-  }
-
-  const hits = scanContent(content, filePath);
-
-  if (hits.length > 0) {
-    process.stderr.write(`${formatHits(hits)}\n`);
-  }
-
-  process.exit(0);
-}
-
 const WritingLint = {
   isScopedPath,
   extractContent,
   scanContent,
   formatHits,
+  loadLexiconCatalog,
+  parseLexiconMarkdown,
   run,
 };
 

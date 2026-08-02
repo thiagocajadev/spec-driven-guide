@@ -43,7 +43,7 @@ The cycle follows five mandatory phases: **SPEC → PLAN → CODE → TEST → E
 
 - **Process**: The agent performs the implementation tasks.
 - **Standards**:
-  - Follow the **Narrative Cascade** (callers above callees).
+  - Follow the **Narrative** rule (callers above callees).
   - Adhere to the project's flavor (Vertical Slice, MVC, etc.).
   - Implement only according to the approved Plan (YAGNI).
   - Surface blockers immediately; do not work around them.

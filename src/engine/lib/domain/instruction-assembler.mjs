@@ -109,7 +109,7 @@ const SKILL_CATALOG = [
   {
     path: ".ai/skills/visual-density.md",
     category: "surgical",
-    description: "Visual-density readability deep dive",
+    description: "Visual-density readability, in depth",
   },
 ];
 

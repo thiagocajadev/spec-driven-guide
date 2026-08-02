@@ -22,7 +22,13 @@ your-project/
 │   │   ├── ui-ux.md             ← Design thinking, presets, standards, architecture
 │   │   ├── review.md            ← PR craft + reviewer checklist
 │   │   ├── performance.md       ← Big-O budget, hot paths, profiling
-│   │   └── domain.md            ← DDD-Lite: aggregates, VOs, ubiquitous language
+│   │   ├── domain.md            ← DDD-Lite: aggregates, VOs, ubiquitous language
+│   │   ├── visual-density.md    ← Visual-density readability, in depth
+│   │   ├── writing-soul.md      ← Voice rules for prose, stated as tests, English
+│   │   ├── checklist-soul.md    ← The writing gate: recite before, sweep after
+│   │   └── lexicon/             ← Defect instances, one file per language
+│   │       ├── en.md            ← English instances
+│   │       └── pt-BR.md         ← Portuguese (Brazil) instances
 │   ├── instructions/
 │   │   ├── templates/           ← Working protocol (workflow.md), agent roles, context + stack + tasks seeds
 │   │   ├── flavors/             ← Architectural patterns (vertical-slice, mvc, lite, legacy)
@@ -71,6 +77,14 @@ Security rules: configuration isolation, PII handling, secret management, and th
 ### skills/api-design.md · data-access.md · observability.md · ci-cd.md · cloud.md · sql-style.md · ui-ux.md · review.md · performance.md · domain.md
 
 Domain skills. Each covers its concern end-to-end — for example, `api-design.md` defines the response envelope, error code table, REST hierarchy, and standardization protocols. Loaded only when the current task touches the relevant domain. The operational trio (`review.md`, `performance.md`, `domain.md`) covers PR/review craft, complexity budget + hot-path discipline, and DDD-Lite vocabulary.
+
+### skills/writing-soul.md · checklist-soul.md · lexicon/
+
+The voice governance, loaded on `docs:`, `land:` and `end:`, and on any Phase CODE task that writes prose.
+
+`writing-soul.md` holds the rules, in English, each stated as a defect class plus the test that detects it. `checklist-soul.md` holds the ritual: Part 1 recited before the first write of each file, Part 2 swept after the last line of the cycle. `lexicon/<language>.md` holds the concrete instances of each class in one language, keyed by the class name.
+
+The split is what makes an English rule fire on a document delivered in another language. A rule written as a test crosses languages; a rule written as a word does not. `tooling/hooks/writing-lint.mjs` reads the lexicon at runtime, so adding a term or a whole language is a text edit, never a code change. A project that wants a different voice from the canon swaps its lexicon and leaves the rules alone.
 
 ---
 

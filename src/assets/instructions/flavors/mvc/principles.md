@@ -1,6 +1,6 @@
 # MVC Architecture Principles
 
-> Inherits Security, Reliability, NarrativeCascade from staff-dna.md.
+> Inherits Security, Reliability, Narrative from code-style.md.
 
 ## MVC Pipeline
 

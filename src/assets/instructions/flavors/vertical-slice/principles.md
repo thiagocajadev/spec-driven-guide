@@ -1,6 +1,6 @@
 # Vertical Slice Architecture
 
-> Inherits Security, Reliability, NarrativeCascade from staff-dna.md.
+> Inherits Security, Reliability, Narrative from code-style.md.
 
 ## Backend Pipeline
 

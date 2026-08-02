@@ -28,11 +28,11 @@ Configuration isolation is mandatory. Environment templates (`.env.example`) are
 
 Every operation with side-effects must be idempotent. Design for graceful degradation — system stability cannot depend on external dependencies being available.
 
-## 4. The Cascade (Orchestration Scansion)
+## 4. Narrative (Code as a Story)
 
-**Code is a technical narrative.**
+**Read the code like a story. High-level intent at the top, implementation details below.**
 
-Follow the Stepdown Rule: entry points at the top, high-level logic first, implementation details below. Expressive naming is primary documentation. If a comment is needed to explain _what_ the code does, the name is wrong. The Writing Soul — no filler, no AI-isms, no post-hoc summaries — is the same rule applied to human text.
+Follow the Stepdown Rule: entry points at the top, callers above callees. Expressive naming is primary documentation. If a comment is needed to explain _what_ the code does, the name is wrong. The Writing Soul (no filler, no AI-isms, no post-hoc summaries) is the same rule applied to human text.
 
 ## 5. Visual Excellence (Consistency)
 
