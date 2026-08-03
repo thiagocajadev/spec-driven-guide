@@ -234,6 +234,6 @@ Governance was living where the CLI put it rather than where tools look for it, 
 
 ## Questions?
 
-- Open an issue at [github.com/thiagocajadev/sgd-agents-cli](https://github.com/thiagocajadev/sgd-agents-cli).
+- Open an issue at [github.com/thiagocajadev/sdg-agents-cli](https://github.com/thiagocajadev/sdg-agents-cli).
 - Read the manifesto at [specdrivenguide.org](https://specdrivenguide.org).
 - For the philosophical foundation, see [CONSTITUTION.md](../concepts/CONSTITUTION.md).

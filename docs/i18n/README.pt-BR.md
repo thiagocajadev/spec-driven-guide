@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/thiagocajadev/sgd-agents-cli/main/docs/img/sdg-agents-icon-light.svg" alt="SDG Agents" width="480" height="480" style="border-radius: 1rem;">
+  <img src="https://raw.githubusercontent.com/thiagocajadev/sdg-agents-cli/main/docs/img/sdg-agents-icon-light.svg" alt="SDG Agents" width="480" height="480" style="border-radius: 1rem;">
   <h1 align="center">Spec-Driven Guide — Agents</h1>
   <p align="center">
     Um CLI (Command Line Interface · interface de linha de comando) que instala um conjunto de instruções para agentes de IA no seu projeto.<br>
@@ -10,7 +10,7 @@
   </p>
   <a href="https://www.npmjs.com/package/sdg-agents"><img src="https://img.shields.io/npm/v/sdg-agents?style=flat-square&logo=npm&color=cb3837" alt="versão npm" /></a>
   <a href="https://www.npmjs.com/package/sdg-agents"><img src="https://img.shields.io/npm/dm/sdg-agents?style=flat-square&logo=npm&color=cb3837" alt="downloads npm" /></a>
-  <a href="https://github.com/thiagocajadev/sgd-agents-cli/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/thiagocajadev/sgd-agents-cli/ci.yml?style=flat-square&logo=githubactions&logoColor=white&label=CI" alt="status do CI" /></a>
+  <a href="https://github.com/thiagocajadev/sdg-agents-cli/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/thiagocajadev/sdg-agents-cli/ci.yml?style=flat-square&logo=githubactions&logoColor=white&label=CI" alt="status do CI" /></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-24%20LTS-brightgreen?style=flat-square&logo=nodedotjs" alt="Node 24 LTS" /></a>
   <a href="../../LICENSE"><img src="https://img.shields.io/badge/license-ISC-blue?style=flat-square" alt="License: ISC" /></a>
   <a href="https://agents.md"><img src="https://img.shields.io/badge/AGENTS.md-compat%C3%ADvel-6e56cf?style=flat-square" alt="compatível com AGENTS.md" /></a>
@@ -50,7 +50,7 @@ npx sdg-agents
 ```
 
 <p align="left">
-  <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/sgd-agents-cli/main/docs/img/sdg-agents-menu-v2.png" alt="Spec Driven Guide CLI em ação" /></kbd>
+  <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/sdg-agents-cli/main/docs/img/sdg-agents-menu-v2.png" alt="Spec Driven Guide CLI em ação" /></kbd>
 </p>
 
 O assistente interativo pede o **flavor** (sabor · o padrão estrutural que o projeto segue). O stack vem depois, pelo ciclo `land:`, porque você declara melhor com o projeto já definido. Para instalar sem perguntas:

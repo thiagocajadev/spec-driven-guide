@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [6.2.1] - 2026-08-03
+
+### Fixed
+
+- **A referenced host stopped resolving, and nobody noticed because nobody clicks a link in a document they wrote.** `tweak.cn` was cited in `docs/guides/UI-UX.md` and `docs/reference/REFERENCES.md` as the source for perceptual color scaling. Its DNS resolves to a parking address and no TLS handshake completes. The project it meant is `tweakcn.com`, which is also how the project spells its own name, so the visible label changed with the href. Found by sweeping all forty-four external URLs in the repository, which is the only way this class of defect surfaces: a dead link reads as a live one until someone follows it.
+
+- **The repository was referenced under the name it carried before it was renamed.** GitHub keeps a renamed repository reachable at its old path, which is why six references to `sgd-agents-cli` opened correctly and stayed wrong for months. The redirect does not cover everything: `api.github.com/repos/thiagocajadev/sgd-agents-cli` answers 301, so any consumer reading the metadata without following redirects finds nothing. `package.json` also contradicted itself, with `repository.url` on the old name while `bugs.url` and `homepage` were already on the canonical one. Corrected in `package.json`, in both READMEs (banner image, CI badge, screenshot), in `docs/guides/MIGRATION-v3.md`, and in the local git remote.
+
+- **An earlier fix pointed the metadata at the alias instead of the repository.** The v6.0.0 entry below records `repository.url` being moved from `sdg-` to `sgd-`, justified by the local remote reading `sgd-`. The remote was the stale side. That entry stays as written, because a changelog records what happened and this one supersedes it; the lesson is that a git remote is a local convenience, not evidence of what a repository is called.
+
 ## [6.2.0] - 2026-08-02
 
 ### Added

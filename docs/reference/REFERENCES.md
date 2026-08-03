@@ -27,4 +27,4 @@ Our design standards and visual protocols are inspired by the following research
 
 - **[UI/UX Pro Max Skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)**: Advanced UI/UX research and design tokens for AI coding agents that shaped our premium aesthetics.
 - **[TypeUI](https://typeui.sh)**: A CLI-first approach to managing design systems for AI agents, influencing how we structure visual skills.
-- **[Tweak.cn](https://tweak.cn)** & **[Shadcn/UI](https://github.com/shadcn-ui/ui)**: Foundational research on component architecture, concentric radius rules, and perceptual color scaling.
+- **[tweakcn](https://tweakcn.com)** & **[Shadcn/UI](https://github.com/shadcn-ui/ui)**: Foundational research on component architecture, concentric radius rules, and perceptual color scaling.

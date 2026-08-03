@@ -97,7 +97,7 @@ The UI/UX skill is built on public research and open-source work. The items belo
 - **[Shadcn/UI](https://ui.shadcn.com)** — component architecture, token naming, and the distinction between design tokens and component styles. The backbone of how we structure surfaces and states.
 - **[Tailwind CSS v4](https://tailwindcss.com)** — utility-first styling and the `@theme` directive that lets us express tokens in pure CSS without a JS config layer.
 - **[Radix UI](https://www.radix-ui.com)** — primitive component patterns, accessibility baselines, and compound component APIs.
-- **[Tweak.cn](https://tweak.cn)** — perceptual color scaling, OKLCH progression, and visual tuning for shadcn-based interfaces.
+- **[tweakcn](https://tweakcn.com)** — perceptual color scaling, OKLCH progression, and visual tuning for shadcn-based interfaces.
 
 ### Color and perception
 
