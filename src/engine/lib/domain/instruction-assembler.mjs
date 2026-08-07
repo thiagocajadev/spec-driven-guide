@@ -328,12 +328,11 @@ function writeBacklogFiles(targetDirectory, selections) {
     const role =
       partner.role || (language === "pt-BR" ? "Fundador/Dev" : "Founder/Dev");
 
-    let partnerInfo = "";
-    if (language === "pt-BR") {
-      partnerInfo = `${name} é o ${role}. Diga "Oi ${name.split(" ")[0]}". Comunicação em Português Brasileiro.`;
-    } else {
-      partnerInfo = `${name} is the ${role}. Say "Hello ${name.split(" ")[0]}". Communication in English.`;
-    }
+    const firstName = name.split(" ")[0];
+    const partnerInfo =
+      language === "pt-BR"
+        ? `${name} é o ${role}. Diga "Oi ${firstName}". Comunicação em Português Brasileiro.`
+        : `${name} is the ${role}. Say "Hello ${firstName}". Communication in English.`;
 
     if (fileSystem.existsSync(contextPath)) {
       injectPartnerSection(contextPath, partnerInfo);

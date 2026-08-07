@@ -1,7 +1,6 @@
 import js from "@eslint/js";
 import globals from "globals";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
-import importPlugin from "eslint-plugin-import";
 import { semanticSpacing } from "./src/assets/tooling/eslint-rules/semantic-spacing.mjs";
 import { noBooleanComparison } from "./src/assets/tooling/eslint-rules/no-boolean-comparison.mjs";
 import { noInlineAssert } from "./src/assets/tooling/eslint-rules/no-inline-assert.mjs";
@@ -13,7 +12,6 @@ export default [
   prettierRecommended,
   {
     plugins: {
-      import: importPlugin,
       local: {
         rules: {
           "semantic-spacing": semanticSpacing,
@@ -52,14 +50,6 @@ export default [
         "error",
         { blankLine: "always", prev: "function", next: "*" },
         { blankLine: "always", prev: "*", next: "function" },
-      ],
-      "import/extensions": [
-        "error",
-        "ignorePackages",
-        {
-          js: "always",
-          mjs: "always",
-        },
       ],
     },
   },
