@@ -104,7 +104,7 @@ function reportResults(violationsByFile, totalViolations) {
   for (const filePath of filePaths) {
     console.log(`  ❌ ${filePath}`);
     for (const violation of violationsByFile[filePath]) {
-      console.log(`     — ${violation.label}: ${violation.reason}`);
+      console.log(`     · ${violation.label}: ${violation.reason}`);
     }
 
     console.log("");

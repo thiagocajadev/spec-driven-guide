@@ -16,7 +16,7 @@ export const noInlineAssert = {
     schema: [],
     messages: {
       inlineArgument:
-        "assert.{{method}}() argument must be a named identifier — extract to a named const.",
+        "assert.{{method}}() argument must be a named identifier: extract to a named const.",
     },
   },
 

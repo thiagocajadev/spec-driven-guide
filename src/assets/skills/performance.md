@@ -1,4 +1,4 @@
-# Performance — Complexity Budget & Hot Paths
+# Performance: Complexity Budget & Hot Paths
 
 <ruleset name="Performance">
 
@@ -27,7 +27,7 @@ State the complexity of any new function on hot paths in a one-line docstring (`
 - **No regex compilation in tight loops**: pre-compile module-level.
 - **Avoid `JSON.parse(JSON.stringify(...))`** for cloning: use `structuredClone` or a per-shape mapper.
 - **Stream over buffer** for large I/O (>1 MB): never load the whole payload into memory.
-- **Memoize pure expensive functions**: Rule of Three — memoize on the third hot-path call site, not sooner.
+- **Memoize pure expensive functions**: Rule of Three: memoize on the third hot-path call site, not sooner.
 - **Avoid synchronous CPU-bound work** on the request thread: offload to workers / queues.
 
 ---
@@ -69,7 +69,7 @@ Without a budget, "fast enough" becomes whatever it happens to be in prod.
 - **"Premature optimization"** used as an excuse to skip profiling on a known hot path.
 - **Caching without invalidation strategy** (see `data-access.md` Caching). Cache + no TTL = bug factory.
 - **Adding parallelism** (`Promise.all`, goroutines) without backpressure → cascade failure.
-- **Hand-rolled microbenchmarks** ignoring JIT warmup or GC noise — use the language's bench tool.
+- **Hand-rolled microbenchmarks** ignoring JIT warmup or GC noise. Use the language's bench tool.
 - **Optimizing the wrong layer**: 90% of the time the bottleneck is I/O, not CPU. Profile before micro-tuning loops.
 
 </ruleset>

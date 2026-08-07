@@ -45,7 +45,7 @@ function orchestrateGovernanceAudit() {
 
 function printHeader() {
   console.log(`\n${"─".repeat(50)}`);
-  console.log(`  🔍 SDG GOVERNANCE AUDIT — v${PROJECT_VERSION} compliance`);
+  console.log(`  🔍 SDG GOVERNANCE AUDIT: v${PROJECT_VERSION} compliance`);
   console.log(`${"─".repeat(50)}\n`);
 }
 
@@ -241,7 +241,7 @@ function checkBacklogHealth() {
 function checkSoulPulse() {
   const requiredFiles = ["README.md"];
   const maintainerOnlyFiles = isMaintainerMode()
-    ? ["docs/i18n/README.pt-BR.md", "docs/ROADMAP.md"]
+    ? ["README.pt-BR.md", "docs/ROADMAP.md"]
     : [];
 
   const files = [...requiredFiles, ...maintainerOnlyFiles];
@@ -346,7 +346,7 @@ function printResult(label, isPassed, reason) {
   const icon = isPassed ? "✅" : "❌";
   const truncatedReason = smartTruncate(reason, 10, 5);
   const paddedLabel = label.padEnd(25);
-  const suffix = reason ? `— ${truncatedReason}` : "";
+  const suffix = reason ? `· ${truncatedReason}` : "";
   const line = `  ${icon} ${paddedLabel} ${suffix}`;
   console.log(line);
 }

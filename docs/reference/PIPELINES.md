@@ -1,6 +1,6 @@
 # Architectural Pipelines
 
-Each flavor defines the data and execution path the agent uses when reading or writing code. Selecting a flavor tells the agent where logic belongs — no ambiguity about whether something is a UseCase, a Service, or a Controller.
+Each flavor defines the data and execution path the agent uses when reading or writing code. Selecting a flavor tells the agent where logic belongs, with no ambiguity about whether something is a UseCase, a Service, or a Controller.
 
 ## Flavors
 
@@ -36,7 +36,7 @@ Use when: refactoring old codebases incrementally, keeping the existing entry po
 
 ### 🪶 Lite
 
-No layers, no abstractions. Logic lives directly at the point of interaction — a single file or flat module. Engineering rules still apply; structural ceremony does not.
+No layers, no abstractions. Logic lives directly at the point of interaction, in a single file or flat module. Engineering rules still apply; structural ceremony does not.
 
 `Input` → `Handler` → `Output`
 
@@ -46,7 +46,7 @@ Use when: CLIs, scripts, utilities, or small tools where adding layers would be 
 
 ## Frontend Reference Patterns
 
-These are not CLI flavor options. They describe data flow within the UI layer — used as reference by the agent when working on frontend code inside any project, regardless of the top-level flavor.
+These are not CLI flavor options. They describe data flow within the UI layer, used as reference by the agent when working on frontend code inside any project, regardless of the top-level flavor.
 
 ### 🌐 Client-Side Flow
 

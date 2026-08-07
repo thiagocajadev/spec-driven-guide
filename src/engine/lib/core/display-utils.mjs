@@ -1,6 +1,6 @@
 /**
  * Returns a human-readable display name for a given flavor key.
- * Single source of truth — imported by all bin scripts.
+ * Single source of truth, imported by all bin scripts.
  */
 function displayName(flavorKey) {
   const PRESET_DISPLAY_NAMES = {

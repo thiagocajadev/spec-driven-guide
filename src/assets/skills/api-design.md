@@ -1,4 +1,4 @@
-# API Design — Consistency, Resilience, and Contracts
+# API Design: Consistency, Resilience, and Contracts
 
 <ruleset name="Universal API Design Standard">
 

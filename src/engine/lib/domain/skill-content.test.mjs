@@ -34,7 +34,7 @@ function readAsset(assetPath) {
   return content;
 }
 
-describe("Skill Content — Governance Layer", () => {
+describe("Skill Content: Governance Layer", () => {
   describe("code-style.md essentials", () => {
     it("opens with a two-line Security-First block", () => {
       const input = readAsset(CODE_STYLE);
@@ -149,7 +149,7 @@ describe("Skill Content — Governance Layer", () => {
     });
   });
 
-  describe("sdg-land.md — Phase STACK shape", () => {
+  describe("sdg-land.md: Phase STACK shape", () => {
     it("includes a Phase: STACK heading between SCOPE and BACKLOG", () => {
       const input = readAsset(LAND_COMMAND);
 
@@ -235,7 +235,7 @@ describe("Skill Content — Governance Layer", () => {
     });
   });
 
-  describe("competencies/delivery.md — fused contract", () => {
+  describe("competencies/delivery.md: fused contract", () => {
     it("contains both Backend and Frontend discriminated sections", () => {
       const input = readAsset(DELIVERY_COMPETENCY);
 

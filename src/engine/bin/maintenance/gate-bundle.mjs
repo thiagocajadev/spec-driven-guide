@@ -50,7 +50,7 @@ async function processCheckMode(isStrictMode) {
   const hasBlockViolations = !result.canCommit;
   if (hasBlockViolations) {
     const report = GateChecker.formatViolationReport(result.blockViolations);
-    const blockOutput = `\n  ❌ SDG Gate — Commit blocked\n\n${report}\n`;
+    const blockOutput = `\n  ❌ SDG Gate: Commit blocked\n\n${report}\n`;
     console.error(blockOutput);
     process.exit(1);
   }
@@ -65,7 +65,7 @@ async function processCheckMode(isStrictMode) {
 
     const report = GateChecker.formatViolationReport(warnViolations);
 
-    const warnOutput = `\n  ⚠️  SDG Gate — Warnings (not blocking)\n\n${report}\n`;
+    const warnOutput = `\n  ⚠️  SDG Gate: Warnings (not blocking)\n\n${report}\n`;
     console.error(warnOutput);
   }
 
@@ -75,12 +75,12 @@ async function processCheckMode(isStrictMode) {
 
 function reportUnverified(reason, isStrictMode) {
   if (isStrictMode) {
-    const strictLine = `\n  ❌ SDG Gate — could not verify: ${reason}\n     Ran with --strict, so this is a failure.\n`;
+    const strictLine = `\n  ❌ SDG Gate could not verify: ${reason}\n     Ran with --strict, so this is a failure.\n`;
     console.error(strictLine);
     process.exit(1);
   }
 
-  const lenientLine = `\n  ⚠️  SDG Gate — could not verify: ${reason}\n     Review skipped, commit allowed. Use --strict to fail instead.\n`;
+  const lenientLine = `\n  ⚠️  SDG Gate could not verify: ${reason}\n     Review skipped, commit allowed. Use --strict to fail instead.\n`;
   console.error(lenientLine);
   process.exit(0);
 }
@@ -99,7 +99,7 @@ async function readStdin() {
 function printUsage() {
   const message = [
     "",
-    "  SDG Gate — Language-agnostic pre-commit code reviewer",
+    "  SDG Gate: Language-agnostic pre-commit code reviewer",
     "",
     "  Usage:",
     "    git diff --staged | sdg-agents gate --prompt | <llm-cli> | sdg-agents gate --check",

@@ -77,7 +77,7 @@ export function pruneBacklog(content, keepCount = DEFAULT_KEEP_COUNT) {
 }
 
 /**
- * The backlog marks a deliberately empty section two ways — `_(placeholder)_`
+ * The backlog marks a deliberately empty section two ways: `_(placeholder)_`
  * in a live file, `<!-- comment -->` in the seed template. Both are an answer,
  * not drift; a fresh project must prune clean before its first entry exists.
  */
@@ -130,12 +130,12 @@ async function orchestratePrune() {
 }
 
 /**
- * "Nothing to prune" and "I cannot read this section" must never sound alike —
+ * "Nothing to prune" and "I cannot read this section" must never sound alike, and
  * a silent no-op here is what lets a format change go unnoticed for cycles.
  */
 function reportDrift(unrecognizedSample) {
   const driftLines = [
-    "  prune-backlog: ❌ format drift in `## Done` — content present, no `- [DONE]` entry recognized.",
+    "  prune-backlog: ❌ format drift in `## Done`: content present, no `- [DONE]` entry recognized.",
     `  First unrecognized line: ${unrecognizedSample}`,
     "  Nothing was pruned. Fix the section format or the entry pattern.",
   ].join("\n");

@@ -44,8 +44,10 @@ const SCOPE_REGEXES = [
 
 /**
  * why: working state is not prose, and checklist-soul.md quotes real defects
- * to teach the classes that detect them. A document whose job is to catalogue
- * banned instances cannot be scanned for banned instances, same as the lexicon.
+ * to teach the classes that detect them. writing-soul.md joins them once
+ * punctuation became a class: it has to spell the banned character out to ban
+ * it. A document whose job is to catalogue banned instances cannot be scanned
+ * for banned instances, same as the lexicon.
  */
 const EXCLUDED_BASENAMES = new Set([
   "tasks.md",
@@ -55,6 +57,7 @@ const EXCLUDED_BASENAMES = new Set([
   "troubleshoot.md",
   "learned.md",
   "checklist-soul.md",
+  "writing-soul.md",
 ]);
 
 const SUPPORTED_TOOLS = new Set(["Write", "Edit", "MultiEdit"]);

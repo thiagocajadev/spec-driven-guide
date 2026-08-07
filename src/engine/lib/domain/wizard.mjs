@@ -127,11 +127,11 @@ async function promptInitialChoice() {
     message: "What would you like to do?",
     choices: [
       {
-        name: "1. Full Setup — configure architecture flavor and partner info",
+        name: "1. Full Setup: configure architecture flavor and partner info",
         value: "agents",
       },
       {
-        name: "2. ⚡ Quick — install with defaults (lite flavor, placeholder stack.md)",
+        name: "2. ⚡ Quick: install with defaults (lite flavor, placeholder stack.md)",
         value: "quick",
       },
       { name: "3. Back", value: "back" },
@@ -218,7 +218,7 @@ function toFlavorOption(flavorFolderKey) {
 
 async function promptPartnerInfo() {
   const input = await safeInput({
-    message: 'Your name and role? (e.g. "Thiago, Dev Founder") — Enter to skip',
+    message: 'Your name and role? (e.g. "Thiago, Dev Founder"). Enter to skip',
     maxLength: 80,
   });
 

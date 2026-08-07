@@ -5,7 +5,7 @@ Executing documentation for: $ARGUMENTS.
 > **Load now**: `.ai/instructions/templates/workflow.md`, `.ai/skills/writing-soul.md`, `.ai/skills/checklist-soul.md`
 > **Load also**, when the cycle touches a README: `.ai/skills/writing-readme.md`. It governs the banner above the first paragraph; the soul governs every line below it.
 
-## Phase: SPEC — MODE: PLANNING
+## Phase: SPEC → MODE: PLANNING
 
 Follow Phase SPEC from Working Protocol. Drafting templates:
 
@@ -15,7 +15,7 @@ Follow Phase SPEC from Working Protocol. Drafting templates:
 
 **ADR** (Architecture Decision Record): `# ADR-[NNN]: [Title]` with Context (Why), Decision (What), Consequences (Impact).
 
-## Phase: END — MODE: PLANNING
+## Phase: END → MODE: PLANNING
 
 Follow Phase END from Working Protocol. Documentation must mirror code state. Sync backlog and WAIT for authorization before any commit/push.
 
@@ -29,5 +29,5 @@ Follow Phase END from Working Protocol. Documentation must mirror code state. Sy
 
 `learned.md` keeps the evidence and the history. It never keeps the canon.
 
-> No CODE phase — Fast is never invoked. All phases run under Planning role.
+> No CODE phase, so Fast is never invoked. All phases run under Planning role.
 > Read `.ai/instructions/templates/agent-roles.md` for full protocol.

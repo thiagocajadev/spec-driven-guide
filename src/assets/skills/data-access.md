@@ -1,4 +1,4 @@
-# Data Access — Performance, Safety, and Scalability
+# Data Access: Performance, Safety, and Scalability
 
 <ruleset name="Data Access Standards">
 
@@ -7,7 +7,7 @@
 
 ## Result-Driven Repositories
 
-- Every data-access method returns `Result<T>` — `ok(data)` or `fail(ERROR_CODE)`
+- Every data-access method returns `Result<T>`: `ok(data)` or `fail(ERROR_CODE)`
 - Domain orchestrates failures via `if (result.isFailure)`; no try/catch in domain
 - Map DB-specific errors (e.g., `PK_VIOLATION`) to domain codes (e.g., `CONFLICT`) before returning
 
@@ -19,7 +19,7 @@
 
 ## Query Performance & Pagination
 
-> **N+1 detection (canonical)** — referenced by `performance.md` for hot-path discipline. Implementation rules live here.
+> **N+1 detection (canonical)**: referenced by `performance.md` for hot-path discipline. Implementation rules live here.
 
 - No `SELECT *`; project only needed columns
 - Detect and eliminate N+1; use eager loading or batch fetching
@@ -42,23 +42,23 @@
 
 ## Caching
 
-> **Caching SSOT** — referenced by `performance.md`. TTL is mandatory; cache + no invalidation = silent staleness.
+> **Caching SSOT**: referenced by `performance.md`. TTL is mandatory; cache + no invalidation = silent staleness.
 
 - Cache as decorator/interceptor around repository; never mix with business logic
 - Every cache entry must have TTL
 
 ## Migrations
 
-- **Naming**: Rails `YYYYMMDDHHMMSS_<verb>_<subject>.sql` — timestamp guarantees order.
+- **Naming**: Rails `YYYYMMDDHHMMSS_<verb>_<subject>.sql`, where the timestamp guarantees order.
 - **Forward-only**: no `down` edits on applied migrations; corrections are new migrations.
 - **One concern per migration**: one table/column/index.
 - **Idempotent guards**: `IF NOT EXISTS` / `IF EXISTS`.
-- **No data backfills** in schema migrations — separate operational script.
+- **No data backfills** in schema migrations. Use a separate operational script.
 
 ## Data Integrity & Transactions
 
 - FK constraints for referential integrity; `NOT NULL` by default
-- Transaction boundaries scoped minimally — one unit of work
+- Transaction boundaries scoped minimally, one unit of work
 - No I/O (external APIs, file ops) inside transactions
 
 ## Resource Hygiene

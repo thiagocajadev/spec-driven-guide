@@ -1,4 +1,4 @@
-# Testing — Quality without Overengineering
+# Testing: Quality without Overengineering
 
 <ruleset name="Testing Governance">
 
@@ -12,7 +12,7 @@
 - **Integration**: Use cases, repositories, API endpoints. Hit real DB/service. Catches the bugs that matter most.
 - **E2E**: Critical user flows only (login, checkout, onboarding). Golden path + 2-3 failure scenarios max.
 - **Contract**: API boundaries between services. Verify producer/consumer shape agreement.
-- **Security**: DAST, fuzzing, exploit simulation — part of pipeline, not optional. See [Security skill](.ai/skills/security.md).
+- **Security**: DAST, fuzzing, exploit simulation, part of pipeline, not optional. See [Security skill](.ai/skills/security.md).
 
 Prioritize integration over unit for orchestration layers. Unit test domain logic exhaustively.
 </rule>
@@ -23,7 +23,7 @@ Prioritize integration over unit for orchestration layers. Unit test domain logi
 
 - **Format:** `[MethodUnderTest]_[Scenario]_[ExpectedResult]`
 - Always in English. Focus on behavior, not implementation.
-- JS/TS: prefer natural-language in `describe/it` blocks. No `should` prefix — it adds no information.
+- JS/TS: prefer natural-language in `describe/it` blocks. No `should` prefix: it adds no information.
 
 ```javascript
 describe('ValidateCredentials', () => {
@@ -109,7 +109,7 @@ Do NOT test: auto-generated DB migrations | trivial DTO mapping (zero logic) | D
 
 <rule name="CoverageStrategy">
 
-- **Domain**: 90%+ — bugs cost the most here
+- **Domain**: 90%+, bugs cost the most here
 - **Orchestration**: 70-80% via integration tests
 - **UI**: Component behavior tests, not snapshots
 - **Never chase 100%**: Diminishing returns. Focus on critical paths + edge cases.
@@ -121,7 +121,7 @@ Do NOT test: auto-generated DB migrations | trivial DTO mapping (zero logic) | D
 
 - Realistic test data (not `"test"` / `"foo"` in domain tests)
 - Isolated environments: dev/stage/prod never share state
-- Never use production data — anonymized/synthetic only
+- Never use production data, anonymized/synthetic only
 - Config via `.env.{environment}`; never hardcode environment assumptions
   </rule>
 

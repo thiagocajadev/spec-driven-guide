@@ -26,12 +26,12 @@
 
 ---
 
-## Phase: SPEC — MODE: PLANNING
+## Phase: SPEC → MODE: PLANNING
 
 <rule name="PhaseSPEC">
 
 1. **Intent Classification**: Identify cycle type.
-2. **Goal**: One sentence — what will be built and why.
+2. **Goal**: One sentence saying what will be built and why.
 3. **Domain & Contracts**: Backend/Frontend/Fullstack. Inputs and outputs.
 4. **Verification Checklist**: Up to 5 yes/no checkpoints.
 5. **Context Report**: `wc -c` on command + backlog files. Sum bytes / 4 + 4K base. Show: `~N tokens loaded`.
@@ -39,7 +39,7 @@
 
 </rule>
 
-## Phase: PLAN — MODE: PLANNING
+## Phase: PLAN → MODE: PLANNING
 
 <rule name="PhasePLAN">
 
@@ -54,7 +54,7 @@
 
 </rule>
 
-## Phase: CODE — MODE: FAST
+## Phase: CODE → MODE: FAST
 
 <rule name="PhaseCODE">
 
@@ -67,12 +67,12 @@
 
 </rule>
 
-## Phase: TEST — MODE: FAST
+## Phase: TEST → MODE: FAST
 
 <rule name="PhaseTEST">
 
 1. **Checklist Verification**: Every item from Spec's checklist.
-2. **Regression Check**: For `fix:` — bug gone, nothing else broke.
+2. **Regression Check**: For `fix:`, the bug is gone and nothing else broke.
 3. **Audit Gate**: Modified files vs **Form** section of `WorkChecklist` (`code-style.md`).
 4. **Lint Fix**: Run linter, fix what's possible.
 5. **Circuit Breaker**: Fail → Phase CODE → re-TEST. Max 3 attempts. 3rd failure → stop + Failure Report.
@@ -80,19 +80,19 @@
 
 </rule>
 
-## Phase: END — MODE: PLANNING
+## Phase: END → MODE: PLANNING
 
 <rule name="PhaseEND">
 
 1. **Task Summary**: One sentence per completed task.
 2. **Changelog**: ONE entry per completed task. Every artifact-producing cycle gets recorded.
    - `feat:` → `### Added` | `fix:` → `### Fixed` | `docs:` → `### Fixed` | `land:` → `### Added`
-3. **Backlog Sync**: Finished tasks → `## Done` in `tasks.md`, each as `- [DONE] ...`. Then run `npm run prune` — keeps last 3 entries in `## Done` (SSOT for history = CHANGELOG + git log).
+3. **Backlog Sync**: Finished tasks → `## Done` in `tasks.md`, each as `- [DONE] ...`. Then run `npm run prune`, which keeps the last 3 entries in `## Done` (SSOT for history = CHANGELOG + git log).
 4. **Objective Update**: Update `## Now` in `tasks.md` with next objective or clear it.
 5. **Map Reset**: Overwrite `impact-map.md` with idle state. Missing → skip.
 6. **Lint**: Run linter, block commit if errors remain.
-7. **Commit [LOCKED]**: If `bump` script exists, run `npm run bump <type>`. Then `git add .` + propose commit (`<intent>: release v<version> - <description>`). **STOP — await explicit approval before `git commit`.**
-8. **Session Gate [HARD STOP]**: Write next objective to `tasks.md`. Stop: _"Cycle complete. Context exhausted — **open a new session**. Next: [objective]."_
+7. **Commit [LOCKED]**: If `bump` script exists, run `npm run bump <type>`. Then `git add .` + propose commit (`<intent>: release v<version> - <description>`). **STOP: await explicit approval before `git commit`.**
+8. **Session Gate [HARD STOP]**: Write next objective to `tasks.md`. Stop: _"Cycle complete. Context exhausted. **Open a new session**. Next: [objective]."_
 
 > **SOVEREIGN GATE**: Never bypass human verification for commits.
 
@@ -104,7 +104,7 @@
 
 `.ai/backlog/tasks.md` is the SSOT for work state. Any agent, any session can continue.
 
-**Checkpoint** (after each atomic task): Mark `- [DONE]` → `## Done`, bullet included — `prune` only recognizes entries with it. Next task → `## Active` as `- [IN_PROGRESS]` with context note.
+**Checkpoint** (after each atomic task): Mark `- [DONE]` → `## Done`, bullet included, since `prune` only recognizes entries with it. Next task → `## Active` as `- [IN_PROGRESS]` with context note.
 
 **Proactive Handoff** (approaching limit): Write checkpoint. Announce: _"Approaching context limit. Saved checkpoint. Start new session."_
 

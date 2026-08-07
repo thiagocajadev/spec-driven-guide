@@ -96,7 +96,7 @@ describe("PruneBacklog.pruneBacklog()", () => {
     assert.ok(hasKeepMarker);
   });
 
-  it("is idempotent — second prune is no-op", () => {
+  it("is idempotent: a second prune is a no-op", () => {
     const input = buildBacklog(
       Array.from({ length: 10 }, (_unused, index) => `cycle-${index}`),
     );
@@ -163,7 +163,7 @@ describe("PruneBacklog.pruneBacklog()", () => {
       "",
       "## Done",
       "",
-      "_(empty — nothing shipped yet)_",
+      "_(empty, nothing shipped yet)_",
       "",
     ].join("\n");
 

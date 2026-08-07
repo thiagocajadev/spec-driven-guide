@@ -1,5 +1,5 @@
 /**
- * Bundle UI — All console output and user confirmation for the bundle lifecycle.
+ * Bundle UI: All console output and user confirmation for the bundle lifecycle.
  * Single responsibility: presentation and interaction only, no file I/O.
  */
 
@@ -25,7 +25,7 @@ function printAborted() {
 }
 
 function printQuickSetupStart() {
-  console.log(`\n  ⚡ Quick setup — installing with defaults...`);
+  console.log(`\n  ⚡ Quick setup, installing with defaults...`);
 }
 
 function printProjectRoot(targetDir) {
@@ -37,7 +37,7 @@ function printActivationGuide() {
   console.log("  If it does not auto-load the rules, paste this once:");
   console.log("\n    Read AGENTS.md\n");
   console.log(
-    "  First task is `land:` — discover the project stack and seed backlog.\n",
+    "  First task is `land:`, which discovers the project stack and seed backlog.\n",
   );
 }
 
@@ -51,11 +51,11 @@ function printSuccessAgents(targetDir) {
 
   console.log("  .ai/                     (skills, commands and templates)");
   console.log(
-    "  .ai/backlog/             (team knowledge, versioned — session state gitignored)",
+    "  .ai/backlog/             (team knowledge, versioned; session state gitignored)",
   );
 
   console.log(
-    "  CLAUDE.md                (pointer at repo root — auto-loaded by Claude Code)",
+    "  CLAUDE.md                (pointer at repo root, auto-loaded by Claude Code)",
   );
 
   printActivationGuide();
@@ -71,11 +71,11 @@ function printQuickSuccess(targetDir) {
 
   console.log("  .ai/                     (skills, commands and templates)");
   console.log(
-    "  .ai/backlog/             (team knowledge, versioned — session state gitignored)",
+    "  .ai/backlog/             (team knowledge, versioned; session state gitignored)",
   );
 
   console.log(
-    "  CLAUDE.md                (pointer at repo root — auto-loaded by Claude Code)",
+    "  CLAUDE.md                (pointer at repo root, auto-loaded by Claude Code)",
   );
 
   printActivationGuide();
@@ -96,7 +96,7 @@ function printAgentConfigWarnings(configOutcome) {
 }
 
 function printForeignAgentsWarning() {
-  console.log("  ⚠️  Existing AGENTS.md preserved — it is not SDG-generated.");
+  console.log("  ⚠️  Existing AGENTS.md preserved: it is not SDG-generated.");
   console.log("      Governance was written to AGENTS.sdg.md instead.");
   console.log(
     "      Merge it into your AGENTS.md, or point your agent at the sidecar.\n",
@@ -104,14 +104,14 @@ function printForeignAgentsWarning() {
 }
 
 function printForeignClaudeWarning() {
-  console.log("  ⚠️  Existing CLAUDE.md preserved — it is not SDG-generated.");
+  console.log("  ⚠️  Existing CLAUDE.md preserved: it is not SDG-generated.");
   console.log("      Claude Code reads that exact filename, so no sidecar was");
   console.log("      written. Add this line to it yourself:\n");
   console.log("        @AGENTS.md\n");
 }
 
 function printQuickDryRun(targetDir) {
-  console.log(`\n  ⚡ [DRY RUN] Quick setup — nothing will be written.`);
+  console.log(`\n  ⚡ [DRY RUN] Quick setup, nothing will be written.`);
   console.log(`  ${"─".repeat(55)}`);
   console.log(`  Project: ${targetDir}\n`);
   console.log(`  [1/5] Would prepare .ai/ structure`);
@@ -136,7 +136,7 @@ function printDryRunPreview(selections, targetDir) {
 }
 
 function renderPreviewHeader(targetDir) {
-  console.log("\n  📋 DRY RUN — Preview of files that would be created:");
+  console.log("\n  📋 DRY RUN: Preview of files that would be created:");
   console.log(`  ${"─".repeat(55)}`);
   console.log(`  Project Root: ${targetDir}\n`);
 }
@@ -151,11 +151,11 @@ function renderPreviewDirectories(directories) {
 function renderPreviewInstructionSet() {
   console.log(`    📄 AGENTS.md                (canonical governance, root)`);
   console.log(
-    `    📄 .ai/backlog/stack.md     (placeholder — populated by \`land:\`)`,
+    `    📄 .ai/backlog/stack.md     (placeholder, populated by \`land:\`)`,
   );
 
   console.log(
-    `    📄 CLAUDE.md                (root pointer — auto-loaded by Claude Code)`,
+    `    📄 CLAUDE.md                (root pointer, auto-loaded by Claude Code)`,
   );
 }
 
@@ -199,7 +199,7 @@ function renderSummaryFooter() {
 }
 
 function printHeader(version) {
-  console.log(`\n  Spec-Driven Guide — Agents v${version}`);
+  console.log(`\n  Spec-Driven Guide: Agents v${version}`);
   console.log(`  ${"─".repeat(50)}`);
   console.log("  A working protocol and engineering rules for your AI agent.");
   console.log("  Press Ctrl+C to exit.\n");
@@ -234,7 +234,7 @@ function printHelp(version) {
     -v, --version    Show version
 
   Init Options:
-    --quick              Install with defaults (lite flavor, stack.md placeholder) — no prompts
+    --quick              Install with defaults (lite flavor, stack.md placeholder), no prompts
     --flavor <name>      Architecture (vertical-slice, mvc, lite, legacy)
     --dry-run            Preview without writing files
 

@@ -23,6 +23,10 @@ Classes that need judgment do not appear here. An absolute stated without data (
 - Antes de mais nada,
 - Não é exagero dizer
 
+## Banned punctuation
+
+- — → vírgula, dois-pontos, parênteses ou duas frases
+
 ## Banned emphasis
 
 - Vale destacar

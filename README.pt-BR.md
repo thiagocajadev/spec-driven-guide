@@ -1,9 +1,10 @@
+<!-- prettier-ignore-start -->
 <div align="center">
   <img src="https://raw.githubusercontent.com/thiagocajadev/sdg-agents-cli/main/docs/img/sdg-agents-icon-light.svg" alt="SDG Agents" width="480" height="480" style="border-radius: 1rem;">
-  <h1 align="center">Spec-Driven Guide — Agents</h1>
+  <h1 align="center">Spec-Driven Guide: Agents</h1>
   <p align="center">
     Um CLI (Command Line Interface · interface de linha de comando) que instala um conjunto de instruções para agentes de IA no seu projeto.<br>
-    <a href="../../README.md">Read in English</a>
+    <a href="README.md">Read in English</a>
   </p>
   <p align="center">
       Leia o manifesto e o guia visual em <a href="https://specdrivenguide.org">specdrivenguide.org</a>
@@ -12,18 +13,33 @@
   <a href="https://www.npmjs.com/package/sdg-agents"><img src="https://img.shields.io/npm/dm/sdg-agents?style=flat-square&logo=npm&color=cb3837" alt="downloads npm" /></a>
   <a href="https://github.com/thiagocajadev/sdg-agents-cli/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/thiagocajadev/sdg-agents-cli/ci.yml?style=flat-square&logo=githubactions&logoColor=white&label=CI" alt="status do CI" /></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-24%20LTS-brightgreen?style=flat-square&logo=nodedotjs" alt="Node 24 LTS" /></a>
-  <a href="../../LICENSE"><img src="https://img.shields.io/badge/license-ISC-blue?style=flat-square" alt="License: ISC" /></a>
-  <a href="https://agents.md"><img src="https://img.shields.io/badge/AGENTS.md-compat%C3%ADvel-6e56cf?style=flat-square" alt="compatível com AGENTS.md" /></a>
-  <a href="../../CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-keep%20a%20changelog-f5a623?style=flat-square" alt="Changelog" /></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-ISC-blue?style=flat-square&logo=opensourceinitiative&logoColor=white" alt="License: ISC" /></a>
+  <a href="https://agents.md"><img src="https://img.shields.io/badge/AGENTS.md-compat%C3%ADvel-6e56cf?style=flat-square&logo=markdown&logoColor=white" alt="compatível com AGENTS.md" /></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-keep%20a%20changelog-f5a623?style=flat-square&logo=keepachangelog&logoColor=white" alt="Changelog" /></a>
 </div>
+<!-- prettier-ignore-end -->
 
 <br>
 
 `sdg-agents` instala arquivos de instrução em markdown no seu projeto. Agentes de IA (Claude Code, Cursor, Windsurf, Copilot, Codex e outros) leem esses arquivos e seguem o protocolo em cada tarefa.
 
+Quem chega ao projeto pela primeira vez lê de cima para baixo: o Início Rápido instala, e Como o Protocolo Funciona explica o que muda na conversa com o agente depois disso. Quem vai alterar o conjunto de instruções lê a partir de O Que É Instalado, onde cada arquivo gerado é nomeado e apontado para a sua origem.
+
 > **Nota:** Se o seu agente não carregar as regras sozinho, cite o `AGENTS.md` no início da sessão.
 
-O conjunto de instruções cobre:
+## Conceitos fundamentais
+
+| Conceito           | O que é                                                                                                              |
+| :----------------- | :------------------------------------------------------------------------------------------------------------------- |
+| **Ciclo**          | Uma unidade de trabalho, aberta por um prefixo (`feat:`, `fix:`, `docs:`, `audit:`, `land:`) e fechada por `end:`    |
+| **Fase**           | Um dos cinco passos que o ciclo percorre: SPEC, PLAN, CODE, TEST, END                                                |
+| **Skill**          | Um conjunto de regras sobre um assunto, em `.ai/skills/`, carregado só quando o domínio do ciclo pede                |
+| **Flavor**         | O formato arquitetural do projeto, escolhido na instalação: vertical slice, MVC, lite ou legacy                      |
+| **Work Checklist** | A barreira binária em `code-style.md`: itens de Intent recitados ao entrar em CODE, itens de Form conferidos em TEST |
+| **Backlog**        | `.ai/backlog/`, onde o resumo do projeto, o stack declarado e o estado das tarefas sobrevivem à sessão               |
+
+<details>
+<summary><strong>O que o conjunto de instruções cobre</strong></summary>
 
 - **Protocolo de trabalho**: um ciclo de 5 fases (SPEC → PLAN → CODE → TEST → END). Ele traz um **Work Checklist** (lista de verificação que o agente recita antes de escrever código) e um **Circuit Breaker** (disjuntor · para o agente após 3 tentativas na mesma falha). Você aprova SPEC e PLAN antes de qualquer linha ser escrita.
 
@@ -38,6 +54,8 @@ O conjunto de instruções cobre:
 - **Memória entre sessões**: a pasta `.ai/backlog/` (lista de trabalho e memória do projeto) guarda o resumo, o stack, o estado das tarefas e o conhecimento que o time acumulou. Um **Impact Map** (mapa de impacto) lista os arquivos que o ciclo atual precisa ler.
 
 - **Catálogo de tooling inerte**: um pacote de ferramentas copiado em `.ai/tooling/`, com nada ligado por padrão. Nenhum `package.json` editado, nenhum `.husky/` criado, nenhuma dependência instalada. Você liga o que quiser, quando quiser.
+
+</details>
 
 ---
 
@@ -59,10 +77,10 @@ O assistente interativo pede o **flavor** (sabor · o padrão estrutural que o p
 # Instalação sem prompts (flavor lite + stack.md placeholder)
 npx sdg-agents init --quick
 
-# Vertical Slice — qualquer stack
+# Vertical Slice, qualquer stack
 npx sdg-agents init --flavor vertical-slice
 
-# MVC — qualquer stack
+# MVC, qualquer stack
 npx sdg-agents init --flavor mvc
 ```
 
@@ -72,7 +90,12 @@ Depois de instalar, abra o chat do agente e escreva `land: <visão>`. O agente p
 
 ## O Que É Instalado
 
-Após rodar `init`, seu projeto recebe:
+O `AGENTS.md` é um roteador: ele lista as skills disponíveis e manda carregar cada uma na hora certa. Só o `workflow.md` (o protocolo de 5 fases) fica sempre em contexto. O resto entra quando o ciclo pede.
+
+Ao lado dele, o `CLAUDE.md` é um ponteiro de uma linha que importa o `AGENTS.md` com `@`. O Claude Code lê esse arquivo sozinho a cada sessão. Para as outras IDEs, você aponta o arquivo de configuração nativo da ferramenta para o mesmo `AGENTS.md` (veja "Usando com outras IDEs" abaixo).
+
+<details>
+<summary><strong>Árvore completa escrita pelo <code>init</code></strong></summary>
 
 ```
 seu-projeto/
@@ -91,11 +114,9 @@ seu-projeto/
 │       └── ...                  ← (Veja docs/reference/PROJECT-STRUCTURE.md para detalhes)
 ```
 
-O `AGENTS.md` é um roteador: ele lista as skills disponíveis e manda carregar cada uma na hora certa. Só o `workflow.md` (o protocolo de 5 fases) fica sempre em contexto. O resto entra quando o ciclo pede.
+</details>
 
-Ao lado dele, o `CLAUDE.md` é um ponteiro de uma linha que importa o `AGENTS.md` com `@`. O Claude Code lê esse arquivo sozinho a cada sessão. Para as outras IDEs, você aponta o arquivo de configuração nativo da ferramenta para o mesmo `AGENTS.md` (veja "Usando com outras IDEs" abaixo).
-
-> Para um detalhamento do papel de cada arquivo, veja [Estrutura do Projeto](../reference/PROJECT-STRUCTURE.md).
+> Para um detalhamento do papel de cada arquivo, veja [Estrutura do Projeto](docs/reference/PROJECT-STRUCTURE.md).
 
 ---
 
@@ -110,8 +131,8 @@ Você começa a mensagem com um prefixo, e o agente entra no ciclo correspondent
 | `fix: <descrição>`  | Fix     | Mesmo ciclo, com foco em RCA (Root Cause Analysis · análise de causa raiz)                                                        |
 | `docs: <descrição>` | Docs    | Atualiza changelogs, ADRs (Architecture Decision Records · registros de decisão) e especificações                                 |
 | `audit: <escopo>`   | Audit   | Compara o projeto com as regras e aponta o drift (desvio entre o que está escrito e o que foi combinado)                          |
-| `end:`              | —       | Fecha o ciclo ativo: changelog, backlog, proposta de commit. Também recupera o ciclo se o agente perder o fio no meio da conversa |
-| Sem prefixo         | —       | O agente pergunta: "land, feat, fix, docs ou audit?"                                                                              |
+| `end:`              | n/a     | Fecha o ciclo ativo: changelog, backlog, proposta de commit. Também recupera o ciclo se o agente perder o fio no meio da conversa |
+| Sem prefixo         | n/a     | O agente pergunta: "land, feat, fix, docs ou audit?"                                                                              |
 
 O agente **para e aguarda sua aprovação** em SPEC e PLAN antes de escrever qualquer código.
 
@@ -121,8 +142,8 @@ SPEC  →  PLAN  →  CODE  →  TEST  →  END
   Wait        Wait                 "end:"
 ```
 
-Para o detalhe de cada fase, veja o [Guia Spec-Driven Development](../concepts/SPEC-DRIVEN-DEV-GUIDE.md).
-Para o diagrama dos pontos de parada e dos loops internos, veja o [Agent Deep-Flow](../concepts/AGENT-DEEP-FLOW.md).
+Para o detalhe de cada fase, veja o [Guia Spec-Driven Development](docs/concepts/SPEC-DRIVEN-DEV-GUIDE.md).
+Para o diagrama dos pontos de parada e dos loops internos, veja o [Agent Deep-Flow](docs/concepts/AGENT-DEEP-FLOW.md).
 
 ---
 
@@ -137,7 +158,7 @@ Escolha o flavor que corresponde à estrutura do seu projeto. Ele diz ao agente 
 | `lite`           | Estrutura mínima, sem camadas             | Scripts, CLIs, utilitários          |
 | `legacy`         | Ponte segura para refatorar aos poucos    | Migrando bases de código existentes |
 
-Para o diagrama de fluxo de dados de cada flavor, veja [Pipelines Arquiteturais](../reference/PIPELINES.md).
+Para o diagrama de fluxo de dados de cada flavor, veja [Pipelines Arquiteturais](docs/reference/PIPELINES.md).
 
 ---
 
@@ -149,7 +170,10 @@ O stack é declarado, não escolhido de um catálogo. Depois do `sdg-agents init
 land: uma API Node.js + TypeScript servindo um dashboard React
 ```
 
-O agente:
+O agente pergunta as suas linguagens e versões, classifica cada uma por papel e escreve `.ai/backlog/stack.md`. A fase CODE lê esse arquivo em todo ciclo.
+
+<details>
+<summary><strong>O que o ciclo <code>land:</code> faz, passo a passo</strong></summary>
 
 1. Pede que você liste cada linguagem e versão, em texto livre.
 
@@ -159,13 +183,16 @@ O agente:
 
 4. Escreve `.ai/backlog/stack.md`. Quando uma versão mudar, edite o arquivo à mão: não precisa gerar nada de novo.
 
-A fase CODE lê o `stack.md` em todo ciclo.
+</details>
 
 ---
 
 ## Usando com outras IDEs
 
-O `sdg-agents` gera um `AGENTS.md` na raiz do repositório e um `CLAUDE.md` ao lado. Codex e Claude Code leem os seus sem passo extra. Para as outras ferramentas, escreva uma linha no arquivo de regras nativo da IDE apontando para o `AGENTS.md`:
+O `sdg-agents` gera um `AGENTS.md` na raiz do repositório e um `CLAUDE.md` ao lado. Codex e Claude Code leem os seus sem passo extra. Para as outras ferramentas, escreva uma linha no arquivo de regras nativo da IDE apontando para o `AGENTS.md`: `Read AGENTS.md before any task.`
+
+<details>
+<summary><strong>Arquivo de configuração nativo, por agente</strong></summary>
 
 | Agente           | Arquivo de config nativo          | Como conectar                                                         |
 | :--------------- | :-------------------------------- | :-------------------------------------------------------------------- |
@@ -176,6 +203,8 @@ O `sdg-agents` gera um `AGENTS.md` na raiz do repositório e um `CLAUDE.md` ao l
 | Codex CLI        | `AGENTS.md` (raiz)                | Carregado automaticamente. Nenhuma ação necessária.                   |
 | Gemini CLI       | `GEMINI.md`                       | Mesma linha de ponteiro.                                              |
 | Cline / Roo Code | `.clinerules`                     | Mesma linha de ponteiro.                                              |
+
+</details>
 
 > **Quer um preset, uma voz ou uma skill própria?** Cole o conteúdo dela no seu agente como prompt. Não existe subcomando no CLI para isso, e não precisa existir.
 
@@ -195,25 +224,34 @@ npx sdg-agents clear      # Remover a pasta .ai/
 
 ## Referência
 
-- [Referência Rápida (CHEATSHEET)](../reference/CHEATSHEET.md): todas as flags do CLI e os gatilhos do agente
+Comece pela [Referência Rápida (CHEATSHEET)](docs/reference/CHEATSHEET.md), com todas as flags do CLI e os gatilhos do agente em uma página só.
 
-- [Estrutura do Projeto](../reference/PROJECT-STRUCTURE.md): o papel de cada arquivo gerado
+<details>
+<summary><strong>Índice completo da documentação</strong></summary>
 
-- [Pipelines Arquiteturais](../reference/PIPELINES.md): o caminho dos dados em cada flavor
+- [Estrutura do Projeto](docs/reference/PROJECT-STRUCTURE.md): o papel de cada arquivo gerado
 
-- [Constituição de Engenharia (CONSTITUTION)](../concepts/CONSTITUTION.md): os princípios por trás das regras. É material de leitura; as regras que valem em execução ficam no `code-style.md`
+- [Pipelines Arquiteturais](docs/reference/PIPELINES.md): o caminho dos dados em cada flavor
 
-- [Sistema UI/UX](../guides/UI-UX.md): design, hierarquia visual, escala tonal de superfície e as pesquisas que embasam tudo isso
+- [Guia Spec-Driven Development](docs/concepts/SPEC-DRIVEN-DEV-GUIDE.md): o detalhe de cada fase e suas regras
 
-- [Roadmap](../ROADMAP.md): o que já foi entregue e o que está planejado
+- [Agent Deep-Flow](docs/concepts/AGENT-DEEP-FLOW.md): os pontos de parada e os loops internos
 
-- [Otimização de Tokens](../guides/TOKEN-OPTIMIZATION.md): quanto custa carregar as instruções e como esse custo foi reduzido
+- [Constituição de Engenharia (CONSTITUTION)](docs/concepts/CONSTITUTION.md): os princípios por trás das regras. É material de leitura; as regras que valem em execução ficam no `code-style.md`
 
-- [Guia de migração](../guides/MIGRATION-v3.md): breaking changes e migração passo a passo, do v2 ao v6
+- [Sistema UI/UX](docs/guides/UI-UX.md): design, hierarquia visual, escala tonal de superfície e as pesquisas que embasam tudo isso
 
-- [Changelog](../../CHANGELOG.md): release atual, com [o arquivo histórico](../CHANGELOG-archive.md) guardando todas as versões desde a v0.x
+- [Roadmap](docs/ROADMAP.md): o que já foi entregue e o que está planejado
 
-- [Créditos e Filosofias](../reference/REFERENCES.md): influências do projeto e créditos de pesquisa
+- [Otimização de Tokens](docs/guides/TOKEN-OPTIMIZATION.md): quanto custa carregar as instruções e como esse custo foi reduzido
+
+- [Guia de migração](docs/guides/MIGRATION-v3.md): breaking changes e migração passo a passo, do v2 ao v6
+
+- [Changelog](CHANGELOG.md): release atual, com [o arquivo histórico](docs/CHANGELOG-archive.md) guardando todas as versões desde a v0.x
+
+- [Créditos e Filosofias](docs/reference/REFERENCES.md): influências do projeto e créditos de pesquisa
+
+</details>
 
 ---
 

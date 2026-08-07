@@ -3,7 +3,7 @@
 <ruleset name="SQLStyle">
 
 > Load in Phase CODE when writing, reviewing, or refactoring SQL.
-> Formatting is owned by **SQLFluff** — enforce via CI, not review comments.
+> Formatting is owned by **SQLFluff**: enforce via CI, not review comments.
 > For structural data access rules (pooling, transactions, indexes), see `.ai/skills/data-access.md`.
 
 ## Formatter-enforced (SQLFluff auto-fix)
@@ -23,7 +23,7 @@ Activation recipe: `.ai/tooling/sqlfluff/.sqlfluff` + `.ai/tooling/README.md`.
 ## Vertical Style
 
 One clause per line, content indented 2 spaces. Read top-to-bottom, no horizontal scroll.
-Inline only when ≤ 3 fields AND ≤ 1 condition — anything beyond goes vertical.
+Inline only when ≤ 3 fields AND ≤ 1 condition. Anything beyond goes vertical.
 
 Never use short aliases (`u`, `o`, `t`). Always qualify with the full table name.
 
@@ -46,7 +46,7 @@ SELECT users.id, users.name FROM users WHERE users.is_active = TRUE;
 DELETE FROM logs WHERE logs.id = 123;
 ```
 
-JOIN with a single ON condition — ON stays on the same line as the table:
+JOIN with a single ON condition, with ON on the same line as the table:
 
 ```sql
 SELECT
@@ -60,7 +60,7 @@ WHERE
   users.is_active = TRUE;
 ```
 
-JOIN with multiple ON conditions — each condition on its own line, aligned after ON:
+JOIN with multiple ON conditions, each on its own line, aligned after ON:
 
 ```sql
 JOIN
@@ -72,7 +72,7 @@ JOIN
 
 ## Visual Density
 
-Clauses (`SELECT`, `FROM`, `WHERE`, `JOIN`) act as visual separators — no blank lines between them.
+Clauses (`SELECT`, `FROM`, `WHERE`, `JOIN`) act as visual separators, so no blank lines between them.
 Blank lines apply only where SQLFluff won't add them automatically:
 
 **Function: one blank line between signature and body**

@@ -1,4 +1,4 @@
-# {{PROJECT_NAME}} — [what this project does in one sentence]
+# {{PROJECT_NAME}}: [what this project does in one sentence]
 
 stack: {{STACK}}
 pattern: [architecture pattern]

@@ -9,7 +9,7 @@ Every CLI command and agent trigger on one page, for the reader who already know
 The fastest paths from zero to a governed project:
 
 ```bash
-# Interactive wizard — walks you through architectural flavor + partner info
+# Interactive wizard: walks you through architectural flavor + partner info
 npx sdg-agents
 
 # Zero-prompt install (lite flavor + stack.md placeholder)
@@ -48,13 +48,13 @@ npx sdg-agents init --flavor legacy
 
 ## Stack Declaration (`land:`)
 
-There is no `--idiom` flag — stack is declared at project inception through the `land:` cycle:
+There is no `--idiom` flag: stack is declared at project inception through the `land:` cycle:
 
 ```
 land: a Node.js + TypeScript API serving a React dashboard
 ```
 
-The agent elicits every language/runtime/framework with its version, classifies entries by role (Backend / Frontend / Data / Scripts), optionally enriches via an allow-listed doc fetch, and writes the result to `.ai/backlog/stack.md`. Phase CODE reads that file on every session — edit it directly when versions change.
+The agent elicits every language/runtime/framework with its version, classifies entries by role (Backend / Frontend / Data / Scripts), optionally enriches via an allow-listed doc fetch, and writes the result to `.ai/backlog/stack.md`. Phase CODE reads that file on every session. Edit it directly when versions change.
 
 ### WebFetch allow-list
 
@@ -93,15 +93,15 @@ npx sdg-agents clear      # Remove the entire .ai/ governance layer
 
 Prefix your message to the AI Agent to activate the corresponding governance cycle:
 
-| Trigger               | Cycle   | Intent                                                                                                                                               |
-| :-------------------- | :------ | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `land: <description>` | Land    | Project inception — vision + stack declaration + sequenced `feat:` backlog, no code written.                                                         |
-| `feat: <description>` | Feature | New implementation — requires SPEC and PLAN approval before any code.                                                                                |
-| `fix: <description>`  | Fix     | Bug resolution — Root Cause Analysis and regression test mandatory.                                                                                  |
-| `docs: <description>` | Docs    | Technical memory sync — Changelogs, ADRs, Specs.                                                                                                     |
-| `audit: <scope>`      | Audit   | Verify project alignment against rulesets (drift detection).                                                                                         |
-| `end:`                | —       | Close the active cycle — runs the END Phase checklist (changelog, backlog, commit). Also recovers a cycle if the agent loses track mid-conversation. |
-| No prefix             | —       | Agent asks: "land, feat, fix, docs, or audit?" — then proceeds.                                                                                      |
+| Trigger               | Cycle   | Intent                                                                                                                                              |
+| :-------------------- | :------ | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `land: <description>` | Land    | Project inception: vision + stack declaration + sequenced `feat:` backlog, no code written.                                                         |
+| `feat: <description>` | Feature | New implementation: requires SPEC and PLAN approval before any code.                                                                                |
+| `fix: <description>`  | Fix     | Bug resolution: Root Cause Analysis and regression test mandatory.                                                                                  |
+| `docs: <description>` | Docs    | Technical memory sync: Changelogs, ADRs, Specs.                                                                                                     |
+| `audit: <scope>`      | Audit   | Verify project alignment against rulesets (drift detection).                                                                                        |
+| `end:`                | n/a     | Close the active cycle: runs the END Phase checklist (changelog, backlog, commit). Also recovers a cycle if the agent loses track mid-conversation. |
+| No prefix             | n/a     | Agent asks: "land, feat, fix, docs, or audit?", then proceeds.                                                                                      |
 
 > `end:` takes no argument.
 
@@ -125,13 +125,13 @@ The Agent **stops and waits for explicit Developer approval** at SPEC and PLAN b
 
 | Responsibility                           | Developer | AI Agent |
 | :--------------------------------------- | :-------: | :------: |
-| Run CLI commands (`init`, `audit`, etc.) |    ✅     |    —     |
-| Declare the stack during `land:`         |    ✅     |    —     |
-| Approve SPEC and PLAN                    |    ✅     |    —     |
-| Execute CODE and TEST phases             |     —     |    ✅    |
-| Update CHANGELOG and backlog             |     —     |    ✅    |
-| Propose commit message                   |     —     |    ✅    |
-| Authorize commit and push                |    ✅     |    —     |
+| Run CLI commands (`init`, `audit`, etc.) |    ✅     |    -     |
+| Declare the stack during `land:`         |    ✅     |    -     |
+| Approve SPEC and PLAN                    |    ✅     |    -     |
+| Execute CODE and TEST phases             |     -     |    ✅    |
+| Update CHANGELOG and backlog             |     -     |    ✅    |
+| Propose commit message                   |     -     |    ✅    |
+| Authorize commit and push                |    ✅     |    -     |
 
 ---
 

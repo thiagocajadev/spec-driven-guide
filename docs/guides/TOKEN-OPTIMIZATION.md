@@ -10,12 +10,12 @@ How the instruction set stays cheap to load, and what it cost to get there. Sect
 - **Per-session formula**: `base (CLAUDE.md + AGENTS.md) + Σ(loaded skills per phase)`.
 - **Typical session**: 2–4 skills loaded. Worst-case (fullstack feat): ~8 skills.
 
-## 2. Semantic Router — Load Only What's Triggered
+## 2. Semantic Router: Load Only What's Triggered
 
 - `AGENTS.md` is a minimal registry (<2.8KB worst-case, 44% reduction from v2).
 - **Phase-gated**: Skills only loaded in Phase CODE, not at session start.
 - **Domain matching**: Backend, Frontend, and Surgical groups loaded by task domain. Stack specifics come from `.ai/backlog/stack.md`, already in context.
-- **Token gate**: "load ONLY what's triggered — never preload."
+- **Token gate**: "load ONLY what's triggered, never preload."
 
 ## 3. Compaction Process
 
@@ -23,13 +23,13 @@ How the instruction set stays cheap to load, and what it cost to get there. Sect
 
 **Workflow**:
 
-1. Edit `src/assets/` (source of truth) — never `.ai/` directly.
+1. Edit `src/assets/` (source of truth), never `.ai/` directly.
 2. Regenerate: `npx sdg-agents init --quick`.
 3. Validate: `npm test`.
 
 ## 4. Reduction Results
 
-### Round 1 — Skills (commit `a99cb76`)
+### Round 1: Skills (commit `a99cb76`)
 
 | File                   | Before     | After     | Cut      |
 | ---------------------- | ---------- | --------- | -------- |
@@ -43,7 +43,7 @@ How the instruction set stays cheap to load, and what it cost to get there. Sect
 | staff-dna.md           | 6.5K       | 3.9K      | -40%     |
 | **Subtotal (8 files)** | **122.0K** | **52.4K** | **-57%** |
 
-### Round 2 — Idioms & remaining skills (commit `5929a53`)
+### Round 2: Idioms & remaining skills (commit `5929a53`)
 
 | File                     | Before    | After     | Cut      |
 | ------------------------ | --------- | --------- | -------- |
@@ -67,7 +67,7 @@ How the instruction set stays cheap to load, and what it cost to get there. Sect
 | scripts/patterns.md      | 2.3K      | 1.4K      | -37%     |
 | **Subtotal (18 files)**  | **82.7K** | **48.4K** | **-41%** |
 
-### Round 3 — Commands, flavors, templates, competencies
+### Round 3: Commands, flavors, templates, competencies
 
 | File                         | Before    | After     | Cut      |
 | ---------------------------- | --------- | --------- | -------- |

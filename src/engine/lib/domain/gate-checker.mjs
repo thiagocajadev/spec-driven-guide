@@ -29,7 +29,7 @@ function checkResult(jsonInput) {
 /**
  * A gate that cannot read the verdict has not approved anything. It reports
  * `canCommit: true` so an automatic hook never blocks on infrastructure, and
- * carries `unverifiedReason` so the caller can shout — or exit 1 under --strict.
+ * carries `unverifiedReason` so the caller can shout, or exit 1 under --strict.
  */
 function buildUnverifiable(reason) {
   const unverifiable = {
@@ -43,7 +43,7 @@ function buildUnverifiable(reason) {
 }
 
 /**
- * Agent CLIs wrap the model output in their own envelope — `claude
+ * Agent CLIs wrap the model output in their own envelope, such as `claude
  * --output-format json` emits `{"type":"result","result":"<json string>"}`.
  * Unwrap one level so the report inside is what gets checked.
  */
@@ -125,7 +125,7 @@ function formatViolationLine(violation) {
     ? `${violation.file}:${violation.line}`
     : violation.file;
 
-  const line = `  [${violation.tier}] ${violation.rule} — ${location}\n    ${violation.snippet}\n    Fix: ${violation.fix}`;
+  const line = `  [${violation.tier}] ${violation.rule} · ${location}\n    ${violation.snippet}\n    Fix: ${violation.fix}`;
   return line;
 }
 

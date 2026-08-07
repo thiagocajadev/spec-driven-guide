@@ -1,4 +1,4 @@
-# Software Development Life Cycle — SDLC (8-Phase Core Trail)
+# Software Development Life Cycle: SDLC (8-Phase Core Trail)
 
 This document defines the technical standards for the project lifecycle. It establishes the baseline for developer onboarding and architectural alignment through 8 cumulative phases.
 
@@ -31,7 +31,7 @@ The pipeline follows a **strict cumulative logic**. Each phase establishes the s
 
 ---
 
-## 01 — Foundation
+## 01: Foundation
 
 Set up the project so that every contributor starts from the same baseline.
 
@@ -49,7 +49,7 @@ Set up the project so that every contributor starts from the same baseline.
 
 ---
 
-## 02 — Observability & Security
+## 02: Observability & Security
 
 Make the project observable and defensible before writing business logic.
 
@@ -63,7 +63,7 @@ Make the project observable and defensible before writing business logic.
 
 ---
 
-## 03 — CI/CD Pipeline
+## 03: CI/CD Pipeline
 
 Automate quality gates so that broken code never reaches production.
 
@@ -77,7 +77,7 @@ Automate quality gates so that broken code never reaches production.
 
 ---
 
-## 04 — Access Control (if applicable)
+## 04: Access Control (if applicable)
 
 Implement identity and permissions before building features that depend on them.
 
@@ -85,13 +85,13 @@ Implement identity and permissions before building features that depend on them.
 2. Define roles and permissions. Start simple (admin/user) and expand as needed. Use deny-by-default.
 3. Secure tokens: HttpOnly cookies for web, short-lived JWTs with refresh rotation. Protect against XSS and CSRF.
 4. Implement session control: concurrent session limits, remote revocation, idle timeout.
-5. Build user CRUD as your reference implementation — the first feature that exercises the full pipeline.
+5. Build user CRUD as your reference implementation, the first feature that exercises the full pipeline.
 
 **Done when:** you can create a user, log in, access a protected route, and get rejected from an unauthorized one.
 
 ---
 
-## 05 — Design System & UI/UX (if applicable)
+## 05: Design System & UI/UX (if applicable)
 
 Establish visual consistency before building screens.
 
@@ -105,7 +105,7 @@ Establish visual consistency before building screens.
 
 ---
 
-## 06 — Feature Evolution
+## 06: Feature Evolution
 
 Build features with clear domain boundaries and safe delivery.
 
@@ -119,7 +119,7 @@ Build features with clear domain boundaries and safe delivery.
 
 ---
 
-## 07 — Production Readiness
+## 07: Production Readiness
 
 Verify everything before going live.
 
@@ -132,7 +132,7 @@ Verify everything before going live.
 
 ---
 
-## 08 — Operational Governance
+## 08: Operational Governance
 
 Keep the system healthy after launch.
 

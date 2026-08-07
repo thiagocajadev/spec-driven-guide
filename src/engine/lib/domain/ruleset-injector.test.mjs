@@ -39,7 +39,7 @@ describe("RulesetInjector", () => {
       }
     });
 
-    it("is idempotent — calling twice does not throw", () => {
+    it("is idempotent: calling twice does not throw", () => {
       const tmpDir = makeTempDir();
 
       try {

@@ -148,7 +148,7 @@ function reportResult(drifts) {
   }
 
   console.error(
-    "\n  ❌ Drift detected — files in .ai/ differ from src/assets/:\n",
+    "\n  ❌ Drift detected: files in .ai/ differ from src/assets/:\n",
   );
 
   for (const drift of drifts) {

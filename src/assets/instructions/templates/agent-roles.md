@@ -2,10 +2,10 @@
 
 ## Execution Mindsets
 
-| Role         | Phases                  | Focus                          |
-| ------------ | ----------------------- | ------------------------------ |
-| **Planning** | SPEC, PLAN, Review, END | Analytical — strategy & design |
-| **Fast**     | CODE, TEST              | Operational — execute & verify |
+| Role         | Phases                  | Focus                         |
+| ------------ | ----------------------- | ----------------------------- |
+| **Planning** | SPEC, PLAN, Review, END | Analytical: strategy & design |
+| **Fast**     | CODE, TEST              | Operational: execute & verify |
 
 ## Baseline: Single-Agent Mode
 

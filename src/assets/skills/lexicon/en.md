@@ -45,6 +45,10 @@ A class earns a place here only when its instances are precise enough to fire wi
 - Make no mistake
 - Let that sink in.
 
+## Banned punctuation
+
+- — → comma, colon, parentheses, or two sentences
+
 ## Banned jargon
 
 - navigate → handle

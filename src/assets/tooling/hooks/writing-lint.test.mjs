@@ -27,7 +27,7 @@ function buildCatalog(lexiconLines, language) {
 
 describe("writing-lint.isScopedPath", () => {
   it("accepts skills markdown under src/assets/skills", () => {
-    const inputPath = "src/assets/skills/writing-soul.md";
+    const inputPath = "src/assets/skills/code-style.md";
     const actualIsScoped = isScopedPath(inputPath);
 
     assert.ok(actualIsScoped);
@@ -84,6 +84,13 @@ describe("writing-lint.isScopedPath", () => {
 
   it("rejects the checklist, which quotes real defects to teach the classes", () => {
     const inputPath = "src/assets/skills/checklist-soul.md";
+    const actualIsRejected = !isScopedPath(inputPath);
+
+    assert.ok(actualIsRejected);
+  });
+
+  it("rejects the soul, which spells out the punctuation it bans", () => {
+    const inputPath = "src/assets/skills/writing-soul.md";
     const actualIsRejected = !isScopedPath(inputPath);
 
     assert.ok(actualIsRejected);
@@ -322,6 +329,55 @@ describe("writing-lint.scanContent", () => {
 
     assert.equal(actualHitCount, expectedHitCount);
     assert.equal(actualLanguage, expectedLanguage);
+  });
+
+  it("flags an em dash, which is punctuation rather than a word", () => {
+    const inputCatalog = buildCatalog(
+      ["## Banned punctuation", "- — → comma, colon, parentheses"],
+      "en",
+    );
+
+    const inputContent = "The gate is loud — it never blocks.";
+
+    const expectedClassName = "Banned punctuation";
+    const expectedSuggestion = "comma, colon, parentheses";
+    const actualHits = scanContent(inputContent, "docs/gate.md", inputCatalog);
+
+    const actualClassName = actualHits[0].className;
+    const actualSuggestion = actualHits[0].suggestion;
+
+    assert.equal(actualClassName, expectedClassName);
+    assert.equal(actualSuggestion, expectedSuggestion);
+  });
+
+  it("leaves the arrow alone, since it separates term from replacement", () => {
+    const inputCatalog = buildCatalog(
+      ["## Banned punctuation", "- — → comma, colon, parentheses"],
+      "en",
+    );
+
+    const inputContent = "The cycle runs SPEC → PLAN → CODE → TEST → END.";
+
+    const expectedHitCount = 0;
+    const actualHits = scanContent(inputContent, "docs/cycle.md", inputCatalog);
+    const actualHitCount = actualHits.length;
+
+    assert.equal(actualHitCount, expectedHitCount);
+  });
+
+  it("leaves a plain hyphen alone, which the em dash rule does not cover", () => {
+    const inputCatalog = buildCatalog(
+      ["## Banned punctuation", "- — → comma, colon, parentheses"],
+      "en",
+    );
+
+    const inputContent = "A flat-square badge with a well-known logo.";
+
+    const expectedHitCount = 0;
+    const actualHits = scanContent(inputContent, "docs/badge.md", inputCatalog);
+    const actualHitCount = actualHits.length;
+
+    assert.equal(actualHitCount, expectedHitCount);
   });
 
   it("does not fire on a term embedded in a longer word", () => {

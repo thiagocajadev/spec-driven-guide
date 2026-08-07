@@ -227,7 +227,7 @@ export const semanticSpacing = {
         }
 
         // Rule 3: remove extraneous blank between consecutive VDs before side-effect terminal
-        // Mirrors Rule 2b but in the removal direction — fires for 5+ statement blocks
+        // Mirrors Rule 2b but in the removal direction, firing for 5+ statement blocks
         if (
           statement.type === "VariableDeclaration" &&
           !isVisuallyMultiline(statement) &&

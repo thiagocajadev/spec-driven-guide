@@ -1,6 +1,6 @@
 # Tooling (optional, inert)
 
-Pre-made scripts and hooks. **Nothing is wired by default** — `sdg-agents init` copies
+Pre-made scripts and hooks. **Nothing is wired by default**. `sdg-agents init` copies
 these files into `.ai/tooling/`, but no `package.json`, no `.husky/`, no devDep is
 modified by the CLI. Activate on demand with agent assistance or manually.
 
@@ -308,7 +308,7 @@ cp .ai/tooling/biome/biome.json biome.json
 | `useArrowFunction`       | Prefer arrow functions for anonymous callbacks |
 | `useConsistentArrayType` | `T[]` over `Array<T>` (TS)                     |
 
-**Not covered — keep ESLint for these.** Checked against Biome 2.5.5 with
+**Not covered: keep ESLint for these.** Checked against Biome 2.5.5 with
 `preset: "all"`, the full catalog: none of the five produce a diagnostic.
 
 | SDG rule                                | Gap in Biome                                                                                |

@@ -4,7 +4,7 @@ Correcting incident: $ARGUMENTS.
 
 > **Load now**: `.ai/instructions/templates/workflow.md`
 
-## Phase: SPEC — MODE: PLANNING
+## Phase: SPEC → MODE: PLANNING
 
 Follow Phase SPEC. Context charges:
 
@@ -16,7 +16,7 @@ Follow Phase SPEC. Context charges:
   - **Minimal Surface**: Fix targets ONLY the bug. No refactors.
 - **Verification**: Reproduction Case is primary validator.
 
-## Phase: PLAN — MODE: PLANNING
+## Phase: PLAN → MODE: PLANNING
 
 Follow Phase PLAN with mandatory addition:
 

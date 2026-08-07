@@ -1,4 +1,4 @@
-# Delivery Contracts — BFF + UI Execution System
+# Delivery Contracts: BFF + UI Execution System
 
 > Load in Phase CODE. The two halves are **self-gated**: apply the section whose discriminator matches the task. A task that touches both sides (e.g. endpoint + its consumer) applies both.
 

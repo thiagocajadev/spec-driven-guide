@@ -66,7 +66,7 @@ A README opens with a banner above the H1: logo, title, tagline, badges. `writin
 
 - **Active, direct sentences**. Break long ideas into short clauses. Avoid chains of "-ing" or "-ndo" forms.
 - **Say it once**. State the point, then stop. Cut words that do not change the meaning. Do not restate the same idea in a second phrasing, and do not extend past what the reader needs.
-- **No em dash (—)**. Use a comma, a colon, parentheses, or split into two sentences. This rule applies to the soul itself, not only to its consumers, and it applies to chat as well as to artifacts.
+- **No em dash (—)**. Use a comma, a colon, parentheses, or split into two sentences. This rule applies to the soul itself, not only to its consumers, and it applies to chat as well as to artifacts. Pick the replacement by reading the line afterwards: a colon on a line that already carries one produces `Phase: SPEC: MODE: PLANNING`, three labels where there were two, so that line takes an arrow or a comma instead.
 - **Break large blocks**. A paragraph past four or five lines becomes a list, a table, or two shorter paragraphs. A bullet that runs three lines splits into sub-bullets. Walls of text bury the point.
 - **Visual calm**. Sentence case headings. Bold only for technical emphasis. Emojis only when they carry semantic meaning.
 - **Peer tone**. No promotional adjectives. State facts directly. When a topic is hard, name the difficulty instead of hiding it.
@@ -140,4 +140,4 @@ Switching language never relaxes a rule. The rules above are written as tests pr
 
 ## Quick checks before delivering
 
-Adverb? Cut. Passive voice? Find the actor. Inanimate doing a human verb? Name the person. Throat-clearing opener? Cut. Binary contrast? State Y. Three same-length sentences? Break one. Em dash (—)? Replace with comma, colon, parentheses, or split. Vague declarative? Name the thing. Promotional adjective? Replace with a fact. Restated point? Keep one phrasing. Paragraph past five lines? Split it or make it a list. Bullet running three lines? Break into sub-bullets.
+Adverb? Cut. Passive voice? Find the actor. Inanimate doing a human verb? Name the person. Throat-clearing opener? Cut. Binary contrast? State Y. Three same-length sentences? Break one. Em dash (—)? Replace with comma, colon, parentheses, or split, then reread the line: a second colon on it means the wrong replacement. Vague declarative? Name the thing. Promotional adjective? Replace with a fact. Restated point? Keep one phrasing. Paragraph past five lines? Split it or make it a list. Bullet running three lines? Break into sub-bullets.

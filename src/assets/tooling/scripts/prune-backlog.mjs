@@ -35,7 +35,7 @@ function run() {
 }
 
 /**
- * "Nothing to prune" and "I cannot read this section" must never sound alike —
+ * "Nothing to prune" and "I cannot read this section" must never sound alike, and
  * a silent exit 0 here is what lets a format change go unnoticed for cycles.
  */
 function reportDrift(unrecognizedSample) {
@@ -146,7 +146,7 @@ function collectEntryIndices(doneBlock) {
 }
 
 /**
- * The backlog marks a deliberately empty section two ways — `_(placeholder)_`
+ * The backlog marks a deliberately empty section two ways: `_(placeholder)_`
  * in a live file, `<!-- comment -->` in the seed template. Both are an answer,
  * not drift; a fresh project must prune clean before its first entry exists.
  */

@@ -194,7 +194,7 @@ describe("prune-backlog.mjs", () => {
       "",
       "## Done",
       "",
-      "_(empty — nothing shipped yet)_",
+      "_(empty, nothing shipped yet)_",
       "",
     ].join("\n");
 

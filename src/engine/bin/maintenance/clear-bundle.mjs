@@ -8,7 +8,7 @@ const { success } = ResultUtils;
 const { bootstrapIfDirect } = FsUtils;
 
 /**
- * Spec Driven Guide — Reset/Clear Utility
+ * Spec Driven Guide: Reset/Clear Utility
  * Deletes all generated SDG files and the .ia directory.
  */
 async function clearProject(targetDirectory = process.cwd(), options = {}) {
@@ -18,7 +18,7 @@ async function clearProject(targetDirectory = process.cwd(), options = {}) {
 async function orchestrateCleanup(targetDirectory, options = {}) {
   const isDryRun = options.isDryRun || process.argv.includes("--dry-run");
 
-  console.log("\n  Spec Driven Guide — Clear Generated Content");
+  console.log("\n  Spec Driven Guide: Clear Generated Content");
   console.log(`  ${"─".repeat(50)}`);
 
   const itemsToRemove = [".ia", ".ai", ".sdg-prompts"];

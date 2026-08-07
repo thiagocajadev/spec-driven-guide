@@ -1,6 +1,6 @@
-# Land Cycle — Project Inception
+# Land Cycle: Project Inception
 
-Landing on project: $ARGUMENTS. Runs once before the first `feat:` — turns raw vision into a grounded backlog and declares the project stack.
+Landing on project: $ARGUMENTS. Runs once before the first `feat:`. It turns raw vision into a grounded backlog and declares the project stack.
 
 > **Load now**: `.ai/instructions/templates/workflow.md`, `.ai/skills/writing-soul.md`, `.ai/skills/checklist-soul.md`
 
@@ -9,9 +9,9 @@ Landing on project: $ARGUMENTS. Runs once before the first `feat:` — turns raw
 - `## Vision` section → `.ai/backlog/context.md`
 - `.ai/backlog/stack.md` populated with developer-declared languages/versions (SSOT for Phase CODE stack context)
 - Ordered epics → `.ai/backlog/tasks.md`
-- STOP — explicit approval required before any `feat:`
+- STOP: explicit approval required before any `feat:`
 
-## Phase: VISION — MODE: PLANNING
+## Phase: VISION → MODE: PLANNING
 
 Parse input. Extract only what was explicitly stated:
 
@@ -22,22 +22,22 @@ Parse input. Extract only what was explicitly stated:
 
 If too vague → ask one clarifying question.
 
-## Phase: SURVEY — MODE: PLANNING (legacy only, skip if greenfield)
+## Phase: SURVEY → MODE: PLANNING (legacy only, skip if greenfield)
 
 Read silently: `package.json`, `README.md`, entry points, folder structure, `git log --oneline -10`. Identify stack, architecture pattern, pain points.
 
-## Phase: SCOPE — MODE: PLANNING
+## Phase: SCOPE → MODE: PLANNING
 
 Define MVP boundary:
 
 - Constrain vision to realistic first release
-- Explicitly list **out of scope** (name it — vague exclusions don't count)
+- Explicitly list **out of scope** (name it, since vague exclusions don't count)
 - Legacy: diagnosis before new features
-- **Max 7 epics** — merge or defer if more
+- **Max 7 epics**: merge or defer if more
 
 Present scope boundary before reaching Phase STACK. If overambitious, say so and propose realistic MVP cut.
 
-## Phase: STACK — MODE: PLANNING
+## Phase: STACK → MODE: PLANNING
 
 Stack discovery is the SSOT for what Phase CODE will load in future cycles. Replace any static idiom catalogs.
 
@@ -69,7 +69,7 @@ Present an **allow-list of canonical doc sources**, one per language entry. Ask 
 Rules:
 
 - Only WebFetch URLs from this allow-list. Never invent a source.
-- Refusal is valid — the dev can skip enrichment entirely. Do not pressure.
+- Refusal is valid, and the dev can skip enrichment entirely. Do not pressure.
 - Enrichment adds one-line "what's new / LTS status" notes to each entry. Do not bloat `stack.md` with doc quotes.
 
 ### 3. Write `.ai/backlog/stack.md`
@@ -79,31 +79,31 @@ Follow the seed shape (roles as headers, one bullet per entry):
 ```md
 # Project Stack
 
-> Declared during `land:`. Update directly when languages/versions change — no regen needed.
+> Declared during `land:`. Update directly when languages/versions change, no regen needed.
 
 ## Languages
 
 ### Backend
 
-- `Node.js@24 LTS` — runtime
-- `TypeScript@5.6` — typed superset
+- `Node.js@24 LTS`: runtime
+- `TypeScript@5.6`: typed superset
 
 ### Frontend
 
-- `Astro@5` — SSG/SSR framework
+- `Astro@5`: SSG/SSR framework
 
 ### Data
 
-- `Postgres@16` — relational DB
+- `Postgres@16`: relational DB
 
 ### Scripts
 
 - _(none)_
 ```
 
-If a role has no entries, keep the header with `_(none)_` placeholder — downstream loaders rely on the shape.
+If a role has no entries, keep the header with `_(none)_` placeholder, because downstream loaders rely on the shape.
 
-## Phase: BACKLOG — MODE: PLANNING
+## Phase: BACKLOG → MODE: PLANNING
 
 ### 1. Update `context.md`
 
@@ -130,9 +130,9 @@ Add `## Vision` section (never overwrite existing content):
 
 Legacy: add diagnosis epic at position 0.
 
-Format: `### Epic N — [Name]` with `- [TODO] feat: [atomic task]` items.
+Format: `### Epic N: [Name]` with `- [TODO] feat: [atomic task]` items.
 
-## Phase: STOP — MODE: PLANNING
+## Phase: STOP → MODE: PLANNING
 
 Present: vision (3 lines), scope (in/out), **stack.md summary** (role counts), epic list with task counts. Stop completely. No code. Wait for explicit approval.
 

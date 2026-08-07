@@ -4,7 +4,7 @@ This document defines the philosophical and technical foundation of `sdg-agents`
 
 ## How the Model Works
 
-The developer sets direction and approves decisions. The agent handles execution — reading the codebase, proposing a structured plan, writing the code, and running the tests. The agent stops at SPEC and PLAN for explicit approval before proceeding.
+The developer sets direction and approves decisions. The agent handles execution: reading the codebase, proposing a structured plan, writing the code, and running the tests. The agent stops at SPEC and PLAN for explicit approval before proceeding.
 
 This document is the mental model for developers. The operational rules the agent follows live in [`.ai/skills/code-style.md`](../../src/assets/skills/code-style.md) (`WorkChecklist`: Intent + Form sections) and [`.ai/instructions/templates/workflow.md`](../../src/assets/instructions/templates/workflow.md) (5-phase cycle protocol).
 
@@ -20,13 +20,13 @@ Before any code is written, the agent recites the `WorkChecklist`: the **Intent*
 
 **Security is not a layer; it is the foundation.**
 
-Configuration isolation is mandatory. Environment templates (`.env.example`) are prohibited — they leak information. All required configuration is declared as a "Configuration Contract" during the SPEC phase, with abstract key names only.
+Configuration isolation is mandatory. Environment templates (`.env.example`) are prohibited, since they leak information. All required configuration is declared as a "Configuration Contract" during the SPEC phase, with abstract key names only.
 
 ## 3. Resilience (Fault Tolerance)
 
 **Software must withstand repetition and failure.**
 
-Every operation with side-effects must be idempotent. Design for graceful degradation — system stability cannot depend on external dependencies being available.
+Every operation with side-effects must be idempotent. Design for graceful degradation, because system stability cannot depend on external dependencies being available.
 
 ## 4. Narrative (Code as a Story)
 

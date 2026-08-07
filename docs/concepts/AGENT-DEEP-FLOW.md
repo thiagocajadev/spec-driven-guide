@@ -81,7 +81,7 @@ graph TD
 
 ### 1. Phase: SPEC
 
-> **Role: Planning** _(Claude Code — multi-agent mode)_
+> **Role: Planning** _(Claude Code, multi-agent mode)_
 
 The agent defines **what** to build before thinking about **how**.
 
@@ -92,18 +92,18 @@ The agent defines **what** to build before thinking about **how**.
 
 ### 2. Phase: PLAN
 
-> **Role: Planning** _(Claude Code — multi-agent mode)_
+> **Role: Planning** _(Claude Code, multi-agent mode)_
 
 The agent sequences the spec into atomic, estimable tasks.
 
 - **Atomic Tasks**: Pattern: `Action Verb + Object`.
-- **Effort Tagging**: Tasks are tagged by size — `[S]` (isolated), `[M]` (cross-layer), `[L]` (complex).
+- **Effort Tagging**: Tasks are tagged by size: `[S]` (isolated), `[M]` (cross-layer), `[L]` (complex).
 - **Sub-task Split**: Any `[L]` task is decomposed into smaller steps (`1.1`, `1.2`).
 - **Approval Gate**: Execution **must stop** here to ensure the strategy is sound.
 
 ### 3. Phase: CODE
 
-> **Role: Fast** _(Claude Code — multi-agent mode)_
+> **Role: Fast** _(Claude Code, multi-agent mode)_
 
 High-density execution following strict architectural standards.
 
@@ -114,17 +114,17 @@ High-density execution following strict architectural standards.
 
 ### 4. Phase: TEST
 
-> **Role: Fast** _(Claude Code — multi-agent mode)_
+> **Role: Fast** _(Claude Code, multi-agent mode)_
 
 Verification against the original Spec's checklist.
 
 - **Regression Proof**: For bugs, the agent must prove the fix works without breaking existing logic.
-- **Fix Loop**: A built-in resilience mechanism allowing up to **3 refactor attempts** if tests fail. On the third failure, the Circuit Breaker triggers — the agent stops and reports rather than continuing.
+- **Fix Loop**: A built-in resilience mechanism allowing up to **3 refactor attempts** if tests fail. On the third failure, the Circuit Breaker triggers, and the agent stops and reports rather than continuing.
 - **Lint Fix**: Automated resolution of style violations before reporting success.
 
 ### 5. Phase: END
 
-> **Role: Planning** _(Claude Code — multi-agent mode)_
+> **Role: Planning** _(Claude Code, multi-agent mode)_
 
 Closing the loop and ensuring project observability.
 

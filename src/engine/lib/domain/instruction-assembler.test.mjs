@@ -33,7 +33,7 @@ const VERSIONED_BACKLOG_FILES = [
 ];
 
 const GENERATED_AGENTS = [
-  "# Staff Engineer — Governance Command Center",
+  "# Staff Engineer: Governance Command Center",
   "",
   "> Cycle phases live in workflow.md.",
   "",
@@ -43,6 +43,20 @@ const FOREIGN_AGENTS = [
   "# House Rules",
   "",
   "Written by the team, not by this CLI.",
+  "",
+].join("\n");
+
+const LEGACY_AGENTS = [
+  "# Staff Engineer — Governance Command Center",
+  "",
+  "> Emitted before the punctuation sweep replaced the em dash.",
+  "",
+].join("\n");
+
+const LEGACY_CLAUDE = [
+  "# SDG Agents — Claude Code Governance",
+  "",
+  "@AGENTS.md",
   "",
 ].join("\n");
 
@@ -199,6 +213,50 @@ describe("InstructionAssembler", () => {
         const expectedOutcome = { agents: "unchanged", claude: "unchanged" };
 
         assert.deepEqual(actualOutcome, expectedOutcome);
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+
+    it("rewrites an AGENTS.md carrying the pre-sweep em dash sentinel", () => {
+      const tmpDir = makeTempDir();
+      const agentsPath = path.join(tmpDir, "AGENTS.md");
+      const sidecarPath = path.join(tmpDir, "AGENTS.sdg.md");
+      fileSystem.writeFileSync(agentsPath, LEGACY_AGENTS);
+
+      try {
+        const configOutcome = writeAgentConfig(tmpDir, GENERATED_AGENTS);
+
+        const actualContent = fileSystem.readFileSync(agentsPath, "utf8");
+        const hasSidecar = fileSystem.existsSync(sidecarPath);
+        const actualOutcome = configOutcome.agents;
+        const expectedOutcome = "written";
+        const expectedSidecar = false;
+
+        assert.equal(actualContent, GENERATED_AGENTS);
+        assert.equal(hasSidecar, expectedSidecar);
+        assert.equal(actualOutcome, expectedOutcome);
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+
+    it("rewrites a CLAUDE.md carrying the pre-sweep em dash sentinel", () => {
+      const tmpDir = makeTempDir();
+      const claudePath = path.join(tmpDir, "CLAUDE.md");
+      fileSystem.writeFileSync(claudePath, LEGACY_CLAUDE);
+
+      try {
+        const configOutcome = writeAgentConfig(tmpDir, GENERATED_AGENTS);
+
+        const actualContent = fileSystem.readFileSync(claudePath, "utf8");
+        const hasLegacyTitle = actualContent.includes("# SDG Agents —");
+        const actualOutcome = configOutcome.claude;
+        const expectedOutcome = "written";
+        const expectedLegacyTitle = false;
+
+        assert.equal(hasLegacyTitle, expectedLegacyTitle);
+        assert.equal(actualOutcome, expectedOutcome);
       } finally {
         cleanup(tmpDir);
       }
@@ -742,7 +800,7 @@ describe("InstructionAssembler", () => {
     it("appends missing entries without repeating a present header", () => {
       const tmpDir = makeTempDir();
       const preexistingContent = [
-        "# AI artifacts — session state, not project logic",
+        "# AI artifacts: session state, not project logic",
         "tmp/",
         "",
       ].join("\n");
@@ -754,7 +812,7 @@ describe("InstructionAssembler", () => {
 
         const actualHeaderCount = countOccurrences(
           readGitignore(tmpDir),
-          "# AI artifacts — session state, not project logic",
+          "# AI artifacts: session state, not project logic",
         );
 
         const expectedHeaderCount = 1;

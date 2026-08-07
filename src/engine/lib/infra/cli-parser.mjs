@@ -3,7 +3,7 @@ function parseCliArgs(argv) {
 
   const parsedArgs = {
     subcommand,
-    // why: targetDirectory resolution (path.resolve) is caller's job — keeps parser pure.
+    // why: targetDirectory resolution (path.resolve) is caller's job, which keeps the parser pure.
     targetDirectory:
       argv.slice(subcommand ? 1 : 0).filter(isPositionalArg)[0] || null,
     help: argv.includes("--help") || argv.includes("-h"),

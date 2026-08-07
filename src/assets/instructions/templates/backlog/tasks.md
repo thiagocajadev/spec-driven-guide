@@ -11,7 +11,7 @@
 
 ## Active
 
-<!-- - [IN_PROGRESS] description — context of where it stopped and what comes next -->
+<!-- - [IN_PROGRESS] description: context of where it stopped and what comes next -->
 
 ## Backlog
 

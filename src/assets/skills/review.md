@@ -1,4 +1,4 @@
-# Code Review — Practice & Craft
+# Code Review: Practice & Craft
 
 <ruleset name="CodeReviewCraft">
 
@@ -25,14 +25,14 @@
 
 > Recite at the start of every review. Stop at the first unmet item; ask the author to fix before continuing.
 
-- [ ] **Scope** — does the PR do what its title claims? Out-of-scope changes flagged or split.
-- [ ] **Tests** — every new function tested; bug fix has regression test; AAA explicit (see `testing.md`).
-- [ ] **Security** — boundary inputs validated; no string-concat into queries / commands / paths; no `.env` committed (see `security.md`).
-- [ ] **Naming** — banned verbs / nouns / abbreviations absent; booleans carry semantic prefix (see `code-style.md`).
-- [ ] **Narrative** — Stepdown, SLA, Explaining Returns; ≤2 indent levels; no `// --- Section ---` banners.
-- [ ] **Density** — 1 blank between groups, 0 within; no walls of tight code; no double blanks.
-- [ ] **Comments** — WHY-only one-liner; no drift accumulation; no stale `// update:` chains.
-- [ ] **Lint + audit** — green before requesting review; reviewer is not the linter.
+- [ ] **Scope**: does the PR do what its title claims? Out-of-scope changes flagged or split.
+- [ ] **Tests**: every new function tested; bug fix has regression test; AAA explicit (see `testing.md`).
+- [ ] **Security**: boundary inputs validated; no string-concat into queries / commands / paths; no `.env` committed (see `security.md`).
+- [ ] **Naming**: banned verbs / nouns / abbreviations absent; booleans carry semantic prefix (see `code-style.md`).
+- [ ] **Narrative**: Stepdown, SLA, Explaining Returns; ≤2 indent levels; no `// --- Section ---` banners.
+- [ ] **Density**: 1 blank between groups, 0 within; no walls of tight code; no double blanks.
+- [ ] **Comments**: WHY-only one-liner; no drift accumulation; no stale `// update:` chains.
+- [ ] **Lint + audit**: green before requesting review; reviewer is not the linter.
 
 </rule>
 
@@ -47,10 +47,10 @@
 
 ## Anti-Patterns
 
-- **Bikeshedding** — formatter-territory comments. Defer to the formatter, not human review.
-- **Multi-day review backlogs** — block author flow. Aim ≤24h response on small PRs.
-- **Mixed-concern PRs** — refactor + feature in one diff doubles review time.
-- **"LGTM with comments"** — either approve or request changes; don't half-merge.
-- **Approving by author count** — two stamps without two reads is one review, not two.
+- **Bikeshedding**: formatter-territory comments. Defer to the formatter, not human review.
+- **Multi-day review backlogs**: block author flow. Aim ≤24h response on small PRs.
+- **Mixed-concern PRs**: refactor + feature in one diff doubles review time.
+- **"LGTM with comments"**: either approve or request changes; don't half-merge.
+- **Approving by author count**: two stamps without two reads is one review, not two.
 
 </ruleset>

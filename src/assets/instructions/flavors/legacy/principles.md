@@ -8,7 +8,7 @@
 Request → UI (Event) → Service → Repository → UI (Response)
 ```
 
-- **UI (Event)**: Entry point — user interaction creates Request.
+- **UI (Event)**: Entry point: user interaction creates Request.
 - **Service (BLL)**: Business orchestration. Receives clean Data/DTOs.
 - **Repository (DAL)**: Persistence + raw SQL/PROCS only. Returns entities/DataTables.
 - **UI (Response)**: Service delivers pre-mapped DTOs to Passive View.
@@ -29,5 +29,5 @@ UI file (.vb, .cs, .java) = Mute Shell. Displays only what Service provides.
 ## SQL Hardening
 
 - **100% Parameterization**: Never string concatenation for SQL. Use DB-specific parameter objects.
-- **Encapsulated Repositories**: All SQL/Procs in Repository — never leaked to Service or UI.
+- **Encapsulated Repositories**: All SQL/Procs in Repository, never leaked to Service or UI.
 - **Vertical Formatting**: Follow SQL Strategy from staff-dna.md.

@@ -1,4 +1,4 @@
-# UI/UX — Design System, Presets & Writing Soul
+# UI/UX: Design System, Presets & Writing Soul
 
 <ruleset name="UI/UX">
 
@@ -6,34 +6,34 @@
 
 ---
 
-## Part 1 — Design Thinking (Phase 0, Mandatory)
+## Part 1: Design Thinking (Phase 0, Mandatory)
 
 > [!IMPORTANT]
 > **Phase 0 is not optional.** Complete it before writing any UI code.
 
-### Phase 0.1 — Palette Setup (First-Time Rule)
+### Phase 0.1: Palette Setup (First-Time Rule)
 
 <rule name="PaletteSetup">
 
 **On the first UI task** (no `--color-primary-*` tokens in `globals.css`), pause and offer:
 
 ```
-Palette Setup Required — Choose one:
+Palette Setup Required. Choose one:
 [1] Default Palette → Zinc neutrals + Blue primary (shadcn/ui compatible)
 [2] Custom Palette → Guided OKLCH primary + secondary selection
 ```
 
 No response or ambiguous → default to [1]. Never block work on color indecision.
 
-#### Option 1 — Default (Zinc + Blue H=250)
+#### Option 1: Default (Zinc + Blue H=250)
 
 Use shadcn/ui built-in tokens. Extend with `--color-primary-*` (H=250) and `--color-secondary-*` (Violet H=290) using OKLCH scale below.
 
-#### Option 2 — Custom (OKLCH Guided)
+#### Option 2: Custom (OKLCH Guided)
 
 Ask exactly two questions: (1) Primary Hue, (2) Secondary Hue (Enter = Split-Complementary H+150).
 
-**Color Harmony:** Default Split-Complementary (H±150). Complementary (H+180) as accent at 10% only. Analogous (H±30) avoid for primary/secondary. Triadic — never use.
+**Color Harmony:** Default Split-Complementary (H±150). Complementary (H+180) as accent at 10% only. Analogous (H±30) avoid for primary/secondary. Triadic: never use.
 
 **Reference Hues (H+150):** Red→Teal-Green, Orange→Sky Blue, Yellow→Blue, Green→Pink, Teal→Rose, Blue→Yellow-Orange, Violet→Amber, Pink→Lime.
 
@@ -56,7 +56,7 @@ Ask exactly two questions: (1) Primary Hue, (2) Secondary Hue (Enter = Split-Com
 
 </rule>
 
-### Phase 0.2 — Elevation Stack
+### Phase 0.2: Elevation Stack
 
 <rule name="ElevationStack">
 
@@ -77,7 +77,7 @@ Both themes carry the hierarchy. No pure white (`#FFFFFF`) in light, no pure bla
 
 </rule>
 
-### Phase 0.3 — Color Distribution (60-30-10)
+### Phase 0.3: Color Distribution (60-30-10)
 
 <rule name="ColorDistribution">
 
@@ -91,7 +91,7 @@ Violations: Secondary >10% → reduce. Primary on backgrounds → use neutral. N
 
 </rule>
 
-### Phase 0.4 — Aesthetic Direction
+### Phase 0.4: Aesthetic Direction
 
 <rule name="AestheticDirection">
 
@@ -101,11 +101,11 @@ Name one **differentiator** (memorable element): typographic pairing, layout bre
 
 </rule>
 
-### Phase 0.5 — Typography
+### Phase 0.5: Typography
 
 <rule name="TypographyCommitment">
 
-**2-Font Rule:** Exactly 1 Display (headings, >=20px) + 1 Body (UI text, <=16px). Code font (`JetBrains Mono`/`Fira Code`) in `<code>`/`<pre>` only — does not count.
+**2-Font Rule:** Exactly 1 Display (headings, >=20px) + 1 Body (UI text, <=16px). Code font (`JetBrains Mono`/`Fira Code`) in `<code>`/`<pre>` only, and does not count.
 
 | Tone            | Display               | Body      | Preset fit          |
 | :-------------- | :-------------------- | :-------- | :------------------ |
@@ -123,7 +123,7 @@ Register as `--font-display` and `--font-body` in `@theme`. Use `font-display` f
 
 </rule>
 
-### Phase 0.6 — Component Nesting
+### Phase 0.6: Component Nesting
 
 <rule name="Nesting">
 
@@ -133,13 +133,13 @@ Register as `--font-display` and `--font-body` in `@theme`. Use `font-display` f
 
 </rule>
 
-### Phase 0.7 — Dark Theme Calibration
+### Phase 0.7: Dark Theme Calibration
 
 <rule name="DarkThemeCalibration">
 
 Dark theme is not color inversion. It is a re-optimized palette for low-light perception.
 
-**Surfaces — use the Zinc elevation scale, never pure black:**
+**Surfaces: use the Zinc elevation scale, never pure black:**
 
 | Token           | Zinc step | OKLCH approx | Role            |
 | :-------------- | :-------- | :----------- | :-------------- |
@@ -149,13 +149,13 @@ Dark theme is not color inversion. It is a re-optimized palette for low-light pe
 | `bg-popover`    | 700       | L≈30%        | Modals (S3)     |
 | hover state     | 800→750   | L+5%         | Apply Hover Law |
 
-Zinc 950 (`oklch(15% 0.005 285)`) already avoids pure black — never override with `#000000`.
+Zinc 950 (`oklch(15% 0.005 285)`) already avoids pure black, so never override with `#000000`.
 
-**Chroma — reduce brand colors for dark backgrounds:**
+**Chroma: reduce brand colors for dark backgrounds:**
 
 Apply C×0.80–0.90 to all primary/secondary OKLCH tokens in dark mode. Full chroma from light theme reads as "neon" on dark surfaces. Exception: NEOBRUTALISM preset (intentional high-chroma).
 
-**Text — opacity over zinc foreground tokens:**
+**Text: opacity over zinc foreground tokens:**
 
 | Role      | Opacity on white | Token equivalent           |
 | :-------- | :--------------- | :------------------------- |
@@ -163,12 +163,12 @@ Apply C×0.80–0.90 to all primary/secondary OKLCH tokens in dark mode. Full ch
 | Secondary | 65% (0.65)       | `text-muted-foreground`    |
 | Disabled  | 45% (0.45)       | `text-muted-foreground/45` |
 
-Avoid opacity below 40% — text disappears against dark zinc surfaces.
+Avoid opacity below 40%: text disappears against dark zinc surfaces.
 
 **Shadows and overlays:**
 
 - Reduce shadow spread and opacity in dark mode (box-shadow fades into dark bg).
-- Avoid `rgba(0,0,0,0.6)` overlays — they accumulate with dark surfaces and create "black hole" regions. Use `bg-background/70` backdrop instead.
+- Avoid `rgba(0,0,0,0.6)` overlays, which accumulate with dark surfaces and create "black hole" regions. Use `bg-background/70` backdrop instead.
 - Elevation conveys depth via lighter surfaces, not stronger shadows.
 
 **Perceptual calibration (mandatory after applying rules):**
@@ -179,17 +179,17 @@ Avoid opacity below 40% — text disappears against dark zinc surfaces.
 | Colors vibrate | Reduce chroma further (C×0.75)         |
 | Looks faded    | Increase foreground contrast (L-delta) |
 
-Perception beats math. Validate visually after applying tokens — adjust manually if WCAG passes but readability fails.
+Perception beats math. Validate visually after applying tokens, adjusting manually if WCAG passes but readability fails.
 
 </rule>
 
-### Phase 0.8 — Light Theme Calibration
+### Phase 0.8: Light Theme Calibration
 
 <rule name="LightThemeCalibration">
 
 Light theme is not "default with no dark class". It gets the same surface discipline as dark: a graded Zinc scale, never pure white.
 
-**Surfaces — use the Zinc scale, never pure white:**
+**Surfaces: use the Zinc scale, never pure white:**
 
 | Token           | Zinc step | OKLCH approx | Role           |
 | :-------------- | :-------- | :----------- | :------------- |
@@ -202,7 +202,7 @@ Zinc 50 (`oklch(98% 0.002 285)`) is the ceiling; never override with `#FFFFFF`. 
 
 **Elevation via shadow:** surfaces cannot go lighter than the Zinc 50 ceiling, so depth reads through soft shadows (S2 `shadow-sm`, S3 `shadow-md`).
 
-**Text — never pure black:** primary text is Zinc 900 (L≈20%), not `#000000`. Secondary Zinc 600, disabled Zinc 400. Pure black on near-white reads harsh and raises glare.
+**Text: never pure black:** primary text is Zinc 900 (L≈20%), not `#000000`. Secondary Zinc 600, disabled Zinc 400. Pure black on near-white reads harsh and raises glare.
 
 **Borders:** `border-border` (Zinc 200) for structure; `border-border/60` for subtle grouping. Hold the WCAG contrast floor (Part 4).
 
@@ -228,9 +228,9 @@ Cannot fill Palette and Preset → ask before generating code.
 
 ---
 
-## Part 2 — Component Architecture
+## Part 2: Component Architecture
 
-> Styling: Tailwind v4 + shadcn/ui. Utility-first CSS. Icons: **Lucide** (`lucide-react`) — single icon library per project.
+> Styling: Tailwind v4 + shadcn/ui. Utility-first CSS. Icons: **Lucide** (`lucide-react`), a single icon library per project.
 
 ### The ViewModel Law
 
@@ -244,7 +244,7 @@ Cannot fill Palette and Preset → ask before generating code.
 
 **ViewModel pattern:** Component receives props → calls `useXxxVM(props)` → VM returns derived state → Component renders. VM handles: UI state (loading/empty/error), derived state (isActive→color), mapping (API→UI). Domain logic stays in services. Formatting stays in utils.
 
-**States are first-class:** Every component exposes loading, empty, error, disabled as props — not afterthought branches.
+**States are first-class:** Every component exposes loading, empty, error, disabled as props, not afterthought branches.
 
 **Anti-patterns:** API calls in components. ViewModel as dumping ground. Raw backend data in UI. Inline business ternaries. Scattered styling logic.
 
@@ -254,12 +254,12 @@ Cannot fill Palette and Preset → ask before generating code.
 
 <rule name="StateManagement">
 
-| State type        | Mechanism               | When                                 |
-| :---------------- | :---------------------- | :----------------------------------- |
-| UI-only, isolated | `useState` / local hook | Modals, toggles, form state          |
-| Shared UI         | React Context           | Theme, sidebar — no business logic   |
-| Server/remote     | React Query / SWR       | All API data — caching, revalidation |
-| Global app        | Zustand                 | Client-side global (session, prefs)  |
+| State type        | Mechanism               | When                                |
+| :---------------- | :---------------------- | :---------------------------------- |
+| UI-only, isolated | `useState` / local hook | Modals, toggles, form state         |
+| Shared UI         | React Context           | Theme, sidebar: no business logic   |
+| Server/remote     | React Query / SWR       | All API data: caching, revalidation |
+| Global app        | Zustand                 | Client-side global (session, prefs) |
 
 Never call APIs directly in components. Never use Context for server data. Prop drilling up to 2 levels is fine.
 
@@ -282,7 +282,7 @@ Never call APIs directly in components. Never use Context for server data. Prop 
 
 ---
 
-## Part 3 — Presets
+## Part 3: Presets
 
 > Phase 0 must be completed before selecting a preset.
 
@@ -317,57 +317,57 @@ Declare: Layout (`default | bento`) + Skin (`clean | glass | brutalism | paper |
 
 ---
 
-## Part 4 — UX Quality Standards
+## Part 4: UX Quality Standards
 
-### Part 4.0 — Gestalt Foundations
+### Part 4.0: Gestalt Foundations
 
-> Eight perceptual laws that explain _why_ the rules below work. Apply when two layouts pass token rules equally — the law tells you which one the brain will read correctly. Each rule below points to the existing tokens / presets it governs.
+> Eight perceptual laws that explain _why_ the rules below work. Apply when two layouts pass token rules equally: the law tells you which one the brain will read correctly. Each rule below points to the existing tokens / presets it governs.
 
 <rule name="Proximity">
 
-**Proximity** — close elements read as one group; distance separates groups. Apply via Spacing L1–L4 (L1/L2 within a group, L3/L4 between groups). Anti-pattern: uniform gaps everywhere — no boundary cues.
+**Proximity**: close elements read as one group; distance separates groups. Apply via Spacing L1–L4 (L1/L2 within a group, L3/L4 between groups). Anti-pattern: uniform gaps everywhere, so no boundary cues.
 
 </rule>
 
 <rule name="Similarity">
 
-**Similarity** — shared shape / color / size / weight signals shared kind. One semantic token per state, one icon family per project, matching variant per action class. Anti-pattern: identical primary button for save vs delete.
+**Similarity**: shared shape / color / size / weight signals shared kind. One semantic token per state, one icon family per project, matching variant per action class. Anti-pattern: identical primary button for save vs delete.
 
 </rule>
 
 <rule name="Continuity">
 
-**Continuity** — eye follows the smoothest line. Align edges to a grid; read order = tab order = DOM order. Break alignment only to mark a phase change. Anti-pattern: zig-zag card grids without anchor column.
+**Continuity**: eye follows the smoothest line. Align edges to a grid; read order = tab order = DOM order. Break alignment only to mark a phase change. Anti-pattern: zig-zag card grids without anchor column.
 
 </rule>
 
 <rule name="Closure">
 
-**Closure** — the mind completes implied shapes from partial cues. Use spacing and alignment to define boundaries before adding borders or backgrounds. Subtract chrome before adding it. Anti-pattern: border on every cluster when whitespace already groups them.
+**Closure**: the mind completes implied shapes from partial cues. Use spacing and alignment to define boundaries before adding borders or backgrounds. Subtract chrome before adding it. Anti-pattern: border on every cluster when whitespace already groups them.
 
 </rule>
 
 <rule name="FigureGround">
 
-**FigureGround** — foreground emerges from a recessive background. Drives Elevation Stack S0–S3 (lighter surface = higher) and dark-mode chroma reduction (C×0.80–0.90). One focal element per zone. Anti-pattern: equal-elevation modal over content; competing focal points.
+**FigureGround**: foreground emerges from a recessive background. Drives Elevation Stack S0–S3 (lighter surface = higher) and dark-mode chroma reduction (C×0.80–0.90). One focal element per zone. Anti-pattern: equal-elevation modal over content; competing focal points.
 
 </rule>
 
 <rule name="CommonRegion">
 
-**CommonRegion** — a bounded container groups its contents across distance. Cards, sections, fieldsets, panels. Pick this over Proximity when grouping must survive responsive reflow. Anti-pattern: proximity-only grouping that breaks below the `md` breakpoint.
+**CommonRegion**: a bounded container groups its contents across distance. Cards, sections, fieldsets, panels. Pick this over Proximity when grouping must survive responsive reflow. Anti-pattern: proximity-only grouping that breaks below the `md` breakpoint.
 
 </rule>
 
 <rule name="CommonFate">
 
-**CommonFate** — items moving together belong together. Drives staggered entry (40–80ms), coordinated expand/collapse, list reorder transitions. Independent timing on a grouped set reads as unrelated. Anti-pattern: each card animating on its own clock during a single state change.
+**CommonFate**: items moving together belong together. Drives staggered entry (40–80ms), coordinated expand/collapse, list reorder transitions. Independent timing on a grouped set reads as unrelated. Anti-pattern: each card animating on its own clock during a single state change.
 
 </rule>
 
 <rule name="Pragnanz">
 
-**Prägnanz** (good figure) — the simplest interpretation wins. Caps the system: 60-30-10 distribution, 2-Font Rule, 3 hierarchy layers, 4 elevation steps. Each new variant must justify itself against the simplest reading. Anti-pattern: five typefaces, seven elevations, three accents — all "necessary".
+**Prägnanz** (good figure): the simplest interpretation wins. Caps the system: 60-30-10 distribution, 2-Font Rule, 3 hierarchy layers, 4 elevation steps. Each new variant must justify itself against the simplest reading. Anti-pattern: five typefaces, seven elevations, three accents, all of them "necessary".
 
 </rule>
 
@@ -376,7 +376,7 @@ Declare: Layout (`default | bento`) + Skin (`clean | glass | brutalism | paper |
 ### Foundational Principles
 
 - **Solution-first**: Every visual decision traces to a user outcome. No justification → remove it.
-- **Visual hierarchy**: One primary focus, one secondary zone, one tertiary layer per screen. Weight/scale/contrast carry hierarchy — not color alone.
+- **Visual hierarchy**: One primary focus, one secondary zone, one tertiary layer per screen. Weight/scale/contrast carry hierarchy, not color alone.
 - **Foundations before features**: Tokens (color, spacing, radius, typography) must exist before components are styled. No magic values.
 - **Component system**: Every element is a primitive or composition of primitives. No half-componentized regions.
 - **Flow-driven layout**: Read order, tab order, DOM order must agree. Grid serves the flow.
@@ -458,7 +458,7 @@ Decompose multi-stage flows via **steps** / **tabs** / **modals**. >3 concerns w
 
 ---
 
-## Part 5 — Writing Soul (UI Copy & Perennial Artifacts)
+## Part 5: Writing Soul (UI Copy & Perennial Artifacts)
 
 > Load `.ai/skills/writing-soul.md` (rules) and `.ai/skills/checklist-soul.md` (ritual) for all non-code writing: UI copy, READMEs, changelogs, guides, commit messages.
 

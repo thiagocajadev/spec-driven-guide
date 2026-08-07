@@ -10,13 +10,13 @@ Every push to a shared branch passes automated quality gates. No exceptions.
 
 **Stages**: `Lint → Security → Test → Build → Deploy (Staging) → Smoke → Deploy (Prod)`
 
-1. **Lint & Format** — zero warnings policy
-2. **Security** — secrets scan, SAST, SCA (see `.ai/skills/security.md` Part 2)
-3. **Unit & Integration Tests** — fail pipeline on any failure; no skipped tests in CI
-4. **Build** — versioned, immutable artifact (Docker image, binary, or bundle)
-5. **Deploy Staging** — automatic
-6. **Smoke Tests** — critical-path E2E against staging; verify RED metrics before promotion
-7. **Deploy Prod** — manual approval gate or automated canary
+1. **Lint & Format**: zero warnings policy
+2. **Security**: secrets scan, SAST, SCA (see `.ai/skills/security.md` Part 2)
+3. **Unit & Integration Tests**: fail pipeline on any failure; no skipped tests in CI
+4. **Build**: versioned, immutable artifact (Docker image, binary, or bundle)
+5. **Deploy Staging**: automatic
+6. **Smoke Tests**: critical-path E2E against staging; verify RED metrics before promotion
+7. **Deploy Prod**: manual approval gate or automated canary
 
 ## Local Pre-commit Gates
 

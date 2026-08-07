@@ -25,7 +25,7 @@ async function reviewBundle() {
 }
 
 async function orchestrateReview() {
-  console.log("\n  Spec Driven Guide — Instructions Reviewer");
+  console.log("\n  Spec Driven Guide: Instructions Reviewer");
   console.log(`  ${"─".repeat(50)}`);
 
   const manifest = loadManifest(PROJECT_ROOT);
@@ -91,7 +91,7 @@ function printManifestSummary(manifest) {
   console.log(`  Current Flavor: ${flavorLabel}`);
   console.log(`  Stack: declared in .ai/backlog/stack.md`);
   console.log(
-    `  Last Sync: ${daysAgo(generatedAt)} — Spec Driven Guide v${sdgAgentVersion ?? "unknown"}`,
+    `  Last Sync: ${daysAgo(generatedAt)}, Spec Driven Guide v${sdgAgentVersion ?? "unknown"}`,
   );
 }
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * sdg-agents — Main CLI Entry Point
+ * sdg-agents: Main CLI Entry Point
  * Supports interactive and non-interactive modes.
  */
 
@@ -227,11 +227,11 @@ async function startInteractiveMode(args) {
         message: "What would you like to do?",
         choices: [
           {
-            name: "1. 🏗️  Build Project — Inject staff-level engineering rules",
+            name: "1. 🏗️  Build Project: Inject staff-level engineering rules",
             value: "init",
           },
           {
-            name: "2. ⚙️  Settings — Audit, update rules, and maintenance",
+            name: "2. ⚙️  Settings: Audit, update rules, and maintenance",
             value: "settings",
           },
           { name: "3. ❌ Exit", value: "exit" },
@@ -292,15 +292,15 @@ async function openSettingsMenu(targetDirectory) {
     message: "Settings:",
     choices: [
       {
-        name: "1. 🔍 Governance Audit — Detect drift and law violations",
+        name: "1. 🔍 Governance Audit: Detect drift and law violations",
         value: "audit",
       },
       {
-        name: "2. 🔄 Update Instructions — Re-apply latest rules (uses saved config)",
+        name: "2. 🔄 Update Instructions: Re-apply latest rules (uses saved config)",
         value: "update-instructions",
       },
       {
-        name: "3. 🗑️  Clear Generated Content — Remove all generated files",
+        name: "3. 🗑️  Clear Generated Content: Remove all generated files",
         value: "clear",
       },
       { name: "4. Back", value: "back" },
@@ -351,7 +351,7 @@ async function applyUpdateInstructions(targetDirectory) {
   }
 
   const { flavor } = manifest.selections;
-  const updateHeader = `\n  Re-applying latest rules — Flavor: ${flavor}\n`;
+  const updateHeader = `\n  Re-applying latest rules, Flavor: ${flavor}\n`;
   console.log(updateHeader);
 
   try {

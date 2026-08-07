@@ -9,7 +9,7 @@
 2. **Flat Hierarchy**: Minimize file hopping. Related logic together in single file when possible.
 3. **No Boilerplate**: Only write what is executed. No future-proofing (YAGNI).
 
-> SRP is inherited from `code-style.md` **Small functions** (one responsibility, one level of abstraction) — applies in every flavor, not duplicated here.
+> SRP is inherited from `code-style.md` **Small functions** (one responsibility, one level of abstraction). It applies in every flavor, not duplicated here.
 
 ## Implementation Standard
 

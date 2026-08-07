@@ -78,7 +78,7 @@ function detectEntryPointShapeViolation(entryPointName, bodyLines) {
     const onlyLine = bodyLines[0];
     const hasTernary = /\?[^?]*:/.test(onlyLine);
     if (hasTernary) {
-      const ternaryViolation = `${entryPointName}() has ternary on body — extract to 'const X = ...; return X;'`;
+      const ternaryViolation = `${entryPointName}() has ternary on body: extract to 'const X = ...; return X;'`;
       return ternaryViolation;
     }
 
@@ -369,7 +369,7 @@ function scanOrphanAtomic(lines) {
     }
 
     violations.push(
-      `line ${index + 1} (orphan atomic — fold into trio or rebalance to 2+2)`,
+      `line ${index + 1} (orphan atomic, fold into trio or rebalance to 2+2)`,
     );
   }
 

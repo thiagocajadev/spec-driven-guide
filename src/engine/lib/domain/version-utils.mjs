@@ -1,5 +1,5 @@
 /**
- * Version Utils — Logic for checking updates on npm registry.
+ * Version Utils: Logic for checking updates on npm registry.
  */
 
 const REGISTRY_URL = "https://registry.npmjs.org/sdg-agents/latest";

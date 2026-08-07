@@ -149,7 +149,7 @@ export function promoteUnreleased(content, unreleasedRegex, newHeader) {
 /**
  * `### Added` and `### Fixed` are scaffolding the next cycle writes into. A
  * cycle that only fixed things must not ship a released block advertising an
- * empty `### Added` — the scaffold belongs to `[Unreleased]`, not to history.
+ * empty `### Added`: the scaffold belongs to `[Unreleased]`, not to history.
  */
 function dropEmptySubsections(content, newHeader) {
   const blockStart = content.indexOf(newHeader) + newHeader.length;
@@ -166,7 +166,7 @@ function dropEmptySubsections(content, newHeader) {
   const subsectionCount = sections.length - 1;
   const populatedCount = populated.length - 1;
 
-  // Every subsection empty means there is no narrative to promote at all —
+  // Every subsection empty means there is no narrative to promote at all,
   // leave the block alone and let the audit report it rather than reshape it.
   const isNarrativeMissing = subsectionCount > 0 && populatedCount === 0;
   if (isNarrativeMissing) {

@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# SDG Gate — pre-commit code review.
+# SDG Gate: pre-commit code review.
 #
 # Four stages: staged diff -> review prompt -> LLM CLI -> verdict.
 #
@@ -41,7 +41,7 @@ fi
 LLM_EXIT=0
 REVIEW=$(printf '%s' "$PROMPT" | $SDG_GATE_LLM) || LLM_EXIT=$?
 
-# LLM unavailable is not a verdict — never block a commit on infrastructure.
+# LLM unavailable is not a verdict, so never block a commit on infrastructure.
 if [ "$LLM_EXIT" -ne 0 ] || [ -z "$REVIEW" ]; then
   echo "  ⚠️  SDG Gate: LLM unavailable (exit $LLM_EXIT). Skipping review." >&2
   exit 0

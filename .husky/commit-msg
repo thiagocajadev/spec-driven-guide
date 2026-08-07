@@ -1,4 +1,4 @@
-# Node Discovery — Staff-grade Resilience
+# Node Discovery: Staff-grade Resilience
 if ! command -v node >/dev/null 2>&1; then
   export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin"
   [ -f "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh" && nvm use --silent >/dev/null 2>&1

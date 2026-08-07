@@ -1,5 +1,5 @@
 /**
- * Instruction Assembler — Builds and writes the final master instructions.
+ * Instruction Assembler: Builds and writes the final master instructions.
  * Assembles agent config files and the project manifest.
  */
 
@@ -25,12 +25,24 @@ const SOURCE_INSTRUCTIONS = path.join(
 
 // Ownership markers: the canonical title line each generated file always
 // carries. Their absence means the developer wrote the file, so we leave it.
-const AGENTS_SENTINEL = "# Staff Engineer — Governance Command Center";
-const CLAUDE_SENTINEL = "# SDG Agents — Claude Code Governance";
+const AGENTS_SENTINEL = "# Staff Engineer: Governance Command Center";
+const CLAUDE_SENTINEL = "# SDG Agents: Claude Code Governance";
+
+/**
+ * why: both titles carried an em dash until the punctuation sweep replaced it.
+ * A project installed before that release still holds the old line on disk, and
+ * matching only the current sentinel would read it as a file the developer
+ * wrote, emitting a sidecar instead of the update the developer asked for.
+ * The em dash below is stored data, not prose, and stays for that reason.
+ */
+const LEGACY_SENTINELS = [
+  "# Staff Engineer — Governance Command Center",
+  "# SDG Agents — Claude Code Governance",
+];
 const AGENTS_SIDECAR_NAME = "AGENTS.sdg.md";
 
 /**
- * Canonical skill catalog — single source of truth for AGENTS.md rendering.
+ * Canonical skill catalog: single source of truth for AGENTS.md rendering.
  * All skills are always listed; the agent self-filters per task domain via the
  * category header ("Backend", "Frontend", "Surgical"). Stack specificity now
  * lives in `.ai/backlog/stack.md`, declared by the developer during `land:`.
@@ -115,7 +127,7 @@ const SKILL_CATALOG = [
 
 /**
  * Assembles the master instruction as a compact Semantic Router.
- * No inline protocol text — only routing triggers and file references.
+ * No inline protocol text, only routing triggers and file references.
  * Skills are loaded on-demand by Phase CODE, matched to task domain.
  */
 function buildMasterInstructions(selections) {
@@ -137,7 +149,7 @@ function buildMasterInstructions(selections) {
 
   function buildHeader() {
     const headerString = dedent`
-      # Staff Engineer — Governance Command Center
+      # Staff Engineer: Governance Command Center
 
       > Code style and quality gates live in code-style.md.
       > Cycle phases live in workflow.md.`;
@@ -149,9 +161,9 @@ function buildMasterInstructions(selections) {
     const sessionStartString = dedent`
       ## Session Start
 
-      1. Read \`.ai/backlog/context.md\` — project brief. If missing, generate from \`package.json\` + \`README.md\`.
-      2. Read \`.ai/backlog/stack.md\` — developer-curated stack declarations.
-      3. Read \`.ai/backlog/tasks.md\` — \`## Now\` holds the objective; check for \`[IN_PROGRESS]\`. If found: load workflow.md and resume.`;
+      1. Read \`.ai/backlog/context.md\`: project brief. If missing, generate from \`package.json\` + \`README.md\`.
+      2. Read \`.ai/backlog/stack.md\`: developer-curated stack declarations.
+      3. Read \`.ai/backlog/tasks.md\`: \`## Now\` holds the objective; check for \`[IN_PROGRESS]\`. If found: load workflow.md and resume.`;
 
     return sessionStartString;
   }
@@ -180,7 +192,7 @@ function buildMasterInstructions(selections) {
     const groupedByCategory = groupSkills(SKILL_CATALOG);
 
     const sections = [
-      "## Phase CODE — Skill Loading",
+      "## Phase CODE: Skill Loading",
       "",
       "> Load on Phase CODE entry only. Match skills to task domain. Stack context lives in `stack.md`, already loaded at Session Start.",
       "",
@@ -208,7 +220,7 @@ function buildMasterInstructions(selections) {
 
       sections.push(categoryHeaders[category]);
       for (const skill of skills) {
-        sections.push(`- \`${skill.path}\` — ${skill.description}`);
+        sections.push(`- \`${skill.path}\`: ${skill.description}`);
       }
 
       sections.push("");
@@ -217,7 +229,7 @@ function buildMasterInstructions(selections) {
     if (flavor && flavor !== "none") {
       sections.push(
         "**Architectural flavor**",
-        `- \`.ai/instructions/flavor/principles.md\` — Flavor: ${displayName(flavor)}`,
+        `- \`.ai/instructions/flavor/principles.md\`, Flavor: ${displayName(flavor)}`,
         "",
       );
     }
@@ -257,7 +269,7 @@ function buildMasterInstructions(selections) {
 
 /**
  * Writes `.ai/backlog/{context,stack,tasks,learned,troubleshoot}.md` at the project root.
- * Only writes each file if it does not already exist — never overwrites user content.
+ * Only writes each file if it does not already exist, and never overwrites user content.
  */
 function writeBacklogFiles(targetDirectory, selections) {
   const backlogDirectory = path.join(targetDirectory, ".ai", "backlog");
@@ -446,11 +458,11 @@ function writeBacklogFiles(targetDirectory, selections) {
  */
 function buildClaudeContent() {
   const claudeContent = dedent`
-    # SDG Agents — Claude Code Governance
+    # SDG Agents: Claude Code Governance
 
     > [!IMPORTANT]
     > This file is read automatically by Claude Code on every session start.
-    > Do not edit manually — regenerate with \`npx sdg-agents init\`.
+    > Do not edit manually. Regenerate with \`npx sdg-agents init\`.
 
     ## Auto-Load: Governance Context
 
@@ -464,8 +476,8 @@ function buildClaudeContent() {
 /**
  * Writes the universal agent config, both at the repo root where harnesses
  * discover them natively:
- *   - \`AGENTS.md\` — canonical governance (consumed by any AI agent).
- *   - \`CLAUDE.md\` — thin pointer auto-loaded by Claude Code.
+ *   - \`AGENTS.md\`: canonical governance (consumed by any AI agent).
+ *   - \`CLAUDE.md\`: thin pointer auto-loaded by Claude Code.
  *
  * Returns the outcome per file so the caller can warn the developer about a
  * sidecar. Other IDEs (Cursor, Windsurf, Copilot, Gemini, Cline/Roo) should be
@@ -510,7 +522,9 @@ function removeLegacyAgentsFile(targetDirectory) {
   }
 
   const legacyContent = fileSystem.readFileSync(legacyPath, "utf8");
-  if (!legacyContent.includes(AGENTS_SENTINEL)) {
+  const isManaged = hasManagedSentinel(legacyContent, AGENTS_SENTINEL);
+
+  if (!isManaged) {
     return;
   }
 
@@ -533,8 +547,9 @@ function writeManagedFile(filePath, content, sentinel) {
   }
 
   const existingContent = fileSystem.readFileSync(filePath, "utf8");
+  const isManaged = hasManagedSentinel(existingContent, sentinel);
 
-  if (!existingContent.includes(sentinel)) {
+  if (!isManaged) {
     const foreignOutcome = "foreign";
     return foreignOutcome;
   }
@@ -551,8 +566,22 @@ function writeManagedFile(filePath, content, sentinel) {
 }
 
 /**
+ * Ownership is recognised by the current title line or by any title the CLI
+ * emitted in an earlier release, so an upgrade is never mistaken for a foreign
+ * file.
+ */
+function hasManagedSentinel(content, sentinel) {
+  const recognizedSentinels = [sentinel, ...LEGACY_SENTINELS];
+  const isManaged = recognizedSentinels.some((known) =>
+    content.includes(known),
+  );
+
+  return isManaged;
+}
+
+/**
  * Writes or updates .gitignore with SDG-managed entries.
- * Idempotent — each block only appends entries not already present.
+ * Idempotent: each block only appends entries not already present.
  * Backlog is classified by volatility: session state is ignored, while
  * context, stack, learned and troubleshoot stay versioned as team knowledge.
  */
@@ -561,11 +590,11 @@ function writeGitignore(targetDirectory) {
 
   const BLOCKS = [
     {
-      header: "# Environment — never commit secrets",
+      header: "# Environment: never commit secrets",
       entries: [".env", ".env.*"],
     },
     {
-      header: "# AI artifacts — session state, not project logic",
+      header: "# AI artifacts: session state, not project logic",
       entries: [
         ".ai/backlog/tasks.md",
         ".ai/backlog/impact-map.md",
@@ -756,7 +785,7 @@ function writeToolingAssets(targetDirectory) {
  * Removes the generated `.ai/instructions/` tree so the next regen rebuilds it from
  * the current `src/assets/instructions/` SSOT. Prevents stale files (like legacy
  * `idioms/`, `competencies/backend.md`, `competencies/frontend.md`) from surviving.
- * Scoped to `.ai/instructions/` — never touches `.ai/backlog/` (developer state).
+ * Scoped to `.ai/instructions/`, and never touches `.ai/backlog/` (developer state).
  */
 function removeGeneratedInstructions(targetDirectory) {
   const generatedInstructionsDir = path.join(

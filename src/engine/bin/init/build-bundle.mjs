@@ -1,5 +1,5 @@
 /**
- * Build Bundle — Orchestrates wizard, injection, and assembly.
+ * Build Bundle: Orchestrates wizard, injection, and assembly.
  */
 
 import { createRequire } from "node:module";

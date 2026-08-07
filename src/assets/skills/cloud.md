@@ -1,4 +1,4 @@
-# Cloud & Containers — Infrastructure Standards
+# Cloud & Containers: Infrastructure Standards
 
 <ruleset name="Cloud & Container Standards">
 

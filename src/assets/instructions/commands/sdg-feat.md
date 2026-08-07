@@ -4,7 +4,7 @@ Initializing feature: $ARGUMENTS.
 
 > **Load now**: `.ai/instructions/templates/workflow.md`
 
-## Phase: SPEC — MODE: PLANNING
+## Phase: SPEC → MODE: PLANNING
 
 Follow Phase SPEC. Context charges:
 

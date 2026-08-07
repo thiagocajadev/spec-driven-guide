@@ -43,10 +43,10 @@ Organize by feature (domain), not by technical layer:
 
 ## Domain Layer
 
-Two valid styles — choose by complexity:
+Two valid styles, chosen by complexity:
 
-**Style A — Rich Entity**: Class with invariants. Preferred when entity enforces own state transitions.
-**Style B — Pure Functions**: Types + functions in same file. Preferred for simpler domains or functional stacks.
+**Style A: Rich Entity**: Class with invariants. Preferred when entity enforces own state transitions.
+**Style B: Pure Functions**: Types + functions in same file. Preferred for simpler domains or functional stacks.
 
 Both styles: zero infrastructure dependencies, fully testable without DB/HTTP mocks.
 

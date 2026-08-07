@@ -12,7 +12,7 @@ function buildPrompt(diff) {
   const promptParts = [
     "You are a code reviewer enforcing SDG (Spec Driven Guide) engineering rules.",
     "",
-    "Review the git diff below. Respond with ONLY valid JSON — no markdown, no explanation.",
+    "Review the git diff below. Respond with ONLY valid JSON, with no markdown and no explanation.",
     "",
     responseSchema,
     "",

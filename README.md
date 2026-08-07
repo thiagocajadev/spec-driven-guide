@@ -1,9 +1,10 @@
+<!-- prettier-ignore-start -->
 <div align="center">
   <img src="https://raw.githubusercontent.com/thiagocajadev/sdg-agents-cli/main/docs/img/sdg-agents-icon-light.svg" alt="SDG Agents" width="480" height="480" style="border-radius: 1rem;">
-  <h1 align="center">Spec-Driven Guide — Agents</h1>
+  <h1 align="center">Spec-Driven Guide: Agents</h1>
   <p align="center">
     A CLI that installs a structured instruction set for AI agents into your project.<br>
-    <a href="docs/i18n/README.pt-BR.md">Versão em Português (Brasil)</a>
+    <a href="README.pt-BR.md">Versão em Português (Brasil)</a>
   </p>
   <p align="center">
       Read the manifesto and visual guide at <a href="https://specdrivenguide.org">specdrivenguide.org</a>
@@ -12,18 +13,33 @@
   <a href="https://www.npmjs.com/package/sdg-agents"><img src="https://img.shields.io/npm/dm/sdg-agents?style=flat-square&logo=npm&color=cb3837" alt="npm downloads" /></a>
   <a href="https://github.com/thiagocajadev/sdg-agents-cli/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/thiagocajadev/sdg-agents-cli/ci.yml?style=flat-square&logo=githubactions&logoColor=white&label=CI" alt="CI status" /></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-24%20LTS-brightgreen?style=flat-square&logo=nodedotjs" alt="Node 24 LTS" /></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-ISC-blue?style=flat-square" alt="License: ISC" /></a>
-  <a href="https://agents.md"><img src="https://img.shields.io/badge/AGENTS.md-compatible-6e56cf?style=flat-square" alt="AGENTS.md compatible" /></a>
-  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-keep%20a%20changelog-f5a623?style=flat-square" alt="Changelog" /></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-ISC-blue?style=flat-square&logo=opensourceinitiative&logoColor=white" alt="License: ISC" /></a>
+  <a href="https://agents.md"><img src="https://img.shields.io/badge/AGENTS.md-compatible-6e56cf?style=flat-square&logo=markdown&logoColor=white" alt="AGENTS.md compatible" /></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-keep%20a%20changelog-f5a623?style=flat-square&logo=keepachangelog&logoColor=white" alt="Changelog" /></a>
 </div>
+<!-- prettier-ignore-end -->
 
 <br>
 
 `sdg-agents` installs a set of markdown instruction files into your project. AI agents (Claude Code, Cursor, Windsurf, Copilot, Codex, and others) read these files and follow the defined protocol for every task.
 
+A developer meeting the project for the first time reads from the top: Quick Start installs it, and How the Protocol Works explains what changes in the conversation with the agent afterwards. A contributor changing the instruction set reads from What Gets Installed down, where every generated file is named and pointed at its source.
+
 > **Note:** If your agent does not pick up the rules automatically, reference `AGENTS.md` at the start of the session.
 
-The instruction set covers:
+## Fundamental concepts
+
+| Concept            | What it is                                                                                              |
+| :----------------- | :------------------------------------------------------------------------------------------------------ |
+| **Cycle**          | One unit of work, opened by a prefix (`feat:`, `fix:`, `docs:`, `audit:`, `land:`) and closed by `end:` |
+| **Phase**          | One of the five steps a cycle runs through: SPEC, PLAN, CODE, TEST, END                                 |
+| **Skill**          | A self-contained ruleset in `.ai/skills/`, loaded only when the cycle's domain calls for it             |
+| **Flavor**         | The architectural shape of the project, chosen at install: vertical slice, MVC, lite, or legacy         |
+| **Work Checklist** | The binary gate in `code-style.md`: Intent items recited at CODE entry, Form items verified at TEST     |
+| **Backlog**        | `.ai/backlog/`, where the project brief, the declared stack and the task state survive the session      |
+
+<details>
+<summary><strong>What the instruction set covers</strong></summary>
 
 - **Working protocol**: a 5-phase cycle (SPEC → PLAN → CODE → TEST → END) with a unified Work Checklist and a 3-strike Circuit Breaker that stops regression loops. The agent waits for your approval at SPEC and PLAN.
 
@@ -38,6 +54,8 @@ The instruction set covers:
 - **Memory across sessions**: `.ai/backlog/` persists the project brief, stack, task state, and accumulated team knowledge. An Impact Map scoped to the active cycle tells the agent which files to load.
 
 - **Inert tooling catalog**: a bundle copied into `.ai/tooling/` with nothing wired by default. No `package.json` edit, no `.husky/` created, no devDep installed. Activate on demand.
+
+</details>
 
 ---
 
@@ -59,10 +77,10 @@ The interactive wizard guides you through selecting an architectural flavor. Sta
 # Zero-prompt install (lite flavor + placeholder stack.md)
 npx sdg-agents init --quick
 
-# Vertical Slice — any stack
+# Vertical Slice, any stack
 npx sdg-agents init --flavor vertical-slice
 
-# MVC — any stack
+# MVC, any stack
 npx sdg-agents init --flavor mvc
 ```
 
@@ -72,7 +90,12 @@ After install, open the agent chat and run `land: <vision>`. The agent elicits t
 
 ## What Gets Installed
 
-After running `init`, your project receives:
+`AGENTS.md` is a minimal router: it lists all available skills and loads them on demand. Only `workflow.md` (the 5-phase protocol) is always in context. Everything else activates only when the current cycle needs it.
+
+`CLAUDE.md` sits beside it as a thin pointer that `@`-imports `AGENTS.md`, so Claude Code auto-loads the governance on every session. Other IDEs are wired up by pointing their native config file at the same canonical file (see "Using with other IDEs" below).
+
+<details>
+<summary><strong>Full tree written by <code>init</code></strong></summary>
 
 ```
 your-project/
@@ -80,20 +103,18 @@ your-project/
 ├── CLAUDE.md                    ← Thin pointer, auto-loaded by Claude Code
 ├── .ai/                         ← Instruction set (committed)
 │   ├── skills/                  ← Engineering skills (loaded on-demand per cycle phase)
-│   │   ├── code-style.md        ← Code style + Work Checklist (Intent + Form) — Phase CODE core
+│   │   ├── code-style.md        ← Code style + Work Checklist (Intent + Form), Phase CODE core
 │   │   ├── testing.md
 │   │   ├── security.md
 │   │   └── ... (api-design, data-access, observability, ci-cd, cloud, sql-style, ui-ux)
 │   ├── instructions/            ← Flavors, fused delivery competency, templates
 │   ├── commands/                ← Cycle commands (feat/fix/docs/audit/land/end)
-│   ├── tooling/                 ← Inert tooling bundle (scripts + husky hooks — activate on demand)
-│   └── backlog/                 ← Harness Engineering (Memory) — versioned knowledge, volatile state gitignored
+│   ├── tooling/                 ← Inert tooling bundle (scripts + husky hooks, activate on demand)
+│   └── backlog/                 ← Harness Engineering (Memory): versioned knowledge, volatile state gitignored
 │       └── ...                  ← (See docs/reference/PROJECT-STRUCTURE.md for details)
 ```
 
-`AGENTS.md` is a minimal router: it lists all available skills and loads them on demand. Only `workflow.md` (the 5-phase protocol) is always in context. Everything else activates only when the current cycle needs it.
-
-`CLAUDE.md` sits beside it as a thin pointer that `@`-imports `AGENTS.md`, so Claude Code auto-loads the governance on every session. Other IDEs are wired up by pointing their native config file at the same canonical file (see "Using with other IDEs" below).
+</details>
 
 > For a detailed breakdown of each file's role, see [Project Structure](docs/reference/PROJECT-STRUCTURE.md).
 
@@ -110,8 +131,8 @@ When you prefix a message to the agent, it enters the corresponding cycle:
 | `fix: <description>`  | Fix     | Agent runs SPEC → PLAN → CODE → TEST → END with RCA focus                                                                                          |
 | `docs: <description>` | Docs    | Agent updates changelogs, ADRs, or specs                                                                                                           |
 | `audit: <scope>`      | Audit   | Agent verifies project alignment against rulesets (drift detection)                                                                                |
-| `end:`                | —       | Close the active cycle. Runs the END Phase checklist (changelog, backlog, commit). Also recovers a cycle if the agent loses track mid-conversation |
-| No prefix             | —       | Agent asks: "land, feat, fix, docs, or audit?", then proceeds                                                                                      |
+| `end:`                | n/a     | Close the active cycle. Runs the END Phase checklist (changelog, backlog, commit). Also recovers a cycle if the agent loses track mid-conversation |
+| No prefix             | n/a     | Agent asks: "land, feat, fix, docs, or audit?", then proceeds                                                                                      |
 
 The agent **stops and waits for your approval** at SPEC and PLAN before writing any code.
 
@@ -149,20 +170,26 @@ Stack is **dynamic, not cataloged**. After `sdg-agents init`, run the `land:` cy
 land: a Node.js + TypeScript API serving a React dashboard
 ```
 
-The agent:
+The agent asks for your languages and versions, classifies them by role, and writes `.ai/backlog/stack.md`. Phase CODE loads that file on every cycle. No static idiom catalog, no `--idiom` flag.
+
+<details>
+<summary><strong>What the <code>land:</code> cycle does, step by step</strong></summary>
 
 1. Asks you to list every language and version (free-form).
 2. Classifies each entry by role (Backend / Frontend / Data / Scripts).
 3. Offers **optional** enrichment via an allow-list of canonical doc sources (`nodejs.org/api`, `react.dev`, `typescriptlang.org`, `tc39.es`, `docs.astro.build`, `docs.python.org`, `go.dev/doc`, `doc.rust-lang.org`, `kotlinlang.org/docs`, `dart.dev`, `learn.microsoft.com/dotnet`, `developer.apple.com/documentation/swift`).
 4. Writes `.ai/backlog/stack.md`, the single source of truth for stack-specific idioms. Edit it directly when versions change; no regen needed.
 
-Phase CODE loads `stack.md` on every cycle. No static idiom catalog, no `--idiom` flag.
+</details>
 
 ---
 
 ## Using with other IDEs
 
-`sdg-agents` generates a single canonical governance file at `AGENTS.md` in the repo root, plus a `CLAUDE.md` pointer beside it. Codex and Claude Code pick theirs up with no extra step. For other tools, add a one-line pointer in your IDE's native rules file:
+`sdg-agents` generates a single canonical governance file at `AGENTS.md` in the repo root, plus a `CLAUDE.md` pointer beside it. Codex and Claude Code pick theirs up with no extra step. For other tools, add a one-line pointer in your IDE's native rules file: `Read AGENTS.md before any task.`
+
+<details>
+<summary><strong>Native config file, per agent</strong></summary>
 
 | Agent            | Native config file                 | How to wire it                                                        |
 | :--------------- | :--------------------------------- | :-------------------------------------------------------------------- |
@@ -173,6 +200,8 @@ Phase CODE loads `stack.md` on every cycle. No static idiom catalog, no `--idiom
 | Codex CLI        | `AGENTS.md` (root)                 | Auto-loaded. No action required.                                      |
 | Gemini CLI       | `GEMINI.md`                        | Same pointer line.                                                    |
 | Cline / Roo Code | `.clinerules`                      | Same pointer line.                                                    |
+
+</details>
 
 > **Prefer a custom preset, voice, or skill?** Paste the skill content into your agent as a prompt, the same way `docs/reference/REFERENCES.md` documents external influences. Custom skills do not require a CLI subcommand.
 
@@ -192,13 +221,20 @@ npx sdg-agents clear      # Remove the .ai/ folder
 
 ## Reference
 
-- [Quick Reference (CHEATSHEET)](docs/reference/CHEATSHEET.md): all CLI flags and agent triggers
+Start with the [Quick Reference (CHEATSHEET)](docs/reference/CHEATSHEET.md) for every CLI flag and agent trigger on one page.
+
+<details>
+<summary><strong>Full documentation index</strong></summary>
 
 - [Project Structure](docs/reference/PROJECT-STRUCTURE.md): detailed breakdown of every generated file
 
 - [Architectural Pipelines](docs/reference/PIPELINES.md): data flow diagrams for each flavor
 
 - [Engineering Constitution](docs/concepts/CONSTITUTION.md): the philosophical principles behind the rules (reference only; runtime rules live in `code-style.md`)
+
+- [Spec-Driven Development Guide](docs/concepts/SPEC-DRIVEN-DEV-GUIDE.md): a walkthrough of each phase and its rules
+
+- [Agent Deep-Flow](docs/concepts/AGENT-DEEP-FLOW.md): the internal decision gates and loops
 
 - [UI/UX System](docs/guides/UI-UX.md): design philosophy, hierarchy, surface tonal scale, presets, and external research references
 
@@ -211,6 +247,8 @@ npx sdg-agents clear      # Remove the .ai/ folder
 - [Migration guide](docs/guides/MIGRATION-v3.md): breaking changes and step-by-step migration, v2 through v6
 
 - [Credits and Philosophies](docs/reference/REFERENCES.md): project influences and research credits
+
+</details>
 
 ---
 

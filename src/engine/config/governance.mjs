@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { NarrativeHeuristics } from "./heuristics/narrative-heuristics.mjs";
 
 /**
- * Governance SSOT — extracts the Form section of the Work Checklist from
+ * Governance SSOT: extracts the Form section of the Work Checklist from
  * code-style.md and wires each labeled item to its narrative-heuristic validator.
  */
 

@@ -1,4 +1,4 @@
-# Security — AppSec Tactics & DevSecOps Pipeline
+# Security: AppSec Tactics & DevSecOps Pipeline
 
 <ruleset name="Security">
 
@@ -6,9 +6,9 @@
 
 ---
 
-## Part 1 — Tactical AppSec (Secure Coding)
+## Part 1: Tactical AppSec (Secure Coding)
 
-### Rule: The Law of Hardening (AppSec Implementation) — SSOT
+### Rule: The Law of Hardening (AppSec Implementation), the SSOT
 
 <rule name="OperationalAppSec">
 
@@ -18,7 +18,7 @@
 - **Input Sanitization**: Sanitize all external inputs (body, query, headers) via trusted libs (Zod, Joi, Pydantic). Reject early.
 - **Injection Prevention**: 100% parameterized SQL. Escape HTML outputs (XSS). No raw string concat for shell/DB.
 - **Data Shielding (PII)**: Mask sensitive fields in logs/responses. Never log secrets/PII (allowlist-based redaction). Never return full emails/IDs/phones except authorized admin scopes.
-- **No Config Templates**: Never commit `.env.example` or `.env.*` — discloses infra metadata. Setup guide belongs in SPEC.
+- **No Config Templates**: Never commit `.env.example` or `.env.*`, which discloses infra metadata. Setup guide belongs in SPEC.
 - **Abstract Env Naming**: Domain-abstract keys (`PAYMENT_SECRET` not `STRIPE_SK`). Runtime validation at boot (fail-fast).
 - **No Unsafe APIs**: Prohibit `eval()`, `dangerouslySetInnerHTML`, insecure deserialization.
   </rule>
@@ -34,7 +34,7 @@
 
 ---
 
-## Part 2 — DevSecOps Pipeline (Staff Lifecycle)
+## Part 2: DevSecOps Pipeline (Staff Lifecycle)
 
 > **FAIL CLOSED POLICY**: Any security gate failure MUST block artifact promotion.
 
@@ -67,7 +67,7 @@ Fail Closed if: critical feature without documented threat model.
 Fail Closed if: any secret detected or insecure API usage found.
 </rule>
 
-### Phase 2: CI — SAST + Policy as Code
+### Phase 2, CI: SAST + Policy as Code
 
 <rule name="SastPolicyEnforcement">
 
@@ -118,13 +118,13 @@ Fail Closed if: untrusted signature or critical CVE.
 
 ---
 
-## Part 3 — Incident Correction Strategy
+## Part 3: Incident Correction Strategy
 
 ### Rule: Fix-Forward Preference
 
 `main` always represents the latest working state. Correction flows forward, not back.
 
-- **Flag-based safety**: disable feature via flag — default containment, no code rollback.
+- **Flag-based safety**: disable feature via flag: default containment, no code rollback.
 - **Fix Forward**: correct via new PR on `main`. Rollback is not default.
 - **Rollback = exception**: only if system unavailable OR fix-forward beats SLO.
 - **Main consistency**: never leave `main` broken; hotfix PR lands before next merge.
