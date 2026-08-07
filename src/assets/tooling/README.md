@@ -41,21 +41,56 @@ Four stages, each feeding the next:
 git diff --staged  →  sdg-agents gate --prompt  →  <llm-cli>  →  sdg-agents gate --check
 ```
 
-The hook ships with `claude --output-format json` as the LLM stage. Swap in
-`openai`, `gemini`, `ollama` — the gate only requires that the CLI writes the
-review JSON to stdout. An agent CLI that wraps its output in an envelope
-(`{"type":"result","result":"…"}`) is unwrapped automatically.
+**The review is opt-in.** `SDG_GATE_LLM` ships empty, and an empty value makes
+the hook exit 0 without reviewing anything, so the file stays as inert as the
+rest of this directory until someone wires it. Two ways to turn it on:
+
+- uncomment one of the example lines at the top of the hook, where `claude`,
+  `codex` and `ollama` sit as examples
+- export `SDG_GATE_LLM` in the environment, which enables the review in CI
+  without editing a copied file
+
+An uncommented line in the file wins over the environment. Any CLI works: the
+gate only requires that the review JSON reaches stdout. An agent CLI that wraps
+its output in an envelope (`{"type":"result","result":"…"}`) is unwrapped
+automatically.
+
+**Written for `sh -e`.** Husky runs every hook through `sh -e`, where a command
+substitution that exits non-zero aborts the script on the spot. Both external
+calls carry `|| VAR=$?` for that reason: without it, the fallback written three
+lines below each call is unreachable, and a missing CLI ends the commit with
+exit 127 and no message. Running a hook by hand with plain `sh` hides this,
+because an interactive shell rarely carries errexit.
 
 Failure modes are deliberately split. An unavailable LLM is infrastructure, not
 a verdict: the hook warns and lets the commit through. A verdict the gate cannot
 read is reported loudly and still exits 0 by default; add `--strict` to the
-`--check` stage to turn that into a hard failure — recommended in CI, where a
+`--check` stage to turn that into a hard failure, recommended in CI, where a
 silent pass is worse than a false alarm.
 
 ### `husky/commit-msg`
 
 Validates conventional-commit prefix:
 `feat|fix|docs|audit|land|chore|refactor|test|perf`.
+
+Sources no shim. The `. "$(dirname -- "$0")/_/husky.sh"` line that husky 8 hooks
+carried prints a deprecation banner on husky 9.1 and exits 2 on v10, which no
+longer ships the file, so under `sh -e` it would block every commit.
+
+An unreadable message file is reported by name and blocks the commit. Blocking
+is the right answer there; saying so is the part `sh -e` would otherwise take
+away, since a failing `head` ends the hook before any `echo` runs.
+
+### `husky/husky-hooks.test.mjs`
+
+Characterization test for both hooks. It runs the real files through `sh -e`,
+the way husky invokes them, inside a throwaway git repository with one staged
+file, and asserts the exit code.
+
+A `PATH` shim stands in for `npx` and for the review command, so the suite needs
+no network, no API key, and no LLM CLI installed. What it locks down is errexit
+resilience: review disabled exits 0 in silence, a failing prompt stage or an
+absent review command exits 0 with a warning, and a BLOCK verdict still exits 1.
 
 ### `biome/biome.json`
 
@@ -145,6 +180,14 @@ cp .ai/tooling/husky/pre-commit .husky/pre-commit
 cp .ai/tooling/husky/commit-msg .husky/commit-msg
 chmod +x .husky/pre-commit .husky/commit-msg
 ```
+
+Copy the two hooks, not the test beside them: `husky-hooks.test.mjs` stays in
+`.ai/tooling/husky/`, where a test runner can reach it, and points at the files
+in that directory rather than at the installed copies.
+
+Both hooks run unchanged on husky 9 and on v10. `pre-commit` reviews nothing
+until `SDG_GATE_LLM` carries a command, so a fresh install validates commit
+messages and otherwise stays out of the way.
 
 ### Wire scripts as npm commands
 

@@ -1,5 +1,17 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+# Conventional-commit prefix check.
+#
+# why: husky 9 and up need no sourced shim. The `_/husky.sh` line this file used
+# to carry prints a deprecation banner on 9.1 and exits 2 on v10, where husky
+# stopped shipping the file at all.
+
+# why: under `sh -e` a failing `head` would abort the hook with no message at
+# all. Blocking is right when the message cannot be read, saying so is the part
+# errexit takes away.
+if [ ! -r "$1" ]; then
+  echo "❌ Commit message file not readable: $1"
+  exit 1
+fi
 
 pattern='^(feat|fix|docs|audit|land|chore|refactor|test|perf)(\([^)]+\))?:\s'
 first_line=$(head -n 1 "$1")

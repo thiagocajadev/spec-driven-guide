@@ -2,10 +2,26 @@
 # SDG Gate — pre-commit code review.
 #
 # Four stages: staged diff -> review prompt -> LLM CLI -> verdict.
-# The default LLM is `claude`. Swap it for openai, gemini, ollama — the gate
-# only cares that stdout carries the JSON the prompt asked for.
+#
+# The review is opt-in. With SDG_GATE_LLM empty the hook exits 0 and reviews
+# nothing, so this file stays inert until a developer wires a command into it.
+#
+# why: husky runs every hook through `sh -e`, where a command substitution that
+# exits non-zero aborts the script before the fallback written below it can run.
+# Every external call here carries `|| VAR=$?` to keep its fallback reachable.
 #
 # Skip a single commit with: git commit --no-verify
+
+# Review command. Uncomment one line, or export SDG_GATE_LLM in the environment.
+# Any CLI works: the gate only cares that stdout carries the JSON it asked for.
+# SDG_GATE_LLM="claude --output-format json"
+# SDG_GATE_LLM="codex exec"
+# SDG_GATE_LLM="ollama run qwen2.5-coder"
+SDG_GATE_LLM="${SDG_GATE_LLM:-}"
+
+if [ -z "$SDG_GATE_LLM" ]; then
+  exit 0
+fi
 
 DIFF=$(git diff --staged --diff-filter=AM)
 
@@ -13,18 +29,20 @@ if [ -z "$DIFF" ]; then
   exit 0
 fi
 
-PROMPT=$(printf '%s' "$DIFF" | npx --no-install sdg-agents gate --prompt)
+PROMPT_EXIT=0
+PROMPT=$(printf '%s' "$DIFF" | npx --no-install sdg-agents gate --prompt) || PROMPT_EXIT=$?
 
-if [ -z "$PROMPT" ]; then
-  echo "  ⚠️  SDG Gate: could not build the review prompt. Skipping review." >&2
+if [ "$PROMPT_EXIT" -ne 0 ] || [ -z "$PROMPT" ]; then
+  echo "  ⚠️  SDG Gate: could not build the review prompt (exit $PROMPT_EXIT). Skipping review." >&2
   exit 0
 fi
 
-REVIEW=$(printf '%s' "$PROMPT" | claude --output-format json)
-LLM_EXIT=$?
+# why: unquoted on purpose. The value carries its own flags and has to word-split.
+LLM_EXIT=0
+REVIEW=$(printf '%s' "$PROMPT" | $SDG_GATE_LLM) || LLM_EXIT=$?
 
 # LLM unavailable is not a verdict — never block a commit on infrastructure.
-if [ $LLM_EXIT -ne 0 ] || [ -z "$REVIEW" ]; then
+if [ "$LLM_EXIT" -ne 0 ] || [ -z "$REVIEW" ]; then
   echo "  ⚠️  SDG Gate: LLM unavailable (exit $LLM_EXIT). Skipping review." >&2
   exit 0
 fi
