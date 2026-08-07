@@ -10,7 +10,7 @@ const fixturesDir = path.resolve(currentDir, "../../../../tests/fixtures/gate");
 
 describe("GatePrompt", () => {
   describe("buildPrompt()", () => {
-    it("should include the diff content in the prompt", () => {
+    it("includes the diff content in the prompt", () => {
       const input = readFileSync(
         path.join(fixturesDir, "violations/explaining-returns.diff"),
         "utf8",
@@ -24,7 +24,7 @@ describe("GatePrompt", () => {
       assert.ok(containsDiff);
     });
 
-    it("should include BLOCK rule ids in the prompt", () => {
+    it("includes BLOCK rule ids in the prompt", () => {
       const input = "diff --git a/foo.cs b/foo.cs";
 
       const expectedRuleId = "explaining-returns";
@@ -35,7 +35,7 @@ describe("GatePrompt", () => {
       assert.ok(containsRule);
     });
 
-    it("should request JSON-only response", () => {
+    it("requests JSON-only response", () => {
       const input = "diff --git a/foo.cs b/foo.cs";
 
       const expectedInstruction = "ONLY valid JSON";
@@ -46,7 +46,7 @@ describe("GatePrompt", () => {
       assert.ok(containsInstruction);
     });
 
-    it("should include canCommit blocking instruction", () => {
+    it("includes canCommit blocking instruction", () => {
       const input = "diff --git a/foo.cs b/foo.cs";
 
       const expectedField = "canCommit";
@@ -57,7 +57,7 @@ describe("GatePrompt", () => {
       assert.ok(containsField);
     });
 
-    it("should include exclusion patterns", () => {
+    it("includes exclusion patterns", () => {
       const input = "diff --git a/foo.cs b/foo.cs";
 
       const expectedFragment = "migrations";
@@ -68,7 +68,7 @@ describe("GatePrompt", () => {
       assert.ok(containsExclusion);
     });
 
-    it("should include ceremonial-void-return rule id in the prompt", () => {
+    it("includes ceremonial-void-return rule id in the prompt", () => {
       const input = "diff --git a/foo.mjs b/foo.mjs";
 
       const expectedRuleId = "ceremonial-void-return";
@@ -79,7 +79,7 @@ describe("GatePrompt", () => {
       assert.ok(containsRule);
     });
 
-    it("should include named-const-before-call diff content in the prompt", () => {
+    it("includes named-const-before-call diff content in the prompt", () => {
       const input = readFileSync(
         path.join(fixturesDir, "violations/named-const-before-call.diff"),
         "utf8",
@@ -93,7 +93,7 @@ describe("GatePrompt", () => {
       assert.ok(containsDiff);
     });
 
-    it("should include named-const-before-call method-call-as-subject fixture case", () => {
+    it("includes named-const-before-call method-call-as-subject fixture case", () => {
       const input = readFileSync(
         path.join(fixturesDir, "violations/named-const-before-call.diff"),
         "utf8",
@@ -107,7 +107,7 @@ describe("GatePrompt", () => {
       assert.ok(containsMethodCallSubject);
     });
 
-    it("should include named-const-before-call rule id in the prompt", () => {
+    it("includes named-const-before-call rule id in the prompt", () => {
       const input = "diff --git a/foo.mjs b/foo.mjs";
 
       const expectedRuleId = "named-const-before-call";
@@ -118,7 +118,7 @@ describe("GatePrompt", () => {
       assert.ok(containsRule);
     });
 
-    it("should include pre-filter signals section when diff has preflight match", () => {
+    it("includes pre-filter signals section when diff has preflight match", () => {
       const input = "+assert.ok(actual.includes(expectedSubstring));";
 
       const expectedSection = "## Pre-filter Signals";
@@ -129,7 +129,7 @@ describe("GatePrompt", () => {
       assert.ok(containsSection);
     });
 
-    it("should not include pre-filter signals section for clean diff", () => {
+    it("does not include pre-filter signals section for clean diff", () => {
       const input = [
         "+const hasExpected = actual.includes(expected);",
         "+assert.ok(hasExpected);",

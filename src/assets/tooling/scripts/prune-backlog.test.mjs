@@ -64,7 +64,7 @@ function buildTasksWithDone(entryCount) {
 }
 
 describe("prune-backlog.mjs", () => {
-  it("should keep only N most recent Done entries when total exceeds N", () => {
+  it("keeps only N most recent Done entries when total exceeds N", () => {
     const { projectDir, backlogDir } = makeTempProject();
     const inputContent = buildTasksWithDone(7);
     const tasksPath = writeTasks(backlogDir, inputContent);
@@ -91,7 +91,7 @@ describe("prune-backlog.mjs", () => {
     }
   });
 
-  it("should be idempotent when total entries already at or below keep threshold", () => {
+  it("is idempotent when total entries already at or below keep threshold", () => {
     const { projectDir, backlogDir } = makeTempProject();
     const inputContent = buildTasksWithDone(2);
     const tasksPath = writeTasks(backlogDir, inputContent);
@@ -110,7 +110,7 @@ describe("prune-backlog.mjs", () => {
     }
   });
 
-  it("should default to keep=3 when --keep flag is omitted", () => {
+  it("defaults to keep=3 when --keep flag is omitted", () => {
     const { projectDir, backlogDir } = makeTempProject();
     const inputContent = buildTasksWithDone(5);
     const tasksPath = writeTasks(backlogDir, inputContent);
@@ -131,7 +131,7 @@ describe("prune-backlog.mjs", () => {
     }
   });
 
-  it("should preserve non-Done sections untouched", () => {
+  it("preserves non-Done sections untouched", () => {
     const { projectDir, backlogDir } = makeTempProject();
     const inputContent = `# Tasks\n\n## Active\n\n- [IN_PROGRESS] live task\n\n## Backlog\n\n- [BACKLOG] pending item\n\n## Done\n\n- [DONE] old 1\n- [DONE] old 2\n- [DONE] old 3\n- [DONE] old 4\n`;
     const tasksPath = writeTasks(backlogDir, inputContent);
@@ -164,7 +164,7 @@ describe("prune-backlog.mjs", () => {
     }
   });
 
-  it("should exit 1 when the Done section holds no recognizable entry", () => {
+  it("exits 1 when the Done section holds no recognizable entry", () => {
     const { projectDir, backlogDir } = makeTempProject();
 
     const inputContent = [
@@ -186,7 +186,7 @@ describe("prune-backlog.mjs", () => {
     }
   });
 
-  it("should stay quiet when the Done section is explicitly empty", () => {
+  it("stays quiet when the Done section is explicitly empty", () => {
     const { projectDir, backlogDir } = makeTempProject();
 
     const inputContent = [
@@ -214,7 +214,7 @@ describe("prune-backlog.mjs", () => {
     }
   });
 
-  it("should stay quiet on the seed template a fresh project starts from", () => {
+  it("stays quiet on the seed template a fresh project starts from", () => {
     const { projectDir, backlogDir } = makeTempProject();
     const inputContent = readSeedTemplate();
     const tasksPath = writeTasks(backlogDir, inputContent);
@@ -233,7 +233,7 @@ describe("prune-backlog.mjs", () => {
     }
   });
 
-  it("should model the bulleted DONE marker in the seed template", () => {
+  it("models the bulleted DONE marker in the seed template", () => {
     const templateContent = readSeedTemplate();
 
     const expectedMarker = "<!-- - [DONE] description -->";
@@ -242,7 +242,7 @@ describe("prune-backlog.mjs", () => {
     assert.ok(actualIncludesMarker);
   });
 
-  it("should exit 1 when tasks.md is missing", () => {
+  it("exits 1 when tasks.md is missing", () => {
     const { projectDir } = makeTempProject();
 
     try {

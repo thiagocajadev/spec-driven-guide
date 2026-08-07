@@ -6,7 +6,7 @@ const { compareHashes, computeHashes, daysAgo } = ManifestUtils;
 
 describe("ManifestUtils", () => {
   describe("compareHashes()", () => {
-    it("should classify unchanged files correctly", () => {
+    it("classifies unchanged files correctly", () => {
       const stored = {
         "core/code-style.md": "abc123",
         "core/security.md": "def456",
@@ -29,7 +29,7 @@ describe("ManifestUtils", () => {
       assert.deepEqual(actualAdded, expectedEmpty);
     });
 
-    it("should detect changed files", () => {
+    it("detects changed files", () => {
       const stored = { "core/code-style.md": "abc123" };
       const current = { "core/code-style.md": "xyz789" };
 
@@ -43,7 +43,7 @@ describe("ManifestUtils", () => {
       assert.deepEqual(actualUnchanged, expectedEmpty);
     });
 
-    it("should detect newly added files", () => {
+    it("detects newly added files", () => {
       const stored = { "core/code-style.md": "abc123" };
       const current = {
         "core/code-style.md": "abc123",
@@ -60,7 +60,7 @@ describe("ManifestUtils", () => {
       assert.deepEqual(actualUnchanged, expectedUnchanged);
     });
 
-    it("should handle mixed changes, additions, and unchanged", () => {
+    it("handles mixed changes, additions, and unchanged", () => {
       const stored = {
         "core/a.md": "hash1",
         "core/b.md": "hash2",
@@ -87,7 +87,7 @@ describe("ManifestUtils", () => {
       assert.deepEqual(actualAdded, expectedAdded);
     });
 
-    it("should handle empty stored hashes (fresh install scenario)", () => {
+    it("handles empty stored hashes (fresh install scenario)", () => {
       const stored = {};
       const current = { "core/a.md": "hash1", "core/b.md": "hash2" };
 
@@ -103,7 +103,7 @@ describe("ManifestUtils", () => {
       assert.deepEqual(actualUnchanged, expectedEmpty);
     });
 
-    it("should handle empty current hashes", () => {
+    it("handles empty current hashes", () => {
       const stored = { "core/a.md": "hash1" };
       const current = {};
 
@@ -153,7 +153,7 @@ describe("ManifestUtils", () => {
       assert.equal(actual, expected);
     });
 
-    it("should handle ISO date strings correctly", () => {
+    it("handles ISO date strings correctly", () => {
       const input = new Date(
         Date.now() - 1000 * 60 * 60 * 24 * 10,
       ).toISOString();
@@ -167,7 +167,7 @@ describe("ManifestUtils", () => {
   });
 
   describe("computeHashes()", () => {
-    it("should hash the tooling tree so review reports drift there", () => {
+    it("hashes the tooling tree so review reports drift there", () => {
       const hashes = computeHashes({ flavor: "lite" });
 
       const actualToolingEntries = Object.keys(hashes).filter((entry) =>
@@ -181,7 +181,7 @@ describe("ManifestUtils", () => {
       assert.ok(actualHasToolingCoverage);
     });
 
-    it("should hash files of any extension, including extensionless ones", () => {
+    it("hashes files of any extension, including extensionless ones", () => {
       const hashes = computeHashes({ flavor: "lite" });
 
       const sampledPaths = [

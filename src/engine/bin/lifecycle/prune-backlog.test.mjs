@@ -35,7 +35,7 @@ const buildBacklog = (doneEntries, trailingSection = "") => {
 };
 
 describe("PruneBacklog.pruneBacklog()", () => {
-  it("should truncate Done section to keepCount and report dropped count", () => {
+  it("truncates Done section to keepCount and report dropped count", () => {
     const input = buildBacklog(
       Array.from({ length: 28 }, (_unused, index) => `cycle-${index}`),
     );
@@ -52,7 +52,7 @@ describe("PruneBacklog.pruneBacklog()", () => {
     assert.equal(actualEntryCount, expectedRemaining);
   });
 
-  it("should no-op when Done already within threshold", () => {
+  it("no-ops when Done already within threshold", () => {
     const input = buildBacklog(["alpha", "beta"]);
 
     const expectedRemoved = 0;
@@ -64,7 +64,7 @@ describe("PruneBacklog.pruneBacklog()", () => {
     assert.equal(actualPruned, input);
   });
 
-  it("should no-op when Done section is absent", () => {
+  it("no-ops when Done section is absent", () => {
     const input =
       "# Tasks\n\n## Active\n\n- pending\n\n## Backlog\n\n- later\n";
 
@@ -77,7 +77,7 @@ describe("PruneBacklog.pruneBacklog()", () => {
     assert.equal(actualPruned, input);
   });
 
-  it("should preserve sections that appear after Done", () => {
+  it("preserves sections that appear after Done", () => {
     const trailingSection = "## Notes\n\n- keep me intact";
     const input = buildBacklog(
       Array.from({ length: 5 }, (_unused, index) => `cycle-${index}`),
@@ -96,7 +96,7 @@ describe("PruneBacklog.pruneBacklog()", () => {
     assert.ok(hasKeepMarker);
   });
 
-  it("should be idempotent — second prune is no-op", () => {
+  it("is idempotent — second prune is no-op", () => {
     const input = buildBacklog(
       Array.from({ length: 10 }, (_unused, index) => `cycle-${index}`),
     );
@@ -112,7 +112,7 @@ describe("PruneBacklog.pruneBacklog()", () => {
     assert.equal(actualSecondPruned, expectedPruned);
   });
 
-  it("should leave exactly one blank line between Done header and first entry", () => {
+  it("leaves exactly one blank line between Done header and first entry", () => {
     const input = buildBacklog(
       Array.from({ length: 6 }, (_unused, index) => `cycle-${index}`),
     );
@@ -133,7 +133,7 @@ describe("PruneBacklog.pruneBacklog()", () => {
     );
   });
 
-  it("should report drift when Done holds content but no recognizable entry", () => {
+  it("reports drift when Done holds content but no recognizable entry", () => {
     const input = [
       "# Tasks",
       "",
@@ -157,7 +157,7 @@ describe("PruneBacklog.pruneBacklog()", () => {
     assert.equal(actualPruned, input);
   });
 
-  it("should not report drift when Done is explicitly empty", () => {
+  it("does not report drift when Done is explicitly empty", () => {
     const input = [
       "# Tasks",
       "",
@@ -175,7 +175,7 @@ describe("PruneBacklog.pruneBacklog()", () => {
     assert.equal(actualDrift, expected);
   });
 
-  it("should not report drift on the seed template a fresh project starts from", () => {
+  it("does not report drift on the seed template a fresh project starts from", () => {
     const input = readSeedTemplate();
 
     const expectedDrift = undefined;
@@ -191,7 +191,7 @@ describe("PruneBacklog.pruneBacklog()", () => {
     assert.equal(actualPruned, input);
   });
 
-  it("should not report drift when every entry is dropped by keepCount zero", () => {
+  it("does not report drift when every entry is dropped by keepCount zero", () => {
     const input = buildBacklog(["cycle-a", "cycle-b"]);
 
     const expected = undefined;

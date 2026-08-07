@@ -36,7 +36,7 @@ function readAsset(assetPath) {
 
 describe("Skill Content — Governance Layer", () => {
   describe("code-style.md essentials", () => {
-    it("should open with a two-line Security-First block", () => {
+    it("opens with a two-line Security-First block", () => {
       const input = readAsset(CODE_STYLE);
 
       const expectedFragments = [
@@ -58,7 +58,7 @@ describe("Skill Content — Governance Layer", () => {
       );
     });
 
-    it("should expose a WorkChecklist rule with Intent before Form sections", () => {
+    it("exposes a WorkChecklist rule with Intent before Form sections", () => {
       const input = readAsset(CODE_STYLE);
 
       const ruleIndex = input.indexOf('<rule name="WorkChecklist">');
@@ -71,7 +71,7 @@ describe("Skill Content — Governance Layer", () => {
       assert.ok(actual, "WorkChecklist must exist with Intent before Form");
     });
 
-    it("should enumerate the eight Intent concerns", () => {
+    it("enumerates the eight Intent concerns", () => {
       const input = readAsset(CODE_STYLE);
 
       const expectedFragments = [
@@ -98,7 +98,7 @@ describe("Skill Content — Governance Layer", () => {
       );
     });
 
-    it("should enumerate the eight Form items wired to heuristics", () => {
+    it("enumerates the eight Form items wired to heuristics", () => {
       const input = readAsset(CODE_STYLE);
 
       const expectedFragments = [
@@ -125,7 +125,7 @@ describe("Skill Content — Governance Layer", () => {
       );
     });
 
-    it("should ban Engineering Laws / DNA-GATE vocabulary from code-style", () => {
+    it("bans Engineering Laws / DNA-GATE vocabulary from code-style", () => {
       const input = readAsset(CODE_STYLE);
 
       const forbiddenFragments = [
@@ -150,7 +150,7 @@ describe("Skill Content — Governance Layer", () => {
   });
 
   describe("sdg-land.md — Phase STACK shape", () => {
-    it("should include a Phase: STACK heading between SCOPE and BACKLOG", () => {
+    it("includes a Phase: STACK heading between SCOPE and BACKLOG", () => {
       const input = readAsset(LAND_COMMAND);
 
       const scopeIndex = input.indexOf("## Phase: SCOPE");
@@ -168,7 +168,7 @@ describe("Skill Content — Governance Layer", () => {
       );
     });
 
-    it("should reference the canonical WebFetch allow-list sources", () => {
+    it("references the canonical WebFetch allow-list sources", () => {
       const input = readAsset(LAND_COMMAND);
 
       const expectedSources = [
@@ -193,7 +193,7 @@ describe("Skill Content — Governance Layer", () => {
       );
     });
 
-    it("should direct the output to .ai/backlog/stack.md", () => {
+    it("directs the output to .ai/backlog/stack.md", () => {
       const input = readAsset(LAND_COMMAND);
 
       const hasStackOutputRef = input.includes(".ai/backlog/stack.md");
@@ -203,7 +203,7 @@ describe("Skill Content — Governance Layer", () => {
   });
 
   describe("stack.md seed template", () => {
-    it("should expose the four canonical role headers", () => {
+    it("exposes the four canonical role headers", () => {
       const input = readAsset(STACK_TEMPLATE);
 
       const expectedHeaders = [
@@ -226,7 +226,7 @@ describe("Skill Content — Governance Layer", () => {
       );
     });
 
-    it("should guide the developer to run land:", () => {
+    it("guides the developer to run land:", () => {
       const input = readAsset(STACK_TEMPLATE);
 
       const hasLandHint = input.includes("run `land:`");
@@ -236,7 +236,7 @@ describe("Skill Content — Governance Layer", () => {
   });
 
   describe("competencies/delivery.md — fused contract", () => {
-    it("should contain both Backend and Frontend discriminated sections", () => {
+    it("contains both Backend and Frontend discriminated sections", () => {
       const input = readAsset(DELIVERY_COMPETENCY);
 
       const expectedFragments = [
@@ -261,7 +261,7 @@ describe("Skill Content — Governance Layer", () => {
   });
 
   describe("workflow.md Phase CODE", () => {
-    it("should route Phase CODE through the Work Checklist", () => {
+    it("routes Phase CODE through the Work Checklist", () => {
       const input = readAsset(WORKFLOW);
 
       const expectedMarker = "Work Checklist (BLOCKING)";
@@ -271,7 +271,7 @@ describe("Skill Content — Governance Layer", () => {
       assert.ok(actual, "Phase CODE step 1 must be the Work Checklist");
     });
 
-    it("should still name the blocked write tools", () => {
+    it("still names the blocked write tools", () => {
       const input = readAsset(WORKFLOW);
 
       const expectedFragments = ["Edit", "Write", "NotebookEdit"];
@@ -288,7 +288,7 @@ describe("Skill Content — Governance Layer", () => {
       );
     });
 
-    it("should have shed all Laws / DNA-GATE vocabulary", () => {
+    it("has shed all Laws / DNA-GATE vocabulary", () => {
       const input = readAsset(WORKFLOW);
 
       const forbiddenFragments = [

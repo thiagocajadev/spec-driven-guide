@@ -4,7 +4,7 @@ import { GatePreflight } from "./gate-preflight.mjs";
 
 describe("GatePreflight", () => {
   describe("runPreflight()", () => {
-    it("should detect method-call-as-subject in assert.ok", () => {
+    it("detects method-call-as-subject in assert.ok", () => {
       const diff = ["+assert.ok(actual.includes(expectedSubstring));"].join(
         "\n",
       );
@@ -20,7 +20,7 @@ describe("GatePreflight", () => {
       assert.strictEqual(actualRule, expectedRule);
     });
 
-    it("should return empty array for clean diff", () => {
+    it("returns empty array for clean diff", () => {
       const diff = [
         "+const hasExpected = actual.includes(expected);",
         "+assert.ok(hasExpected);",
@@ -34,7 +34,7 @@ describe("GatePreflight", () => {
       assert.strictEqual(actualLength, expectedLength);
     });
 
-    it("should detect violations across multiple assert methods", () => {
+    it("detects violations across multiple assert methods", () => {
       const diff = [
         "+assert.ok(result.includes(expected));",
         "+assert.deepEqual(obj.getProp(), target);",
@@ -49,7 +49,7 @@ describe("GatePreflight", () => {
       assert.strictEqual(actualLength, expectedLength);
     });
 
-    it("should include snippet and line number in each match", () => {
+    it("includes snippet and line number in each match", () => {
       const diff = "+assert.ok(actual.startsWith(prefix));";
 
       const actual = GatePreflight.runPreflight(diff);

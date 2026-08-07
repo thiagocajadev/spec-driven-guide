@@ -21,7 +21,7 @@ describe("DisplayUtils", () => {
       assert.equal(actualNone, expected);
     });
 
-    it("should return hardcoded labels for core flavors", () => {
+    it("returns hardcoded labels for core flavors", () => {
       const inputLite = "lite";
       const inputVS = "vertical-slice";
       const inputMVC = "mvc";
@@ -43,7 +43,7 @@ describe("DisplayUtils", () => {
       assert.equal(actualLegacy, expectedLegacy);
     });
 
-    it("should return the key itself if no display name is found", () => {
+    it("returns the key itself if no display name is found", () => {
       const input = "unknown-flavor-key";
 
       const expected = input;
@@ -55,14 +55,14 @@ describe("DisplayUtils", () => {
   });
 
   describe("smartTruncate()", () => {
-    it("should return original content if below threshold", () => {
+    it("returns original content if below threshold", () => {
       const content = "line 1\nline 2\nline 3";
       const actual = DisplayUtils.smartTruncate(content, 10, 10);
 
       assert.equal(actual, content);
     });
 
-    it("should truncate and show head/tail for long content", () => {
+    it("truncates and show head/tail for long content", () => {
       const lines = Array.from({ length: 200 }, (_, i) => `line ${i + 1}`);
       const content = lines.join("\n");
       const headLimit = 10;
@@ -86,7 +86,7 @@ describe("DisplayUtils", () => {
       assert.equal(actualLineCount, expectedLineCount);
     });
 
-    it("should return empty string for empty input", () => {
+    it("returns empty string for empty input", () => {
       const expected = "";
       const actualNull = DisplayUtils.smartTruncate(null);
       const actualEmpty = DisplayUtils.smartTruncate("");
@@ -97,7 +97,7 @@ describe("DisplayUtils", () => {
   });
 
   describe("createReference()", () => {
-    it("should return a formatted reference string", () => {
+    it("returns a formatted reference string", () => {
       const targetFile = "large-file.log";
       const summary = "Summary of the logs";
       const actual = DisplayUtils.createReference(targetFile, summary);

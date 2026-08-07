@@ -20,7 +20,7 @@ function loadReadme() {
 }
 
 describe("BiomeConfig", () => {
-  it("should pin a schema matching the Biome major line in use", () => {
+  it("pins a schema matching the Biome major line in use", () => {
     const config = loadConfig();
 
     const actualSchema = config.$schema;
@@ -30,7 +30,7 @@ describe("BiomeConfig", () => {
     assert.match(actualSchema, expectedSchemaPattern);
   });
 
-  it("should use the preset key rather than the removed recommended flag", () => {
+  it("uses the preset key rather than the removed recommended flag", () => {
     const config = loadConfig();
 
     const actualPreset = config.linter.rules.preset;
@@ -41,7 +41,7 @@ describe("BiomeConfig", () => {
     assert.equal(actualLegacyFlag, undefined);
   });
 
-  it("should place noVar under suspicious and useArrowFunction under complexity", () => {
+  it("places noVar under suspicious and useArrowFunction under complexity", () => {
     const config = loadConfig();
 
     const actualNoVar = config.linter.rules.suspicious.noVar;
@@ -54,7 +54,7 @@ describe("BiomeConfig", () => {
     assert.equal(actualUseArrowFunction, expectedLevel);
   });
 
-  it("should exclude .ai so the template copy is not read as a second root config", () => {
+  it("excludes .ai so the template copy is not read as a second root config", () => {
     const config = loadConfig();
 
     const actualIncludes = config.files.includes;
@@ -63,7 +63,7 @@ describe("BiomeConfig", () => {
     assert.deepEqual(actualIncludes, expectedIncludes);
   });
 
-  it("should not carry rule names removed in Biome 2.x", () => {
+  it("does not carry rule names removed in Biome 2.x", () => {
     const rawConfig = fileSystem.readFileSync(configPath, "utf8");
 
     const removedRuleNames = ["noConsoleLog", "useShorthandArrayType"];
@@ -78,7 +78,7 @@ describe("BiomeConfig", () => {
 });
 
 describe("BiomeReadme", () => {
-  it("should never claim Biome covers visual density", () => {
+  it("never claims Biome covers visual density", () => {
     const readmeContent = loadReadme();
 
     const biomeSection = readmeContent.slice(
@@ -93,7 +93,7 @@ describe("BiomeReadme", () => {
     assert.equal(actualHasFalseClaim, expectedHasFalseClaim);
   });
 
-  it("should tell the reader which SDG rules Biome leaves uncovered", () => {
+  it("tells the reader which SDG rules Biome leaves uncovered", () => {
     const readmeContent = loadReadme();
 
     const uncoveredRuleNames = [

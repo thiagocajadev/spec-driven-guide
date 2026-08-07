@@ -26,7 +26,7 @@ function buildChangelog(unreleasedBody) {
 }
 
 describe("promoteUnreleased()", () => {
-  it("should drop a scaffolding section the cycle left empty", () => {
+  it("drops a scaffolding section the cycle left empty", () => {
     const input = buildChangelog([
       "### Added",
       "",
@@ -44,7 +44,7 @@ describe("promoteUnreleased()", () => {
     assert.ok(actualIncludesReleased);
   });
 
-  it("should keep both sections when both carry entries", () => {
+  it("keeps both sections when both carry entries", () => {
     const input = buildChangelog([
       "### Added",
       "",
@@ -65,7 +65,7 @@ describe("promoteUnreleased()", () => {
     assert.ok(actualKeepsFixed);
   });
 
-  it("should leave no double blank line where a section was dropped", () => {
+  it("leaves no double blank line where a section was dropped", () => {
     const input = buildChangelog([
       "### Added",
       "",
@@ -83,7 +83,7 @@ describe("promoteUnreleased()", () => {
     assert.equal(actualHasBlankRun, expected);
   });
 
-  it("should open a fresh Unreleased block with both scaffolds", () => {
+  it("opens a fresh Unreleased block with both scaffolds", () => {
     const input = buildChangelog([
       "### Added",
       "",
@@ -101,7 +101,7 @@ describe("promoteUnreleased()", () => {
     assert.ok(actualIncludesScaffold);
   });
 
-  it("should preserve earlier releases untouched", () => {
+  it("preserves earlier releases untouched", () => {
     const input = buildChangelog([
       "### Added",
       "",
@@ -120,7 +120,7 @@ describe("promoteUnreleased()", () => {
     assert.ok(actualIncludesOlder);
   });
 
-  it("should leave the block alone when no section carries a narrative", () => {
+  it("leaves the block alone when no section carries a narrative", () => {
     const input = buildChangelog(["### Added", "", "### Fixed", ""]);
 
     const actual = promoteUnreleased(input, UNRELEASED_PATTERN, NEW_HEADER);

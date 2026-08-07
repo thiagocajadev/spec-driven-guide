@@ -6,7 +6,7 @@ const { detectBumpType, bumpVersion } = AutoBump;
 
 describe("AutoBump", () => {
   describe("detectBumpType()", () => {
-    it("should return patch for fix: commits", () => {
+    it("returns patch for fix: commits", () => {
       const input = "fix: corrige typo no README";
 
       const expected = "patch";
@@ -16,7 +16,7 @@ describe("AutoBump", () => {
       assert.equal(actual, expected);
     });
 
-    it("should return patch for chore: commits", () => {
+    it("returns patch for chore: commits", () => {
       const input = "chore: atualiza dependencias";
 
       const expected = "patch";
@@ -26,7 +26,7 @@ describe("AutoBump", () => {
       assert.equal(actual, expected);
     });
 
-    it("should return minor for feat: commits", () => {
+    it("returns minor for feat: commits", () => {
       const input = "feat: adiciona novo comando export";
 
       const expected = "minor";
@@ -36,7 +36,7 @@ describe("AutoBump", () => {
       assert.equal(actual, expected);
     });
 
-    it("should return major for breaking change via ! prefix", () => {
+    it("returns major for breaking change via ! prefix", () => {
       const inputFeature = "feat!: remove suporte a Node 18";
       const inputFix = "fix!: altera contrato da API";
 
@@ -48,7 +48,7 @@ describe("AutoBump", () => {
       assert.equal(actualFix, expected);
     });
 
-    it("should return major for BREAKING CHANGE in footer", () => {
+    it("returns major for BREAKING CHANGE in footer", () => {
       const input =
         "refactor: reestrutura pipeline\n\nBREAKING CHANGE: remove flag --legacy";
 
@@ -59,7 +59,7 @@ describe("AutoBump", () => {
       assert.equal(actual, expected);
     });
 
-    it("should return skip for chore: bump version commits", () => {
+    it("returns skip for chore: bump version commits", () => {
       const inputMajor = "chore: bump version to 1.2.3";
       const inputMinor = "chore: bump version to 0.13.0";
 
@@ -73,7 +73,7 @@ describe("AutoBump", () => {
   });
 
   describe("bumpVersion()", () => {
-    it("should increment patch", () => {
+    it("increments patch", () => {
       const inputVersion = "0.12.1";
       const inputType = "patch";
 
@@ -83,7 +83,7 @@ describe("AutoBump", () => {
       assert.equal(actual, expected);
     });
 
-    it("should increment minor and reset patch", () => {
+    it("increments minor and reset patch", () => {
       const inputVersion = "0.12.1";
       const inputType = "minor";
 
@@ -93,7 +93,7 @@ describe("AutoBump", () => {
       assert.equal(actual, expected);
     });
 
-    it("should increment major and reset minor + patch", () => {
+    it("increments major and reset minor + patch", () => {
       const inputVersion = "0.12.1";
       const inputType = "major";
 
@@ -103,7 +103,7 @@ describe("AutoBump", () => {
       assert.equal(actual, expected);
     });
 
-    it("should handle version 0.0.0", () => {
+    it("handles version 0.0.0", () => {
       const inputVersion = "0.0.0";
 
       const expectedPatch = "0.0.1";

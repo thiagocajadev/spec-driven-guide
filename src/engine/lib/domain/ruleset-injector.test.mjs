@@ -19,7 +19,7 @@ function cleanup(dir) {
 
 describe("RulesetInjector", () => {
   describe("prepareProjectStructure()", () => {
-    it("should create .ai/instructions and .ai/commands directories", () => {
+    it("creates .ai/instructions and .ai/commands directories", () => {
       const tmpDir = makeTempDir();
       const expectedDirs = [
         path.join(tmpDir, ".ai", "instructions"),
@@ -39,7 +39,7 @@ describe("RulesetInjector", () => {
       }
     });
 
-    it("should be idempotent — calling twice does not throw", () => {
+    it("is idempotent — calling twice does not throw", () => {
       const tmpDir = makeTempDir();
 
       try {
@@ -53,7 +53,7 @@ describe("RulesetInjector", () => {
   });
 
   describe("injectRulesets()", () => {
-    it("should copy skills/ to .ai/skills/", () => {
+    it("copies skills/ to .ai/skills/", () => {
       const tmpDir = makeTempDir();
       const inputSelections = { flavor: "lite" };
 
@@ -75,7 +75,7 @@ describe("RulesetInjector", () => {
       }
     });
 
-    it("should copy flavor files to .ai/instructions/flavor/", () => {
+    it("copies flavor files to .ai/instructions/flavor/", () => {
       const tmpDir = makeTempDir();
       const inputSelections = { flavor: "lite" };
 
@@ -92,7 +92,7 @@ describe("RulesetInjector", () => {
       }
     });
 
-    it("should copy templates and commands to .ai/", () => {
+    it("copies templates and commands to .ai/", () => {
       const tmpDir = makeTempDir();
       const inputSelections = { flavor: "lite" };
       const expectedTemplates = path.join(
@@ -117,7 +117,7 @@ describe("RulesetInjector", () => {
       }
     });
 
-    it("should inject delivery.md as the fused competency", () => {
+    it("injects delivery.md as the fused competency", () => {
       const tmpDir = makeTempDir();
       const inputSelections = { flavor: "lite" };
       const deliveryPath = path.join(
@@ -170,7 +170,7 @@ describe("RulesetInjector", () => {
       }
     });
 
-    it("should NOT create an idioms/ directory", () => {
+    it("does NOT create an idioms/ directory", () => {
       const tmpDir = makeTempDir();
       const inputSelections = { flavor: "lite" };
       const legacyIdiomsDir = path.join(
@@ -195,7 +195,7 @@ describe("RulesetInjector", () => {
   });
 
   describe("collectOutputSummary()", () => {
-    it("should list the canonical directory set (no idioms)", () => {
+    it("lists the canonical directory set (no idioms)", () => {
       const expectedDirs = [
         ".ai/skills/",
         ".ai/instructions/flavor/",
@@ -209,7 +209,7 @@ describe("RulesetInjector", () => {
       assert.deepEqual(actual, expectedDirs);
     });
 
-    it("should NOT include any idioms/ subdirectory", () => {
+    it("does NOT include any idioms/ subdirectory", () => {
       const expectedAbsent = false;
       const { directories: actual } = collectOutputSummary();
 

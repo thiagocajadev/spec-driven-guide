@@ -46,7 +46,7 @@ function cleanup(projectDir) {
 }
 
 describe("bump-version.mjs", () => {
-  it("should increment patch segment when arg is patch", () => {
+  it("increments patch segment when arg is patch", () => {
     const { projectDir, packagePath } = makeTempProject("3.8.0");
     const expectedVersion = "3.8.1";
 
@@ -62,7 +62,7 @@ describe("bump-version.mjs", () => {
     }
   });
 
-  it("should increment minor and reset patch when arg is minor", () => {
+  it("increments minor and reset patch when arg is minor", () => {
     const { projectDir, packagePath } = makeTempProject("3.8.2");
     const expectedVersion = "3.9.0";
 
@@ -76,7 +76,7 @@ describe("bump-version.mjs", () => {
     }
   });
 
-  it("should increment major and reset minor+patch when arg is major", () => {
+  it("increments major and reset minor+patch when arg is major", () => {
     const { projectDir, packagePath } = makeTempProject("3.8.2");
     const expectedVersion = "4.0.0";
 
@@ -90,7 +90,7 @@ describe("bump-version.mjs", () => {
     }
   });
 
-  it("should preserve package.json fields other than version", () => {
+  it("preserves package.json fields other than version", () => {
     const projectDir = fileSystem.mkdtempSync(
       path.join(os.tmpdir(), "sdg-bump-test-"),
     );
@@ -135,7 +135,7 @@ describe("bump-version.mjs", () => {
     }
   });
 
-  it("should exit 1 when bump arg is invalid", () => {
+  it("exits 1 when bump arg is invalid", () => {
     const { projectDir } = makeTempProject("1.0.0");
 
     try {
@@ -145,7 +145,7 @@ describe("bump-version.mjs", () => {
     }
   });
 
-  it("should exit 1 when bump arg is missing", () => {
+  it("exits 1 when bump arg is missing", () => {
     const { projectDir } = makeTempProject("1.0.0");
 
     try {
@@ -155,7 +155,7 @@ describe("bump-version.mjs", () => {
     }
   });
 
-  it("should exit 1 when package.json is absent", () => {
+  it("exits 1 when package.json is absent", () => {
     const projectDir = fileSystem.mkdtempSync(
       path.join(os.tmpdir(), "sdg-bump-test-"),
     );
@@ -167,7 +167,7 @@ describe("bump-version.mjs", () => {
     }
   });
 
-  it("should not import child_process (zero git side-effects guarantee)", () => {
+  it("does not import child_process (zero git side-effects guarantee)", () => {
     const scriptSource = fileSystem.readFileSync(SCRIPT_PATH, "utf8");
     const actualHasNoChildProcess = !scriptSource.includes("child_process");
     const actualHasNoExecSync = !scriptSource.includes("execSync");

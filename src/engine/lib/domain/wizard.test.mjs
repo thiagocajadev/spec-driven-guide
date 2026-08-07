@@ -6,7 +6,7 @@ const { validateSelections } = WizardUtils;
 
 describe("WizardUtils (Non-Interactive)", () => {
   describe("validateSelections()", () => {
-    it("should accept valid flavor", () => {
+    it("accepts valid flavor", () => {
       const input = { flavor: "vertical-slice" };
 
       const expectedSuccess = true;
@@ -17,7 +17,7 @@ describe("WizardUtils (Non-Interactive)", () => {
       assert.equal(actualIsSuccess, expectedSuccess);
     });
 
-    it("should reject missing flavor", () => {
+    it("rejects missing flavor", () => {
       const input = {};
 
       const expectedFailure = true;
@@ -30,7 +30,7 @@ describe("WizardUtils (Non-Interactive)", () => {
       assert.equal(actualErrorCode, expectedCode);
     });
 
-    it("should reject unknown flavor", () => {
+    it("rejects unknown flavor", () => {
       const input = { flavor: "nonexistent" };
 
       const expectedFailure = true;
@@ -47,7 +47,7 @@ describe("WizardUtils (Non-Interactive)", () => {
       assert.ok(hasExpectedInMessage);
     });
 
-    it("should apply default flavor for quick mode", () => {
+    it("applies default flavor for quick mode", () => {
       const input = { mode: "quick" };
 
       const expectedSuccess = true;
@@ -60,7 +60,7 @@ describe("WizardUtils (Non-Interactive)", () => {
       assert.equal(actualFlavor, expectedFlavor);
     });
 
-    it("should accept each supported flavor", () => {
+    it("accepts each supported flavor", () => {
       const expectedSuccess = true;
       for (const flavor of ["lite", "vertical-slice", "mvc", "legacy"]) {
         const actual = validateSelections({ flavor });
@@ -76,7 +76,7 @@ describe("WizardUtils (Non-Interactive)", () => {
   });
 
   describe("WizardUtils surface", () => {
-    it("should only export gatherUserSelections and validateSelections", () => {
+    it("only exports gatherUserSelections and validateSelections", () => {
       const expectedKeys = ["gatherUserSelections", "validateSelections"];
       const actualKeys = Object.keys(WizardUtils).sort();
 

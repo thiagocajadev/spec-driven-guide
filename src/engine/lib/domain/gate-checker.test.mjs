@@ -13,7 +13,7 @@ const resultsDir = path.resolve(
 
 describe("GateChecker", () => {
   describe("checkResult()", () => {
-    it("should return canCommit false when BLOCK violation present", () => {
+    it("returns canCommit false when BLOCK violation present", () => {
       const input = readFileSync(
         path.join(resultsDir, "block-result.json"),
         "utf8",
@@ -27,7 +27,7 @@ describe("GateChecker", () => {
       assert.equal(actualCanCommit, expected);
     });
 
-    it("should return canCommit true when result is clean", () => {
+    it("returns canCommit true when result is clean", () => {
       const input = readFileSync(
         path.join(resultsDir, "pass-result.json"),
         "utf8",
@@ -41,7 +41,7 @@ describe("GateChecker", () => {
       assert.equal(actualCanCommit, expected);
     });
 
-    it("should return canCommit true when only WARN violations present", () => {
+    it("returns canCommit true when only WARN violations present", () => {
       const input = readFileSync(
         path.join(resultsDir, "warn-result.json"),
         "utf8",
@@ -55,7 +55,7 @@ describe("GateChecker", () => {
       assert.equal(actualCanCommit, expected);
     });
 
-    it("should isolate block violations from warn violations", () => {
+    it("isolates block violations from warn violations", () => {
       const input = readFileSync(
         path.join(resultsDir, "block-result.json"),
         "utf8",
@@ -69,7 +69,7 @@ describe("GateChecker", () => {
       assert.equal(actualBlockCount, expectedBlockCount);
     });
 
-    it("should read the verdict wrapped in an agent CLI envelope", () => {
+    it("reads the verdict wrapped in an agent CLI envelope", () => {
       const input = readFileSync(
         path.join(resultsDir, "envelope-result.json"),
         "utf8",
@@ -86,7 +86,7 @@ describe("GateChecker", () => {
       assert.equal(actualBlockCount, expectedBlockCount);
     });
 
-    it("should mark valid JSON without a violations array as unverified", () => {
+    it("marks valid JSON without a violations array as unverified", () => {
       const input = readFileSync(
         path.join(resultsDir, "unreadable-result.json"),
         "utf8",
@@ -102,7 +102,7 @@ describe("GateChecker", () => {
       assert.ok(actualNamesKeys);
     });
 
-    it("should mark an envelope with unreadable inner content as unverified", () => {
+    it("marks an envelope with unreadable inner content as unverified", () => {
       const input = '{"type":"result","result":"I could not review this diff"}';
 
       const actual = GateChecker.checkResult(input);
@@ -111,7 +111,7 @@ describe("GateChecker", () => {
       assert.ok(actualReason);
     });
 
-    it("should mark a JSON primitive as unverified", () => {
+    it("marks a JSON primitive as unverified", () => {
       const input = "42";
 
       const actual = GateChecker.checkResult(input);
@@ -122,7 +122,7 @@ describe("GateChecker", () => {
       assert.ok(actualNamesType);
     });
 
-    it("should carry an unverified reason when JSON is invalid", () => {
+    it("carries an unverified reason when JSON is invalid", () => {
       const input = "not valid json {{";
 
       const actual = GateChecker.checkResult(input);
@@ -131,7 +131,7 @@ describe("GateChecker", () => {
       assert.ok(actualReason);
     });
 
-    it("should leave a clean report without an unverified reason", () => {
+    it("leaves a clean report without an unverified reason", () => {
       const input = readFileSync(
         path.join(resultsDir, "pass-result.json"),
         "utf8",
@@ -145,7 +145,7 @@ describe("GateChecker", () => {
       assert.equal(actualReason, expected);
     });
 
-    it("should fail open when JSON is invalid", () => {
+    it("fails open when JSON is invalid", () => {
       const input = "not valid json {{";
 
       const expected = true;
@@ -156,7 +156,7 @@ describe("GateChecker", () => {
       assert.equal(actualCanCommit, expected);
     });
 
-    it("should fail open when input is empty", () => {
+    it("fails open when input is empty", () => {
       const input = "";
 
       const expected = true;
@@ -169,7 +169,7 @@ describe("GateChecker", () => {
   });
 
   describe("formatViolationReport()", () => {
-    it("should include rule id and file in report", () => {
+    it("includes rule id and file in report", () => {
       const input = readFileSync(
         path.join(resultsDir, "block-result.json"),
         "utf8",

@@ -81,7 +81,7 @@ describe("BacklogVolatilityMessaging", () => {
   const IGNORE_CLAIM = /gitignored|NOT in git/;
   const KNOWLEDGE_FILE = /(context|stack|learned|troubleshoot)\.md/;
 
-  it("should never call a knowledge file gitignored", () => {
+  it("never calls a knowledge file gitignored", () => {
     const actualOffenders = SUMMARY_SOURCES.flatMap((sourcePath) => {
       const sourceLines = fileSystem
         .readFileSync(sourcePath, "utf8")
@@ -102,7 +102,7 @@ describe("BacklogVolatilityMessaging", () => {
 
 describe("InstructionAssembler", () => {
   describe("writeAgentConfig()", () => {
-    it("should write AGENTS.md at the repo root", () => {
+    it("writes AGENTS.md at the repo root", () => {
       const tmpDir = makeTempDir();
       const expectedPath = path.join(tmpDir, "AGENTS.md");
 
@@ -118,7 +118,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should leave no AGENTS.md under .ai/skills/", () => {
+    it("leaves no AGENTS.md under .ai/skills/", () => {
       const tmpDir = makeTempDir();
       const legacyPath = path.join(tmpDir, ".ai", "skills", "AGENTS.md");
 
@@ -134,7 +134,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should delete a legacy .ai/skills/AGENTS.md on upgrade", () => {
+    it("deletes a legacy .ai/skills/AGENTS.md on upgrade", () => {
       const tmpDir = makeTempDir();
       const legacyDir = path.join(tmpDir, ".ai", "skills");
       const legacyPath = path.join(legacyDir, "AGENTS.md");
@@ -153,7 +153,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should keep a hand-written .ai/skills/AGENTS.md", () => {
+    it("keeps a hand-written .ai/skills/AGENTS.md", () => {
       const tmpDir = makeTempDir();
       const legacyDir = path.join(tmpDir, ".ai", "skills");
       const legacyPath = path.join(legacyDir, "AGENTS.md");
@@ -172,7 +172,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should point CLAUDE.md at the root AGENTS.md", () => {
+    it("points CLAUDE.md at the root AGENTS.md", () => {
       const tmpDir = makeTempDir();
       const claudePath = path.join(tmpDir, "CLAUDE.md");
 
@@ -189,7 +189,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should report unchanged when re-run over its own output", () => {
+    it("reports unchanged when re-run over its own output", () => {
       const tmpDir = makeTempDir();
 
       try {
@@ -204,7 +204,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should preserve a foreign AGENTS.md and write a sidecar", () => {
+    it("preserves a foreign AGENTS.md and write a sidecar", () => {
       const tmpDir = makeTempDir();
       const agentsPath = path.join(tmpDir, "AGENTS.md");
       const sidecarPath = path.join(tmpDir, "AGENTS.sdg.md");
@@ -226,7 +226,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should preserve a foreign CLAUDE.md without a sidecar", () => {
+    it("preserves a foreign CLAUDE.md without a sidecar", () => {
       const tmpDir = makeTempDir();
       const claudePath = path.join(tmpDir, "CLAUDE.md");
       const sidecarPath = path.join(tmpDir, "CLAUDE.sdg.md");
@@ -251,7 +251,7 @@ describe("InstructionAssembler", () => {
   });
 
   describe("writeManifest()", () => {
-    it("should create .ai/.sdg-manifest.json", () => {
+    it("creates .ai/.sdg-manifest.json", () => {
       const tmpDir = makeTempDir();
       const inputSelections = { flavor: "lite" };
       const expectedFile = path.join(tmpDir, ".ai", ".sdg-manifest.json");
@@ -267,7 +267,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should write valid JSON with all required fields", () => {
+    it("writes valid JSON with all required fields", () => {
       const tmpDir = makeTempDir();
       const inputSelections = { flavor: "lite" };
       const inputVersion = "2.0.0";
@@ -294,7 +294,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should store a valid ISO generatedAt timestamp", () => {
+    it("stores a valid ISO generatedAt timestamp", () => {
       const tmpDir = makeTempDir();
       const before = Date.now();
       const manifestPath = path.join(tmpDir, ".ai", ".sdg-manifest.json");
@@ -320,7 +320,7 @@ describe("InstructionAssembler", () => {
   describe("buildMasterInstructions()", () => {
     const baseSelections = { flavor: "lite" };
 
-    it("should point at code-style.md and workflow.md in the header", () => {
+    it("points at code-style.md and workflow.md in the header", () => {
       const expectedCodeStyleRef = ".ai/skills/code-style.md";
       const expectedWorkflowRef = ".ai/instructions/templates/workflow.md";
 
@@ -332,14 +332,14 @@ describe("InstructionAssembler", () => {
       assert.ok(hasWorkflowRef);
     });
 
-    it("should NOT reference removed staff-dna.md skill", () => {
+    it("does NOT reference removed staff-dna.md skill", () => {
       const actual = buildMasterInstructions(baseSelections);
       const hasNoStaffDnaLink = !actual.includes("staff-dna.md");
 
       assert.ok(hasNoStaffDnaLink);
     });
 
-    it("should reference .ai/backlog/stack.md in Session Start", () => {
+    it("references .ai/backlog/stack.md in Session Start", () => {
       const actual = buildMasterInstructions(baseSelections);
       const hasStackPointer = actual.includes(".ai/backlog/stack.md");
 
@@ -349,7 +349,7 @@ describe("InstructionAssembler", () => {
       );
     });
 
-    it("should reference delivery.md (fused competency) and NOT the legacy split files", () => {
+    it("references delivery.md (fused competency) and NOT the legacy split files", () => {
       const actual = buildMasterInstructions(baseSelections);
 
       const hasDeliveryRef = actual.includes(
@@ -375,7 +375,7 @@ describe("InstructionAssembler", () => {
       );
     });
 
-    it("should NOT reference the removed idioms directory", () => {
+    it("does NOT reference the removed idioms directory", () => {
       const actual = buildMasterInstructions(baseSelections);
       const hasNoIdiomsRef = !actual.match(/idioms\/[a-z-]+\/patterns\.md/);
       const hasNoIdiomsHeader = !actual.includes("Stack idioms");
@@ -387,7 +387,7 @@ describe("InstructionAssembler", () => {
       );
     });
 
-    it("should include Semantic Router with all cycle triggers", () => {
+    it("includes Semantic Router with all cycle triggers", () => {
       const expectedSubstrings = [
         "## Semantic Router",
         "feat:",
@@ -407,14 +407,14 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should include Phase CODE skill loading section", () => {
+    it("includes Phase CODE skill loading section", () => {
       const actual = buildMasterInstructions(baseSelections);
       const hasPhaseCodeHeader = actual.includes("## Phase CODE");
 
       assert.ok(hasPhaseCodeHeader);
     });
 
-    it("should classify testing/security/observability/visual-density as surgical skills", () => {
+    it("classifies testing/security/observability/visual-density as surgical skills", () => {
       const actual = buildMasterInstructions(baseSelections);
 
       const hasSurgicalHeader = actual.includes("**Surgical**");
@@ -430,7 +430,7 @@ describe("InstructionAssembler", () => {
       assert.ok(hasVisualDensitySkill);
     });
 
-    it("should unconditionally include Agent Roles block", () => {
+    it("unconditionally includes Agent Roles block", () => {
       const actual = buildMasterInstructions(baseSelections);
       const hasAgentRolesHeader = actual.includes("## Agent Roles");
       const hasAgentRolesLink = actual.includes("agent-roles.md");
@@ -439,7 +439,7 @@ describe("InstructionAssembler", () => {
       assert.ok(hasAgentRolesLink);
     });
 
-    it("should NOT include DNA-GATE or Working Protocol inline blocks", () => {
+    it("does NOT include DNA-GATE or Working Protocol inline blocks", () => {
       const actual = buildMasterInstructions(baseSelections);
       const hasNoDnaGateBlock = !actual.includes("DNA-GATE & MENTAL RESET");
       const hasNoPhaseBanner = !actual.includes("PHASE EXECUTION IS MANDATORY");
@@ -465,7 +465,7 @@ describe("InstructionAssembler", () => {
       assert.ok(isWithinTokenBudget, tokenLeakMessage);
     });
 
-    it("should not duplicate any file path reference", () => {
+    it("does not duplicate any file path reference", () => {
       const actual = buildMasterInstructions(WORST_CASE_INPUT);
       const pathMatches = actual.match(/`\.ai\/[^`]+\.md`/g) || [];
 
@@ -476,7 +476,7 @@ describe("InstructionAssembler", () => {
       assert.equal(actualPathCount, expectedUniqueCount);
     });
 
-    it("should not contain verbose protocol patterns", () => {
+    it("does not contain verbose protocol patterns", () => {
       const actual = buildMasterInstructions(WORST_CASE_INPUT);
 
       const forbiddenPatterns = [
@@ -497,7 +497,7 @@ describe("InstructionAssembler", () => {
   });
 
   describe("writeToolingAssets()", () => {
-    it("should copy tooling directory into .ai/tooling/ preserving structure", () => {
+    it("copies tooling directory into .ai/tooling/ preserving structure", () => {
       const tmpDir = makeTempDir();
       const expectedFiles = [
         path.join(".ai", "tooling", "scripts", "prune-backlog.mjs"),
@@ -521,7 +521,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should mark husky hooks as executable", () => {
+    it("marks husky hooks as executable", () => {
       const tmpDir = makeTempDir();
       const hookNames = ["pre-commit", "commit-msg"];
       const expectedPermissionMask = 0o100;
@@ -551,7 +551,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should be idempotent when invoked twice", () => {
+    it("is idempotent when invoked twice", () => {
       const tmpDir = makeTempDir();
       const referencePath = path.join(tmpDir, ".ai", "tooling", "README.md");
 
@@ -570,7 +570,7 @@ describe("InstructionAssembler", () => {
   });
 
   describe("writeBacklogFiles()", () => {
-    it("should include Tooling (optional) section in generated context.md", () => {
+    it("includes Tooling (optional) section in generated context.md", () => {
       const tmpDir = makeTempDir();
       const contextPath = path.join(tmpDir, ".ai", "backlog", "context.md");
 
@@ -590,7 +590,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should keep the Now objective in tasks.md and out of context.md", () => {
+    it("keeps the Now objective in tasks.md and out of context.md", () => {
       const tmpDir = makeTempDir();
       const contextPath = path.join(tmpDir, ".ai", "backlog", "context.md");
       const tasksPath = path.join(tmpDir, ".ai", "backlog", "tasks.md");
@@ -613,7 +613,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should write .ai/backlog/stack.md placeholder when missing", () => {
+    it("writes .ai/backlog/stack.md placeholder when missing", () => {
       const tmpDir = makeTempDir();
       const stackPath = path.join(tmpDir, ".ai", "backlog", "stack.md");
 
@@ -637,7 +637,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should never overwrite an existing .ai/backlog/stack.md", () => {
+    it("never overwrites an existing .ai/backlog/stack.md", () => {
       const tmpDir = makeTempDir();
       const backlogDir = path.join(tmpDir, ".ai", "backlog");
       const stackPath = path.join(backlogDir, "stack.md");
@@ -659,7 +659,7 @@ describe("InstructionAssembler", () => {
   });
 
   describe("writeGitignore()", () => {
-    it("should ignore volatile session state only", () => {
+    it("ignores volatile session state only", () => {
       const tmpDir = makeTempDir();
 
       try {
@@ -678,7 +678,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should never ignore the backlog as a whole", () => {
+    it("never ignores the backlog as a whole", () => {
       const tmpDir = makeTempDir();
 
       try {
@@ -699,7 +699,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should leave every knowledge file versioned", () => {
+    it("leaves every knowledge file versioned", () => {
       const tmpDir = makeTempDir();
 
       try {
@@ -718,7 +718,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should preserve a pre-existing .gitignore that lacks a trailing newline", () => {
+    it("preserves a pre-existing .gitignore that lacks a trailing newline", () => {
       const tmpDir = makeTempDir();
       const preexistingContent = ["node_modules/", "dist/"].join("\n");
 
@@ -739,7 +739,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should append missing entries without repeating a present header", () => {
+    it("appends missing entries without repeating a present header", () => {
       const tmpDir = makeTempDir();
       const preexistingContent = [
         "# AI artifacts — session state, not project logic",
@@ -765,7 +765,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should be idempotent across repeated init runs", () => {
+    it("is idempotent across repeated init runs", () => {
       const tmpDir = makeTempDir();
 
       try {
@@ -786,7 +786,7 @@ describe("InstructionAssembler", () => {
   });
 
   describe("removeGeneratedInstructions()", () => {
-    it("should delete legacy .ai/instructions/idioms/ tree", () => {
+    it("deletes legacy .ai/instructions/idioms/ tree", () => {
       const tmpDir = makeTempDir();
       const staleDir = path.join(tmpDir, ".ai", "instructions", "idioms");
       const staleFile = path.join(staleDir, "typescript", "patterns.md");
@@ -810,7 +810,7 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("should be a no-op when no stale idioms exist", () => {
+    it("is a no-op when no stale idioms exist", () => {
       const tmpDir = makeTempDir();
 
       try {

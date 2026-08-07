@@ -27,7 +27,7 @@ function loadCheckerSource() {
 }
 
 describe("SyncChecker", () => {
-  it("should pair live and source trees explicitly rather than by shared name", () => {
+  it("pairs live and source trees explicitly rather than by shared name", () => {
     const checkerSource = loadCheckerSource();
 
     const actualHasFlatCommandsPair =
@@ -39,7 +39,7 @@ describe("SyncChecker", () => {
     assert.equal(actualHasFlatCommandsPair, expectedHasFlatCommandsPair);
   });
 
-  it("should mirror every tree that init writes into .ai/", () => {
+  it("mirrors every tree that init writes into .ai/", () => {
     const checkerSource = loadCheckerSource();
 
     const mirroredTreeNames = [
@@ -59,7 +59,7 @@ describe("SyncChecker", () => {
     assert.deepEqual(actualMissing, expectedMissing);
   });
 
-  it("should compare files of any extension, not markdown alone", () => {
+  it("compares files of any extension, not markdown alone", () => {
     const checkerSource = loadCheckerSource();
 
     const actualHasMarkdownFilter = checkerSource.includes('endsWith(".md")');
@@ -68,7 +68,7 @@ describe("SyncChecker", () => {
     assert.equal(actualHasMarkdownFilter, expectedHasMarkdownFilter);
   });
 
-  it("should resolve the flavor tree through the manifest selection", () => {
+  it("resolves the flavor tree through the manifest selection", () => {
     const checkerSource = loadCheckerSource();
 
     const actualReadsSelection = checkerSource.includes(
@@ -80,7 +80,7 @@ describe("SyncChecker", () => {
     assert.equal(actualReadsSelection, expectedReadsSelection);
   });
 
-  it("should carry no drift exemption now that AGENTS.md left .ai/", () => {
+  it("carries no drift exemption now that AGENTS.md left .ai/", () => {
     const checkerSource = loadCheckerSource();
 
     const actualExemptsAnything = checkerSource.includes("UNMIRRORED");
@@ -94,7 +94,7 @@ describe("SyncCheckerMirror", () => {
   // Generate the tree instead of reading `.ai/`: that mirror is gitignored
   // output, absent from any fresh clone, and reading it would only prove the
   // developer ran init at some point. Generating proves the writer still works.
-  it("should reproduce the whole tooling tree when generating into a clean directory", () => {
+  it("reproduces the whole tooling tree when generating into a clean directory", () => {
     const temporaryRoot = fileSystem.mkdtempSync(
       path.join(operatingSystem.tmpdir(), "sdg-mirror-"),
     );
@@ -114,7 +114,7 @@ describe("SyncCheckerMirror", () => {
     }
   });
 
-  it("should carry a source tree worth comparing", () => {
+  it("carries a source tree worth comparing", () => {
     const sourceEntries = listRelativeEntries(SOURCE_TOOLING_DIRECTORY);
 
     const actualEntryCount = sourceEntries.length;

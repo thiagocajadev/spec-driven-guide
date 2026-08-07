@@ -6,7 +6,7 @@ const { parseCliArgs, validateInit } = CliParser;
 
 describe("CliParser", () => {
   describe("parseCliArgs()", () => {
-    it("should parse a subcommand and positional target directory", () => {
+    it("parses a subcommand and positional target directory", () => {
       const input = ["init", "my-project", "--flavor", "lite"];
 
       const expectedSubcommand = "init";
@@ -22,7 +22,7 @@ describe("CliParser", () => {
       assert.equal(actualFlavor, expectedFlavor);
     });
 
-    it("should correctly parse positional arg after a flag with value", () => {
+    it("correctly parses positional arg after a flag with value", () => {
       const input = ["init", "--flavor", "mvc", "my-project"];
 
       const expectedTargetDir = "my-project";
@@ -35,7 +35,7 @@ describe("CliParser", () => {
       assert.equal(actualFlavor, expectedFlavor);
     });
 
-    it("should handle missing subcommand and default to null", () => {
+    it("handles missing subcommand and default to null", () => {
       const input = ["--help"];
 
       const expectedSubcommand = null;
@@ -48,7 +48,7 @@ describe("CliParser", () => {
       assert.equal(actualHelp, expectedHelp);
     });
 
-    it("should identify help and version flags (long and short)", () => {
+    it("identifies help and version flags (long and short)", () => {
       const inputHelpLong = ["--help"];
       const inputHelpShort = ["-h"];
       const inputVersionLong = ["--version"];
@@ -66,7 +66,7 @@ describe("CliParser", () => {
       assert.equal(actualVersionShort, expectedTrue);
     });
 
-    it("should handle dry-run flag", () => {
+    it("handles dry-run flag", () => {
       const input = ["init", "--dry-run"];
 
       const expectedDryRun = true;
@@ -77,7 +77,7 @@ describe("CliParser", () => {
       assert.equal(actualIsDryRun, expectedDryRun);
     });
 
-    it("should parse --quick flag", () => {
+    it("parses --quick flag", () => {
       const input = ["init", "--quick"];
 
       const expectedQuick = true;
@@ -88,7 +88,7 @@ describe("CliParser", () => {
       assert.equal(actualQuick, expectedQuick);
     });
 
-    it("should default quick to false when flag is absent", () => {
+    it("defaults quick to false when flag is absent", () => {
       const input = ["init", "--flavor", "lite"];
 
       const expectedQuick = false;
@@ -99,7 +99,7 @@ describe("CliParser", () => {
       assert.equal(actualQuick, expectedQuick);
     });
 
-    it("should not expose an idioms field (legacy flag removed in v5.0)", () => {
+    it("does not expose an idioms field (legacy flag removed in v5.0)", () => {
       const input = ["init", "--flavor", "lite"];
 
       const expectedAbsent = false;
@@ -116,7 +116,7 @@ describe("CliParser", () => {
   describe("validateInit()", () => {
     const expectedPass = null;
 
-    it("should return null for --quick flag (bypasses all other validation)", () => {
+    it("returns null for --quick flag (bypasses all other validation)", () => {
       const input = { quick: true, flavor: null, mode: null };
 
       const actual = validateInit(input);
@@ -124,7 +124,7 @@ describe("CliParser", () => {
       assert.equal(actual, expectedPass);
     });
 
-    it("should return null for mode quick (bypasses all other validation)", () => {
+    it("returns null for mode quick (bypasses all other validation)", () => {
       const input = { quick: false, mode: "quick", flavor: null };
 
       const actual = validateInit(input);
@@ -132,7 +132,7 @@ describe("CliParser", () => {
       assert.equal(actual, expectedPass);
     });
 
-    it("should return null for valid non-interactive arguments", () => {
+    it("returns null for valid non-interactive arguments", () => {
       const input = { quick: false, flavor: "lite", mode: null };
 
       const actual = validateInit(input);
@@ -140,7 +140,7 @@ describe("CliParser", () => {
       assert.equal(actual, expectedPass);
     });
 
-    it("should return null for interactive mode (no flavor)", () => {
+    it("returns null for interactive mode (no flavor)", () => {
       const input = { quick: false, flavor: null, mode: null };
 
       const actual = validateInit(input);
@@ -148,7 +148,7 @@ describe("CliParser", () => {
       assert.equal(actual, expectedPass);
     });
 
-    it("should return an error message if flavor is missing in non-interactive mode", () => {
+    it("returns an error message if flavor is missing in non-interactive mode", () => {
       const input = { quick: false, flavor: null, mode: "agents" };
 
       const expectedError = "--flavor is required";

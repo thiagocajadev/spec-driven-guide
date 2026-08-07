@@ -6,7 +6,7 @@ const { success, fail } = ResultUtils;
 
 describe("ResultUtils", () => {
   describe("success()", () => {
-    it("should create a success result with a value", () => {
+    it("creates a success result with a value", () => {
       const input = "hello";
 
       const expectedValue = input;
@@ -25,7 +25,7 @@ describe("ResultUtils", () => {
       assert.equal(actualError, expectedNull);
     });
 
-    it("should create a success result with undefined when no value is passed", () => {
+    it("creates a success result with undefined when no value is passed", () => {
       const expectedValue = undefined;
       const expectedSuccess = true;
       const expectedFailure = false;
@@ -42,7 +42,7 @@ describe("ResultUtils", () => {
       assert.equal(actualError, expectedNull);
     });
 
-    it("should preserve complex objects as values", () => {
+    it("preserves complex objects as values", () => {
       const input = { id: 1, name: "test", nested: { key: "value" } };
 
       const expected = input;
@@ -53,7 +53,7 @@ describe("ResultUtils", () => {
       assert.deepEqual(actualValue, expected);
     });
 
-    it("should handle null as a valid value", () => {
+    it("handles null as a valid value", () => {
       const input = null;
 
       const expectedValue = null;
@@ -68,7 +68,7 @@ describe("ResultUtils", () => {
   });
 
   describe("fail()", () => {
-    it("should create a failure result with message and code", () => {
+    it("creates a failure result with message and code", () => {
       const inputMessage = "Something went wrong";
       const inputCode = "ERR_001";
 
@@ -92,7 +92,7 @@ describe("ResultUtils", () => {
       assert.deepEqual(actualError, expectedError);
     });
 
-    it("should guarantee isSuccess and isFailure are always opposite", () => {
+    it("guarantees isSuccess and isFailure are always opposite", () => {
       const inputOk = "data";
       const inputErr = "oops";
 

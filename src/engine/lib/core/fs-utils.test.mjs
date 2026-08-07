@@ -9,7 +9,7 @@ const { getDirname, getDirectories, copyRecursiveSync } = FsUtils;
 
 describe("FsUtils", () => {
   describe("getDirname()", () => {
-    it("should return a valid directory path from a file URL", () => {
+    it("returns a valid directory path from a file URL", () => {
       const input = "file:///home/user/project/src/index.mjs";
       const expected = "/home/user/project/src";
 
@@ -18,7 +18,7 @@ describe("FsUtils", () => {
       assert.equal(actual, expected);
     });
 
-    it("should return the directory of the current test file", () => {
+    it("returns the directory of the current test file", () => {
       const input = import.meta.url;
 
       const expected = true;
@@ -33,7 +33,7 @@ describe("FsUtils", () => {
   });
 
   describe("getDirectories()", () => {
-    it("should return an empty array when the path does not exist", () => {
+    it("returns an empty array when the path does not exist", () => {
       const input = "/non-existent-path-sdg-test";
       const expected = [];
 
@@ -42,7 +42,7 @@ describe("FsUtils", () => {
       assert.deepEqual(actual, expected);
     });
 
-    it("should return a list of directory names for a valid path", () => {
+    it("returns a list of directory names for a valid path", () => {
       const coreDir = getDirname(import.meta.url);
       const input = path.join(coreDir, "..");
 
@@ -55,7 +55,7 @@ describe("FsUtils", () => {
   });
 
   describe("copyRecursiveSync()", () => {
-    it("should copy a single file to a destination", () => {
+    it("copies a single file to a destination", () => {
       const tmpDir = fileSystem.mkdtempSync(
         path.join(os.tmpdir(), "sdg-test-"),
       );
@@ -76,7 +76,7 @@ describe("FsUtils", () => {
       fileSystem.rmSync(tmpDir, { recursive: true, force: true });
     });
 
-    it("should copy a directory tree recursively", () => {
+    it("copies a directory tree recursively", () => {
       const tmpDir = fileSystem.mkdtempSync(
         path.join(os.tmpdir(), "sdg-test-"),
       );
@@ -108,7 +108,7 @@ describe("FsUtils", () => {
       fileSystem.rmSync(tmpDir, { recursive: true, force: true });
     });
 
-    it("should do nothing when the source path does not exist", () => {
+    it("does nothing when the source path does not exist", () => {
       const destFile = "/tmp/sdg-dest-non-existent.txt";
       const input = "/non-existent-path-sdg-test/file.txt";
       const expected = false;

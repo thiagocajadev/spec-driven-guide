@@ -35,7 +35,7 @@ function buildBlockReport() {
 }
 
 describe("gate --check", () => {
-  it("should exit 0 and stay quiet on a clean report", () => {
+  it("exits 0 and stay quiet on a clean report", () => {
     const input = '{"canCommit": true, "violations": []}';
 
     const expectedStatus = 0;
@@ -49,7 +49,7 @@ describe("gate --check", () => {
     assert.equal(actualStderr, expectedStderr);
   });
 
-  it("should exit 1 on a BLOCK violation", () => {
+  it("exits 1 on a BLOCK violation", () => {
     const input = buildBlockReport();
 
     const expectedStatus = 1;
@@ -60,7 +60,7 @@ describe("gate --check", () => {
     assert.equal(actualStatus, expectedStatus);
   });
 
-  it("should exit 0 but warn loudly when the verdict cannot be read", () => {
+  it("exits 0 but warn loudly when the verdict cannot be read", () => {
     const input = '{"type": "result", "result": "prose, not a verdict"}';
 
     const expectedStatus = 0;
@@ -73,7 +73,7 @@ describe("gate --check", () => {
     assert.ok(actualWarns);
   });
 
-  it("should exit 1 under --strict when the verdict cannot be read", () => {
+  it("exits 1 under --strict when the verdict cannot be read", () => {
     const input = '{"type": "result", "result": "prose, not a verdict"}';
 
     const expectedStatus = 1;
@@ -86,7 +86,7 @@ describe("gate --check", () => {
     assert.ok(actualWarns);
   });
 
-  it("should exit 1 under --strict when the input is not JSON at all", () => {
+  it("exits 1 under --strict when the input is not JSON at all", () => {
     const input = "diff --git a/src/order.mjs b/src/order.mjs";
 
     const expectedStatus = 1;
@@ -97,7 +97,7 @@ describe("gate --check", () => {
     assert.equal(actualStatus, expectedStatus);
   });
 
-  it("should keep exit 0 without --strict when the input is not JSON at all", () => {
+  it("keeps exit 0 without --strict when the input is not JSON at all", () => {
     const input = "diff --git a/src/order.mjs b/src/order.mjs";
 
     const expectedStatus = 0;
