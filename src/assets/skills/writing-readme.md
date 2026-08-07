@@ -55,15 +55,16 @@ One badge per line, whatever the line length. A formatter that wraps the row bre
 
 ### Rules
 
-| Element     | Rule                                                                                                                      |
-| :---------- | :------------------------------------------------------------------------------------------------------------------------ |
-| Logo        | Square, 360 to 640 px, with `width` and `height` both set. A missing dimension lets the page reflow while the image loads |
-| Title       | Inside the banner as `<h1 align="center">`. A markdown `#` above the block leaves the title outside the centering         |
-| Tagline     | One sentence, then `<br>`, then the link to the translated README, all in one `<p align="center">`                        |
-| Live link   | Its own `<p align="center">`, written only when the project is published somewhere                                        |
-| Badges      | `shields.io`, `style=flat-square`, `logo=` set, and each badge wrapped in an `<a>` that opens what the badge reports      |
-| Badge order | Identity and status, then stack, then meta. The three groups below                                                        |
-| Closing     | `</div>`, then a bare `<br>`. Without the `<br>` the first paragraph sits flush against the badges                        |
+| Element            | Rule                                                                                                                                                                                                                                                                                                                                             |
+| :----------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Logo               | Square, 360 to 640 px, with `width` and `height` both set. A missing dimension lets the page reflow while the image loads                                                                                                                                                                                                                        |
+| Title              | Inside the banner as `<h1 align="center">`. A markdown `#` above the block leaves the title outside the centering                                                                                                                                                                                                                                |
+| Tagline            | One sentence, then `<br>`, then the link to the translated README, all in one `<p align="center">`                                                                                                                                                                                                                                               |
+| Live link          | Its own `<p align="center">`, written only when the project is published somewhere                                                                                                                                                                                                                                                               |
+| Badges             | `shields.io`, `style=flat-square`, `logo=` set, and each badge wrapped in an `<a>` that opens what the badge reports                                                                                                                                                                                                                             |
+| Badge order        | Identity and status, then stack, then meta. The three groups below                                                                                                                                                                                                                                                                               |
+| One fact per badge | Two badges never report the same fact. A CI badge already covers lint, tests and audit when the workflow runs them, so a second badge pointing at that workflow adds no information and implies the two can disagree. Test strength is said with a real coverage badge or not at all, never with a hand-written count that goes stale in silence |
+| Closing            | `</div>`, then a bare `<br>`. Without the `<br>` the first paragraph sits flush against the badges                                                                                                                                                                                                                                               |
 
 ### Badge order
 

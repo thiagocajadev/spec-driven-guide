@@ -1,0 +1,56 @@
+# SDG release pipeline. The version is derived from the commits and never
+# written into them.
+#
+# Inert until copied to .github/workflows/ in the consuming project.
+#
+# On every push to the default branch it reads the commits since the last tag,
+# computes the next version from their types (feat = minor, fix and perf =
+# patch, a `!` marker or a BREAKING CHANGE footer = major), and opens or updates
+# a release PR carrying the version bump and the generated CHANGELOG. Merging
+# that PR tags the release and creates the GitHub Release.
+#
+# The human gate is the merge. Nothing reaches a tag without it, which is why
+# this action is the one SDG ships: the alternative publishes on every push and
+# automates away the approval the framework treats as non-negotiable.
+
+name: release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: .release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      # Publishing is opt-in and ships commented out, because a registry push is
+      # the one step that cannot be undone. Uncomment only after NPM_TOKEN sits
+      # in the repository secrets and the team has agreed that merging the
+      # release PR should reach the registry with no further human step.
+      #
+      # - uses: actions/checkout@v5
+      #   if: ${{ steps.release.outputs.release_created }}
+      #
+      # - uses: actions/setup-node@v5
+      #   if: ${{ steps.release.outputs.release_created }}
+      #   with:
+      #     node-version: 24
+      #     registry-url: https://registry.npmjs.org
+      #
+      # - run: npm ci
+      #   if: ${{ steps.release.outputs.release_created }}
+      #
+      # - run: npm publish --provenance --access public
+      #   if: ${{ steps.release.outputs.release_created }}
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -73,7 +73,7 @@ npm install --save-dev husky lint-staged && npx husky init
 
 ## Release Strategy
 
-- **Commits + SemVer**: canonical in `code-style.md` StaffGradeVCS.
+- **Commits + SemVer**: canonical in `versioning.md`, rule `VersionControl`. This file owns wiring the pipeline; that one owns what the commit says and who decides the number.
 - **Versioning**: MAJOR.MINOR.PATCH; CI publishes on tags.
 - **Risk control**: feature flags, not long-lived branches.
 

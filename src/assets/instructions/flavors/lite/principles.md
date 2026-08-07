@@ -20,3 +20,5 @@ Even in a single file:
 - **Resilience**: Prefer Result Pattern for business logic / complex failure paths. Don't force it for trivial logic where idiomatic error handling is clearer.
 
 > **Upgrade trigger**: File > 300 lines or logic reused across multiple files → refactor to Vertical Slice.
+>
+> The 500-line ceiling in `code-style.md` is the hard limit for any file in any flavor. The 300 lines above are the earlier signal that this flavor has stopped paying for itself, so a Lite file crossing it changes shape rather than growing to the ceiling.

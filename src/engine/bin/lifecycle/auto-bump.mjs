@@ -22,9 +22,9 @@ export function detectBumpType(commitMessage) {
 
   const BUMP_RULES = [
     { test: () => /^chore:\s*bump version/i.test(firstLine), value: "skip" },
-    { test: () => /^[a-z]+!:/.test(firstLine), value: "major" },
+    { test: () => /^[a-z]+(\([^)]+\))?!:/.test(firstLine), value: "major" },
     { test: () => /BREAKING CHANGE:/m.test(footer), value: "major" },
-    { test: () => /^feat:/.test(firstLine), value: "minor" },
+    { test: () => /^feat(\([^)]+\))?:/.test(firstLine), value: "minor" },
   ];
 
   const matchedRule = BUMP_RULES.find((rule) => rule.test());

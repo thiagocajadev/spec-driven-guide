@@ -33,6 +33,8 @@
 
 ## Research Findings
 
+- **A standard's own page is the source; summaries of it reorder and rename** (2026-08-07, v7.0.0): the OWASP Top 10:2025 mapping table in `security.md` was first built from search-result summaries and had five of ten rows wrong. Categories had shuffled between editions (Security Misconfiguration is A02 and Cryptographic Failures is A04, the reverse of what the summaries implied), one had been renamed (Logging & Monitoring became Security Logging and Alerting), and a publication date asserted by several vendor blogs appears nowhere on the official pages. Every summary was individually plausible and eight of ten links returned 200, so nothing looked wrong until the source was read. The check that caught it was the pre-commit link verification, which is why status codes are not the whole of that check: **200 proves the link resolves, never that the page says what the citing text claims**. Any rule that pins an external edition has to read that edition, and the `audit:` currency check now says so explicitly.
+
 - **Automated Versioning**: Validated that `npm version` combined with Regex-based `CHANGELOG.md` promotion creates a reliable "Success by Default" experience.
 - **Husky Resilience**: Integrated NVM shims in hooks to prevent path-related failures in non-interactive agent shells on Linux.
 - **npm `files` + `.npmignore` interaction**: When the `files` field in `package.json` lists a directory, `.npmignore` cannot exclude files inside that directory. npm treats `files` as a strict allowlist.

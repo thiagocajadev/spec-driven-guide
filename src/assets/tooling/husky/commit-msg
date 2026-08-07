@@ -13,11 +13,15 @@ if [ ! -r "$1" ]; then
   exit 1
 fi
 
-pattern='^(feat|fix|docs|audit|land|chore|refactor|test|perf)(\([^)]+\))?:\s'
+# why: the `!` before the colon is how Conventional Commits marks a breaking
+# change, and it is the signal release tooling reads to pick MAJOR. Without it
+# in the pattern the hook blocks the only way to publish one.
+pattern='^(feat|fix|docs|audit|land|chore|refactor|test|perf)(\([^)]+\))?!?:\s'
 first_line=$(head -n 1 "$1")
 
 if ! echo "$first_line" | grep -qE "$pattern"; then
-  echo "❌ Commit message must start with: feat|fix|docs|audit|land|chore|refactor|test|perf:"
+  echo "❌ Commit message must start with: feat|fix|docs|audit|land|chore|refactor|test|perf"
+  echo "   Optional scope in parentheses, optional ! before the colon to mark a breaking change."
   echo "Got: $first_line"
   exit 1
 fi

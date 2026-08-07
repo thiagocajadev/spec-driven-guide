@@ -121,7 +121,12 @@ const SKILL_CATALOG = [
   {
     path: ".ai/skills/visual-density.md",
     category: "surgical",
-    description: "Visual-density readability, in depth",
+    description: "Visual density in depth (core rule always on)",
+  },
+  {
+    path: ".ai/skills/writing-soul.md",
+    category: "surgical",
+    description: "voice for UI copy, docs, commits",
   },
 ];
 

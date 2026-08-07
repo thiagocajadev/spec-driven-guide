@@ -19,7 +19,7 @@
 
 ### Config Fail-Fast
 
-- Config schema + abstract naming + no `.env.example`: see `security.md` (AbstractEnvNaming SSOT).
+- Config schema + abstract naming + no `.env.example`: see `security.md`, **Abstract Env Naming** (SSOT).
 - Ship logs to central sink (CloudWatch, Datadog, GCP Logging); never rely on local disk in cloud.
 - Health + RED + structured logging rules: see `observability.md`.
 
@@ -31,12 +31,12 @@
 - `npm install`/`dotnet build` in separate build stage
 
 ```dockerfile
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 COPY . .
 RUN npm ci && npm run build
 
-FROM node:22-alpine AS runner
+FROM node:24-alpine AS runner
 WORKDIR /app
 COPY --from=builder /app/dist ./dist
 USER node

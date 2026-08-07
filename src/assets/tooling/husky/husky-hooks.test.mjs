@@ -199,6 +199,41 @@ describe("husky commit-msg", () => {
     }
   });
 
+  it("exits 0 on a breaking-change marker after the type", () => {
+    const targetDir = makeTempDir();
+
+    try {
+      const messagePath = writeCommitMessage(targetDir, "feat!: drop node 22");
+      const hookOptions = { cwd: targetDir, args: [messagePath] };
+
+      const expectedExitCode = 0;
+      const outcome = runHook(COMMIT_MSG_PATH, hookOptions);
+      const actualExitCode = outcome.status;
+
+      assert.equal(actualExitCode, expectedExitCode);
+    } finally {
+      cleanup(targetDir);
+    }
+  });
+
+  it("exits 0 on a breaking-change marker after the scope", () => {
+    const targetDir = makeTempDir();
+
+    try {
+      const breakingLine = "feat(engine)!: drop node 22";
+      const messagePath = writeCommitMessage(targetDir, breakingLine);
+      const hookOptions = { cwd: targetDir, args: [messagePath] };
+
+      const expectedExitCode = 0;
+      const outcome = runHook(COMMIT_MSG_PATH, hookOptions);
+      const actualExitCode = outcome.status;
+
+      assert.equal(actualExitCode, expectedExitCode);
+    } finally {
+      cleanup(targetDir);
+    }
+  });
+
   it("exits 1 on a message with no conventional prefix", () => {
     const targetDir = makeTempDir();
 

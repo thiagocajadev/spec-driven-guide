@@ -117,7 +117,6 @@ The UI/UX skill is built on public research and open-source work. The items belo
 
 ### AI agent ecosystem
 
-- **[UI/UX Pro Max Skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)**: advanced design tokens and aesthetics research for AI coding agents. Shaped the premium look of the GLASS and BENTO presets.
 - **[TypeUI](https://typeui.sh)**: a CLI-first approach to managing design systems for AI agents; influenced how we structure visual skills.
 
 ---

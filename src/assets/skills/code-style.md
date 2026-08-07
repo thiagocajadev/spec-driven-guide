@@ -2,7 +2,7 @@
 
 <ruleset name="CodeStyle">
 
-> Load in **Phase CODE**. SQL aesthetics in `sql-style.md`; UI copy voice in `writing-soul.md`; visual density in depth in `visual-density.md`.
+> Load in **Phase CODE**. SQL aesthetics in `sql-style.md`; UI copy voice in `writing-soul.md`; visual density in depth in `visual-density.md`; commit shape and release modes in `versioning.md`, which Phase END loads instead of this file.
 
 ## Security first
 
@@ -59,9 +59,10 @@
 - **Banned verbs**: `handle`, `do`, `run`, `execute`, `perform`; `get` for computations (use `compute` / `calculate` / `derive`).
 - **Banned nouns**: `data`, `info`, `obj`, `item`, `thing`, `helpers`, `utils`, `common`, `shared`, `misc`.
 - **Banned abbreviations**: `req` → `request`, `res` → `response`, `ctx` → `context`, plus `idx`, `prev`, `arr`, `val`, `tmp`, `cb`, `fn`, `mgr`, `ctrl`, `svc`.
+- **Name distinctiveness**: a new identifier returns under five `grep` hits across the repository. The banned lists catch the names already known to be generic; this test catches the ones that are not on any list yet. It matters because agents navigate by lexical search, so a name colliding with forty lines costs a read of each.
 - **Braced guards** examples: ❌ `if (isEmpty) return null;` ✅ `if (isEmpty) {\n  return null;\n}`.
 - **Import aliasing** examples: `import z from 'zod'` → `import { z as validate } from 'zod'`; `import fs from 'node:fs'` → `import fileSystem from 'node:fs'`. Carve-out: identifiers ≥3 chars that are English words or established acronyms (`path`, `os`, `url`, `http`, `crypto`) stay as-is.
-- **WHY discipline**: `// why:` permitted only for hidden constraints (invariants, workarounds, bug references). Multi-line WHY → extract named const / function or move to docstring. On drift (maintenance, evolution, fix-on-fix): replace stale WHY, never stack `// update:` / `// 2026:` / `// also:` chains. Stale WHY ≥ no comment. No section banners (`// --- Section ---`).
+- **WHY discipline**: `// why:` permitted only for hidden constraints (invariants, workarounds, bug references). Multi-line WHY → extract named const / function or move to docstring. On drift (maintenance, evolution, fix-on-fix): replace stale WHY, never stack `// update:` / `// 2026:` / `// also:` chains. Stale WHY ≥ no comment. No section banners (`// --- Section ---`). A sound WHY survives refactor: it holds the constraint, workaround or bug reference the code cannot show on its own, and deleting it discards the only copy. Move it with the code it explains, rewrite it when the mechanism changes, and remove it only once the constraint is gone.
 - **Magic values**: any string whose visible form does not match its purpose is magic: `'en-CA'` used to emit ISO dates, single-letter locale codes for formatting side-effects. Exception messages include the offending value and the expected shape.
 
 ---

@@ -35,7 +35,7 @@
 ### 3. Boundaries & Insulation
 
 - **Typed Layer Results**: Named types for all inter-layer returns. No anonymous objects.
-- **One-Line Entry Point**: `run()` / `init()` / `start()` = headline caller only (single-statement or canonical 2-statement form). `Result<T> → HttpEnvelope` via Adapter.
+- **Entry point**: `code-style.md`, `Clean entry point`, owns the shape. What this layer adds is the conversion `Result<T> → HttpEnvelope` through the Adapter at that edge, and nothing else happening there.
 - **OutputFilter**: Entities → Response DTOs. Mask PII/password/internal IDs.
 - **Insulation**: Cache as decorator. Repositories hide SQL/NoSQL details.
 
@@ -56,11 +56,10 @@
 
 ### 2. Visual Layers & Scale
 
-- **Base**: `bg-background` (root) · **Surface**: `bg-muted` / `bg-muted/40` (sections) · **Elevated**: `bg-card` (cards) · **Overlay**: `bg-popover` (modals).
-- **Surface hierarchy, both themes**: keep the S0→S3 tonal steps in light and dark. Never pure white (`#FFFFFF`) or pure black (`#000000`); the Zinc 50 and Zinc 950 ceilings hold. See `ui-ux.md` Phase 0.2 / 0.7 / 0.8.
-- **Brand**: `--color-primary-*` (OKLCH) for actions/accents.
-- **Spacing**: `gap-1`–`gap-8`. No arbitrary values. No margin for layout.
-- **Radius**: `rounded-sm (6px)` · `rounded-md (10px)` · `rounded-lg (16px)`.
+- **Surfaces**: `ui-ux.md` owns the hierarchy and this file does not restate it. Phase 0.2 for S0→S3, Phase 0.7 / 0.8 for the per-theme calibration, Phase 0.9 for input surfaces and feedback color. Both themes ship, and neither pure white (`#FFFFFF`) nor pure black (`#000000`) appears in either.
+- **Brand**: `--color-primary-*` (OKLCH) for actions and accents. The four feedback roles sit outside the brand budget, see `ui-ux.md` Phase 0.9.
+- **Spacing**: `gap-1` to `gap-8`, following the L1–L4 hierarchy in `ui-ux.md`. No arbitrary values. No margin for layout.
+- **Radius**: the preset declares the container radius (`ui-ux.md` Part 3), and nested elements derive theirs from the concentric rule in Phase 0.6. Never introduce a parallel pixel scale here.
 
 ### 3. HTTP Integration
 

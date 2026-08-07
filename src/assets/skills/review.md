@@ -8,14 +8,14 @@
 
 ## PR Craft (the author's contract with the reviewer)
 
-| Aspect            | Rule                                                                                                  |
-| :---------------- | :---------------------------------------------------------------------------------------------------- |
-| Scope             | One concern per PR. Mixing refactor + feature blocks the reviewer.                                    |
-| Size              | ≤ 400 changed lines target; > 600 lines = split before requesting review.                             |
-| Title             | Imperative + intent: `fix: prevent N+1 in OrderRepo`. No "WIP" / "Final" suffixes.                    |
-| Description       | What changed, **why**, how to verify. Reference issue / incident SHA when fix-on-incident.            |
-| Diff hygiene      | Squash WIP commits before review. Each commit compiles + tests green.                                 |
-| Self-review first | Read the diff yourself before requesting review. Strip noise (comments, debug prints, dead branches). |
+| Aspect            | Rule                                                                                                                 |
+| :---------------- | :------------------------------------------------------------------------------------------------------------------- |
+| Scope             | One concern per PR. Mixing refactor + feature blocks the reviewer.                                                   |
+| Size              | ≤ 400 changed lines target; > 600 lines = split before requesting review.                                            |
+| Title             | Same grammar as a commit subject, see `versioning.md`: `fix: prevent N+1 in OrderRepo`. No "WIP" / "Final" suffixes. |
+| Description       | What changed, **why**, how to verify. Reference issue / incident SHA when fix-on-incident.                           |
+| Diff hygiene      | Squash WIP commits before review. Each commit compiles + tests green.                                                |
+| Self-review first | Read the diff yourself before requesting review. Strip noise (comments, debug prints, dead branches).                |
 
 ---
 

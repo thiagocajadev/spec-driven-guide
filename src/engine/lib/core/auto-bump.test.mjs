@@ -48,6 +48,27 @@ describe("AutoBump", () => {
       assert.equal(actualFix, expected);
     });
 
+    it("returns minor for a scoped feature", () => {
+      const input = "feat(engine): adiciona derivacao de versao";
+
+      const expected = "minor";
+      const actual = detectBumpType(input);
+
+      assert.equal(actual, expected);
+    });
+
+    it("returns major for a scoped breaking change", () => {
+      const inputFeature = "feat(engine)!: remove suporte a Node 22";
+      const inputFix = "fix(api)!: altera contrato do envelope";
+
+      const expected = "major";
+      const actualFeature = detectBumpType(inputFeature);
+      const actualFix = detectBumpType(inputFix);
+
+      assert.equal(actualFeature, expected);
+      assert.equal(actualFix, expected);
+    });
+
     it("returns major for BREAKING CHANGE in footer", () => {
       const input =
         "refactor: reestrutura pipeline\n\nBREAKING CHANGE: remove flag --legacy";

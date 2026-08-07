@@ -66,6 +66,13 @@ Present an **allow-list of canonical doc sources**, one per language entry. Ask 
 - .NET / C# → `learn.microsoft.com/dotnet/`
 - Swift → `developer.apple.com/documentation/swift/`
 
+**Security sources**, allowed for any stack and read by `audit:` when it checks the baseline in `security.md`:
+
+- OWASP Top 10 → `owasp.org/Top10/`
+- OWASP ASVS → `owasp.org/www-project-application-security-verification-standard/`
+- OWASP Cheat Sheets → `cheatsheetseries.owasp.org/`
+- Advisory data → `nvd.nist.gov/`
+
 Rules:
 
 - Only WebFetch URLs from this allow-list. Never invent a source.
@@ -102,6 +109,19 @@ Follow the seed shape (roles as headers, one bullet per entry):
 ```
 
 If a role has no entries, keep the header with `_(none)_` placeholder, because downstream loaders rely on the shape.
+
+### 4. Declare the release mode
+
+Ask once, and write the answer as `release` in `context.md`:
+
+> "Who cuts releases here: a single maintainer on their own machine, or a team through pull requests?"
+
+- **Single maintainer** → `manual`. The bump runs locally, the release commit carries the version, and `CHANGELOG.md` is maintained by hand under `## [Unreleased]`. Nothing to configure and no CI minutes spent.
+- **Team** → `derived`. Offer to wire `.ai/tooling/github-actions/`, following the recipe in `.ai/tooling/README.md`. From then on the agent writes neither the version nor the changelog, because the commits already carry both.
+
+Both modes compute the same bump from the same commit types, and they differ only in where that happens. `versioning.md`, `VersionControl`, holds the table.
+
+Default to `manual` when the answer is unclear: it needs no infrastructure, and moving to `derived` later is copying three files.
 
 ## Phase: BACKLOG → MODE: PLANNING
 

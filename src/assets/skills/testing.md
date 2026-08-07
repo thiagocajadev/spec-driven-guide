@@ -21,9 +21,11 @@ Prioritize integration over unit for orchestration layers. Unit test domain logi
 
 <rule name="TestNamingConvention">
 
-- **Format:** `[MethodUnderTest]_[Scenario]_[ExpectedResult]`
+The discriminator is what the runner reports, not the language.
+
+- **BDD frameworks** (Jest, Vitest, `node:test`, RSpec, Pytest) nest, so the name is split: the `describe` block carries the subject, the case carries behavior and outcome, in natural language. No `should` prefix, which adds no information.
+- **xUnit frameworks** (JUnit, NUnit, xUnit.net, Go `testing`) report a bare method name with no surrounding block, so that one name carries all three parts: `[MethodUnderTest]_[Scenario]_[ExpectedResult]`.
 - Always in English. Focus on behavior, not implementation.
-- JS/TS: prefer natural-language in `describe/it` blocks. No `should` prefix: it adds no information.
 
 ```javascript
 describe('ValidateCredentials', () => {

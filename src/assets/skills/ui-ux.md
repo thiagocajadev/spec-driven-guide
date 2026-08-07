@@ -202,11 +202,77 @@ Zinc 50 (`oklch(98% 0.002 285)`) is the ceiling; never override with `#FFFFFF`. 
 
 **Elevation via shadow:** surfaces cannot go lighter than the Zinc 50 ceiling, so depth reads through soft shadows (S2 `shadow-sm`, S3 `shadow-md`).
 
-**Text: never pure black:** primary text is Zinc 900 (L≈20%), not `#000000`. Secondary Zinc 600, disabled Zinc 400. Pure black on near-white reads harsh and raises glare.
+**Text: never pure black, mirroring the Phase 0.7 table:**
+
+| Role      | Zinc step | Token equivalent           |
+| :-------- | :-------- | :------------------------- |
+| Primary   | 900       | `text-foreground`          |
+| Secondary | 600       | `text-muted-foreground`    |
+| Disabled  | 400       | `text-muted-foreground/70` |
+
+Zinc 900 (L≈20%) is the floor, and `#000000` never replaces it: pure black on a near-white surface reads harsh and raises glare. Below Zinc 400 disabled text stops being readable rather than reading as disabled.
 
 **Borders:** `border-border` (Zinc 200) for structure; `border-border/60` for subtle grouping. Hold the WCAG contrast floor (Part 4).
 
 > Peer of Phase 0.7. Same FigureGround law, opposite luminance direction.
+
+</rule>
+
+### Phase 0.9: Control Surfaces & Feedback
+
+<rule name="ControlSurfaces">
+
+The elevation stack rises toward the user. A control that **accepts** input does the opposite: it reads as a well cut into the surface holding it. Call that layer **S-1**, defined relative to its parent rather than to the page.
+
+**S-1 moves the same direction in both themes: down.** Elevation flips between light and dark, recession does not, because a depression loses light whichever way the scale runs.
+
+| Parent          | Field fill | Field border | Focus                       |
+| :-------------- | :--------- | :----------- | :-------------------------- |
+| Light card (50) | Zinc 100   | Zinc 200     | `border-primary` + `ring-2` |
+| Light page (50) | Zinc 100   | Zinc 200     | same                        |
+| Dark card (800) | Zinc 900   | Zinc 700     | same                        |
+| Dark page (950) | Zinc 950   | Zinc 700     | same                        |
+
+The last row is the exception that proves the rule: the dark page already sits on the floor of the scale, so the field cannot drop below it. **When the parent is at the floor, the fill holds and the border carries the boundary alone.** Never give a field both the same fill and the same border weight as its parent, because a control with neither is a control the user cannot find.
+
+**Radius** follows the concentric rule of Phase 0.6, computed from the container that holds the field, not from a global default.
+
+**No two containers share an elevation step.** A card inside a card either climbs one step (S2 → S3) or drops its fill and groups by border and spacing. Prefer dropping the fill: **Closure** (Part 4.0) says define the boundary with space before adding chrome. Adjacent surfaces differ by at least one full step on the Zinc scale, and where they cannot, a border does the work instead.
+
+</rule>
+
+<rule name="SemanticFeedback">
+
+Primary and secondary carry the brand. They say nothing about **state**, so a form built from them alone invents an error color per project.
+
+| Role            | Hue        | Says                                               |
+| :-------------- | :--------- | :------------------------------------------------- |
+| **destructive** | Red ~25    | Irreversible action, validation failure, data loss |
+| **success**     | Green ~150 | Write confirmed, check passing                     |
+| **warning**     | Amber ~75  | Degraded, needs attention, nothing lost yet        |
+| **info**        | Blue ~250  | Neutral notice                                     |
+
+**These four sit outside the 60-30-10 budget.** That distribution describes the interface at rest; feedback appears in answer to a state and leaves with it. Counting it against the budget pushes designers to under-signal failure.
+
+Each role ships three tokens off the Phase 0.1 progression: fill at step 100 light / 900 dark, foreground at 700 light / 300 dark, border at 200 light / 800 dark. The dark-mode chroma reduction of Phase 0.7 (C×0.80–0.90) applies here too.
+
+**When the brand primary is blue**, info collides with it. Info then drops its fill and reads through border plus icon, leaving saturated blue to mean "action".
+
+**Never carry the meaning in hue alone.** Accessibility (Part 4) forbids it: every feedback surface pairs color with an icon and a word.
+
+</rule>
+
+<rule name="FormAnatomy">
+
+One field per row, in fixed vertical order: **label, control, help text**. Error text replaces help text in the same slot, so the row height never jumps.
+
+- **The label sits above the control.** A placeholder is not a label: it disappears the moment the user types, which is the moment they need it.
+- **Help text is permanent**, not a tooltip. If the field needs an explanation to be filled correctly, that explanation is part of the field.
+- **Required is marked on the label**, and the form states its convention once at the top. Marking optional instead is valid when most fields are required, provided the choice is stated.
+- **Field width tracks expected content.** A postal code the width of the row teaches the wrong expectation before the user types a character.
+- **Grouping uses `fieldset` + `legend`** when fields form one unit (address, payment). **CommonRegion** (Part 4.0) applies: a bounded container survives responsive reflow, proximity alone does not.
+- **Validation fires on blur** for a field the user has left, and on submit for the form. Never on every keystroke, which corrects a person mid-thought.
+- **The submit control owns its loading state** and blocks the second press. Trusting the user not to double-submit is not a strategy.
 
 </rule>
 

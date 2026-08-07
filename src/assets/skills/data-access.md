@@ -28,7 +28,7 @@
 
 ## Vertical Density & Storytelling SQL
 
-- Follow SDG Linear Flow Style (see `.ai/skills/sql-style.md`)
+- Follow the SDG Vertical Style (see `.ai/skills/sql-style.md`)
 - Mandatory JOINs first, then optional (LEFT JOIN)
 - Always qualify: `Table.Column`
 - Avoid complex nested subqueries; favor temp tables for sequential steps

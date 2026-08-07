@@ -31,6 +31,59 @@ node .ai/tooling/scripts/bump-version.mjs <patch|minor|major>
 - Use case: dev experimentation, pre-release bumps, or agent-driven version-only changes.
 - For full release bump (version + CHANGELOG promote + stage), use the project's own
   `scripts/bump.mjs` if installed.
+- To stop choosing the type by hand, pair it with `derive-bump.mjs` below.
+
+### `scripts/derive-bump.mjs`
+
+Reads the commits since the last tag and prints the bump they imply, one word on
+stdout: `patch`, `minor` or `major`. It applies the same table `release-please`
+runs in CI, so a project that starts on a local bump and later wires the action
+keeps producing the same numbers, and the move never renumbers a release.
+
+Pairs with `bump-version.mjs`, which stays a pure writer:
+
+```
+node .ai/tooling/scripts/bump-version.mjs $(node .ai/tooling/scripts/derive-bump.mjs)
+```
+
+Two files rather than one, because reading history is a query and writing the
+version is a command. Folding them would also cost `bump-version.mjs` the tested
+guarantee that it never shells out to git.
+
+Exits non-zero when nothing since the last tag is releasable, and every
+diagnostic goes to stderr so stdout stays usable inline.
+
+### `scripts/promote-changelog.mjs`
+
+Renames `## [Unreleased]` to the version in `package.json`, dated today, and
+seeds a fresh empty Unreleased block above it. Reads `package.json`, writes
+`CHANGELOG.md`, touches nothing else.
+
+It refuses to promote an Unreleased block that carries no narrative, section
+headings with nothing under them not counting. That guard exists because the
+opposite behaviour has already cost a release: an empty block promoted on
+schedule mints a version header with no notes behind it, which is the single
+thing a changelog exists to prevent. A second run for the same version is
+refused too, since stacking two headings on one version puts the notes under
+the wrong number and the symptom appears releases later.
+
+Every refusal names its reason on stderr and exits non-zero. The engine's own
+`auto-bump.mjs` returns in silence on the same conditions, which is right for a
+post-commit hook and wrong for a command somebody typed.
+
+### The three steps of the manual release mode
+
+Each script does one thing, and together they are what `derived` mode gets from
+CI:
+
+```
+derive-bump.mjs        reads the commits    → prints the type
+bump-version.mjs       takes the type       → writes package.json
+promote-changelog.mjs  reads package.json   → writes CHANGELOG.md
+```
+
+None of them touches git. Staging, committing and tagging stay where the
+approval is, which is with the person running them.
 
 ### `husky/pre-commit`
 
@@ -91,6 +144,24 @@ A `PATH` shim stands in for `npx` and for the review command, so the suite needs
 no network, no API key, and no LLM CLI installed. What it locks down is errexit
 resilience: review disabled exits 0 in silence, a failing prompt stage or an
 absent review command exits 0 with a warning, and a BLOCK verdict still exits 1.
+
+### `github-actions/release-please.yml`
+
+Derives the version from the commits, so nobody writes it by hand. On every push
+to the default branch it reads the commits since the last tag, computes the next
+version, and opens or updates a **release PR** carrying the version bump and the
+generated `CHANGELOG.md`. Merging that PR tags the release.
+
+The merge is the human gate, which is why this is the action SDG ships. The
+alternative, `semantic-release`, publishes on every push and automates away the
+approval that `versioning.md`, `VersionControl`, treats as non-negotiable.
+
+`release-please-config.json` maps the SDG commit types onto changelog sections,
+`audit` and `land` included, which no stock configuration knows about. Without
+that mapping those cycles ship invisibly.
+
+Publishing to a registry ships commented out, since a registry push is the one
+step that cannot be taken back.
 
 ### `biome/biome.json`
 
@@ -189,6 +260,55 @@ Both hooks run unchanged on husky 9 and on v10. `pre-commit` reviews nothing
 until `SDG_GATE_LLM` carries a command, so a fresh install validates commit
 messages and otherwise stays out of the way.
 
+### Activate derived versioning (GitHub Actions)
+
+Turns `release` in `context.md` from `manual` into `derived`. After this the
+agent stops writing version numbers and stops writing `CHANGELOG.md`, because
+the action generates both from the commits.
+
+1. Copy the three files, giving two of them the leading dot they carry at the
+   project root:
+
+```
+mkdir -p .github/workflows
+cp .ai/tooling/github-actions/release-please.yml .github/workflows/release.yml
+cp .ai/tooling/github-actions/release-please-config.json .release-please-config.json
+cp .ai/tooling/github-actions/release-please-manifest.json .release-please-manifest.json
+```
+
+2. Set the manifest to the version already published, so the first run computes
+   the next one instead of starting over:
+
+```json
+{ ".": "1.4.2" }
+```
+
+3. Let the action open pull requests: **Settings → Actions → General → Workflow
+   permissions**, then tick _Allow GitHub Actions to create and approve pull
+   requests_. Without it the first run fails with a permission error that reads
+   like a bad token and is not one.
+
+4. Declare the mode in `.ai/backlog/context.md`:
+
+```
+release: derived
+```
+
+**The everyday loop**, which is the part worth reading before wiring anything:
+
+| You do                      | It does                                                                                |
+| :-------------------------- | :------------------------------------------------------------------------------------- |
+| Commit `feat: ...` and push | Opens or updates the release PR. Nothing is tagged yet                                 |
+| Commit three more times     | Updates that same PR, recomputing the version on each push                             |
+| Merge the release PR        | Tags `vX.Y.Z`, writes `CHANGELOG.md` and `package.json` on `main`, creates the release |
+| `git pull`                  | Your working copy catches up with the version the action wrote                         |
+
+The pull happens once per release, at the merge, never once per commit. Between
+releases the local `package.json` holds the previous version, which is the
+accurate state: the new version does not exist until the release does.
+
+Or ask your agent: "wire derived versioning."
+
 ### Wire scripts as npm commands
 
 Edit `package.json`:
@@ -197,10 +317,17 @@ Edit `package.json`:
 {
   "scripts": {
     "prune:backlog": "node .ai/tooling/scripts/prune-backlog.mjs",
-    "bump:version": "node .ai/tooling/scripts/bump-version.mjs"
+    "bump:version": "node .ai/tooling/scripts/bump-version.mjs",
+    "bump:auto": "node .ai/tooling/scripts/bump-version.mjs $(node .ai/tooling/scripts/derive-bump.mjs)",
+    "release:local": "npm run bump:auto && node .ai/tooling/scripts/promote-changelog.mjs"
   }
 }
 ```
+
+`bump:auto` is the `manual` release mode with the guesswork removed: the type
+comes from the commits instead of from whoever is running the command.
+`release:local` adds the changelog promotion, which leaves the working tree
+ready for a commit that nobody has approved yet.
 
 Or ask your agent: "wire the tooling scripts into package.json."
 

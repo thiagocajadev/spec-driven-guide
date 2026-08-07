@@ -4,6 +4,16 @@ stack: Node.js 24+, ESM, Inquirer, Chalk
 pattern: Revealing Module, generated output in .ai/
 entry: src/engine/bin/index.mjs
 
+## Commands
+
+> Phase TEST runs these by name. Without them the agent rediscovers the build on every cycle.
+
+test: `npm test`
+lint: `npm run lint` (`npm run lint:fix` to auto-fix)
+build: `npm run build`
+gate: `npm run gate` (audit + lint + test + self-audit, the full CI gate)
+release: `manual`. Single maintainer, `npm run bump <type>` runs locally and the release commit carries the version. See `versioning.md`, `VersionControl`.
+
 ## Decisions
 
 - Extracted from private monorepo (sdg-agents)
