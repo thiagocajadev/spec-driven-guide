@@ -78,6 +78,16 @@ Security rules: configuration isolation, PII handling, secret management, and th
 
 Domain skills. Each covers its concern end-to-end. For example, `api-design.md` defines the response envelope, error code table, REST hierarchy, and standardization protocols. Loaded only when the current task touches the relevant domain. The operational trio (`review.md`, `performance.md`, `domain.md`) covers PR/review craft, complexity budget + hot-path discipline, and DDD-Lite vocabulary.
 
+### skills/versioning.md
+
+Commit shape and release mechanics. It holds the subject format the `commit-msg` hook enforces, the table that derives MAJOR / MINOR / PATCH from the commit types, and the two release modes a project declares as `release` in `context.md`: `derived`, where CI computes the version and generates `CHANGELOG.md` from the commit bodies, and `manual`, where `npm run bump` runs locally and the release commit carries the number. An absent key reads as `manual`.
+
+Loaded by command rather than by the router: `sdg-end.md` loads it on every Phase END, `sdg-land.md` loads it to ask a new project which mode it wants. `code-style.md`, `ci-cd.md`, `review.md` and `workflow.md` cite it instead of restating the format.
+
+### skills/writing-readme.md
+
+The banner above the first paragraph, which `writing-soul.md` does not describe: logo dimensions, the title inside the centered block, the tagline and its link to the translated README, badge grouping in the order identity, stack, meta. Everything under the banner is prose the soul governs unchanged. Loaded by `sdg-docs.md` when the cycle touches a README.
+
 ### skills/writing-soul.md · checklist-soul.md · lexicon/
 
 The voice governance, loaded on `docs:`, `land:` and `end:`, and on any Phase CODE task that writes prose.

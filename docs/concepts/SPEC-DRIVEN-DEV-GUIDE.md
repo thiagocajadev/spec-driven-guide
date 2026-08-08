@@ -59,6 +59,7 @@ The cycle follows five mandatory phases: **SPEC → PLAN → CODE → TEST → E
   - Writes new tests if the checklist items aren't covered by existing ones.
   - Reports PASS/FAIL for every checklist item.
   - **Refactor Loop:** If a test fails, the agent refactors the code and tries again (up to 3 times before stopping to report a blocker).
+  - **Stops on the report.** TEST ends with the result per checklist item, plus lint and audit status, and the agent waits there. The cycle does not roll into END on its own.
 
 ---
 
@@ -66,8 +67,11 @@ The cycle follows five mandatory phases: **SPEC → PLAN → CODE → TEST → E
 
 **Goal:** Finalize the task, document changes, and prepare for version control.
 
-- **What happens:** The Agent summarizes the work and updates project logs.
+END is the closing phase, and it opens with a check rather than a summary. Read the TEST report first: every checklist item PASS, lint clean, audit clean, and the last details settled with the developer. A FAIL, a skipped item or an open question sends the cycle back to CODE. Typing `end:` over a red report ships the changelog entry and the commit message for work that does not hold.
+
+- **What happens:** The Agent verifies the TEST report, then summarizes the work and updates project logs.
 - **Agent Behavior:**
+  - Confirms every Verification Checklist item came back PASS, and names anything that did not.
   - Summarizes what was implemented (linking to PLAN tasks).
   - Appends entries to `CHANGELOG.md` following the [Keep a Changelog](https://keepachangelog.com/) standard (`### Added` for features, `### Fixed` for bugs).
   - Proposes a semantic git commit message (e.g., `feat: ...` or `fix: ...`).
@@ -76,4 +80,4 @@ The cycle follows five mandatory phases: **SPEC → PLAN → CODE → TEST → E
 ---
 
 > [!IMPORTANT]
-> The agent only writes code after SPEC and PLAN are approved. This is the mechanism that keeps changes traceable to an explicit decision, not a guess.
+> The agent only writes code after SPEC and PLAN are approved, and it only closes after the TEST report is read. Three stops, and each one keeps a change traceable to an explicit decision rather than a guess.

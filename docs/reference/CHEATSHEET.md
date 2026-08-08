@@ -93,31 +93,85 @@ npx sdg-agents clear      # Remove the entire .ai/ governance layer
 
 Prefix your message to the AI Agent to activate the corresponding governance cycle:
 
-| Trigger               | Cycle   | Intent                                                                                                                                              |
-| :-------------------- | :------ | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `land: <description>` | Land    | Project inception: vision + stack declaration + sequenced `feat:` backlog, no code written.                                                         |
-| `feat: <description>` | Feature | New implementation: requires SPEC and PLAN approval before any code.                                                                                |
-| `fix: <description>`  | Fix     | Bug resolution: Root Cause Analysis and regression test mandatory.                                                                                  |
-| `docs: <description>` | Docs    | Technical memory sync: Changelogs, ADRs, Specs.                                                                                                     |
-| `audit: <scope>`      | Audit   | Verify project alignment against rulesets (drift detection).                                                                                        |
-| `end:`                | n/a     | Close the active cycle: runs the END Phase checklist (changelog, backlog, commit). Also recovers a cycle if the agent loses track mid-conversation. |
-| No prefix             | n/a     | Agent asks: "land, feat, fix, docs, or audit?", then proceeds.                                                                                      |
+| Trigger                        | Cycle           | Intent                                                                                                                      |
+| :----------------------------- | :-------------- | :-------------------------------------------------------------------------------------------------------------------------- |
+| `land: <your vision here>`     | First contact   | Define your project's vision and scope before writing the first line.                                                       |
+| `feat: <describe the feature>` | Feature         | Walk through SPEC → PLAN → CODE → TEST → END for any new feature.                                                           |
+| `fix: <describe the problem>`  | Bug fix         | Diagnose the root cause, fix it, and confirm nothing else broke.                                                            |
+| `docs: <what to document>`     | Documentation   | Write ADRs, changelogs, and technical specs with the right template.                                                        |
+| `audit: <scope to audit>`      | Audit           | Check whether the governance rules are applied to the project and get back a correction plan.                               |
+| `end: <optional instruction>`  | Close the cycle | Summarize what was done, update the changelog, and commit. Also recovers a cycle if the agent loses track mid-conversation. |
+| No prefix                      | n/a             | Agent asks: "land, feat, fix, docs, or audit?", then proceeds.                                                              |
 
-> `end:` takes no argument.
+> The argument after `end:` is optional. Bare `end:` runs the END checklist; anything after it is context for that closure.
 
 ---
 
 ## Standard Lifecycle
 
-Every `feat:`, `fix:`, and `docs:` task follows this sequence:
+Every `feat:`, `fix:`, and `docs:` task follows this sequence. For `land:` and `audit:`, see Governance Cycles below.
 
 ```
-SPEC  →  PLAN  →  CODE  →  TEST  →  END
-  ↑           ↑                       ↑
-  Wait        Wait                 "end:"
+  SPEC    the contract        what and why, in writing      ⏸  you approve
+   │
+  PLAN    the strategy        ordered, followable tasks     ⏸  you approve
+   │
+  CODE    the execution       the plan, nothing more
+   │
+  TEST    the verification    built matches agreed          ⏸  you review
+   │
+  END     the delivery        changelog, backlog, commit    ▸  you type end:
 ```
 
-The Agent **stops and waits for explicit Developer approval** at SPEC and PLAN before proceeding.
+The Agent **stops and waits for the Developer** three times: at SPEC and at PLAN before proceeding, and again after TEST, where it reports the verification and the Developer settles the last details before `end:` runs.
+
+---
+
+## Governance Cycles
+
+`land:` and `audit:` do not touch code, and they are not meant to. Their output is the task list the coding cycles read afterwards: `land:` writes that list when the project starts, `audit:` rewrites it when the project has drifted away from its own rules. Neither runs the five phases above, so each one is drawn on its own below.
+
+Both close with `end:` like any other cycle, which is what writes the changelog entry and proposes the commit.
+
+<details>
+<summary><strong>How <code>land:</code> runs</strong></summary>
+
+Once per project, before the first `feat:`. Its phases are its own, and none of them is CODE:
+
+```
+  VISION     what is being built, for whom, and the core problem
+   │
+  SURVEY     the existing code, on legacy projects only
+   │
+  SCOPE      the MVP boundary, with what is out named explicitly
+   │
+  STACK      languages and versions, written to stack.md
+   │
+  BACKLOG    epics split into sequenced feat: tasks
+   │
+  STOP       vision, scope, stack and epics, presented              ⏸  you approve
+```
+
+What you get back: `stack.md` for Phase CODE to load on every later cycle, and a `tasks.md` whose entries are already shaped as the `feat:` prefixes you will type next.
+
+</details>
+
+<details>
+<summary><strong>How <code>audit:</code> runs</strong></summary>
+
+Phase SPEC, and it stops there. Nothing is repaired inside the audit:
+
+```
+  SCOPE      full codebase, one layer, or doc alignment
+   │
+  FINDINGS   drift against .ai/, law violations, canon coverage
+   │
+  PLAN       every gap as an actionable correction task             ⏸  you approve
+```
+
+What you get back: each finding as a task you can run as its own `fix:` or `feat:` cycle. Keeping the report separate from the repair is what leaves every change traceable to the cycle that made it.
+
+</details>
 
 ---
 

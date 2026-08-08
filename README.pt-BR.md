@@ -25,9 +25,20 @@
 
 Quem chega ao projeto pela primeira vez lê de cima para baixo: o Início Rápido instala, e Como o Protocolo Funciona explica o que muda na conversa com o agente depois disso. Quem vai alterar o conjunto de instruções lê a partir de O Que É Instalado, onde cada arquivo gerado é nomeado e apontado para a sua origem.
 
-> **Nota:** Se o seu agente não carregar as regras sozinho, cite o `AGENTS.md` no início da sessão.
+## Comece por um prefixo
 
-## Conceitos fundamentais
+Instrua o agente do mesmo jeito que você escreveria uma mensagem de commit.
+
+| Como você pede         | O que você escreve                                                | O que volta                                                                                              |
+| :--------------------- | :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| Um pedido solto        | `conserta o login`                                                | O agente adivinha o escopo e começa a escrever. Você descobre o que ele decidiu revisando tudo depois    |
+| Uma spec escrita à mão | contrato, critérios de aceite e casos de borda, escritos por você | Funciona bem. Detalhe ajuda, e o agente pode escrever esse detalhe junto com você                        |
+| ✅ Um prefixo          | `fix:` login aceita senha vazia                                   | O agente escreve a spec, para para você aprovar, e então planeja, codifica e testa dentro do mesmo ciclo |
+
+O agente propõe a SPEC a partir do contexto que ele já tem do projeto, e vocês alinham juntos antes de qualquer código. Onde houver risco, detalhe o quanto puder.
+
+<details>
+<summary><strong>Conceitos fundamentais</strong></summary>
 
 | Conceito           | O que é                                                                                                              |
 | :----------------- | :------------------------------------------------------------------------------------------------------------------- |
@@ -38,6 +49,8 @@ Quem chega ao projeto pela primeira vez lê de cima para baixo: o Início Rápid
 | **Work Checklist** | A barreira binária em `code-style.md`: itens de Intent recitados ao entrar em CODE, itens de Form conferidos em TEST |
 | **Backlog**        | `.ai/backlog/`, onde o resumo do projeto, o stack declarado e o estado das tarefas sobrevivem à sessão               |
 
+</details>
+
 <details>
 <summary><strong>O que o conjunto de instruções cobre</strong></summary>
 
@@ -45,7 +58,9 @@ Quem chega ao projeto pela primeira vez lê de cima para baixo: o Início Rápid
 
 - **Estilo de código e quality gates** (barreiras de qualidade): uma regra só, o `WorkChecklist` em `code-style.md`. Ela se divide em itens de Intent (intenção · recitados ao entrar na fase CODE) e de Form (forma · verificados na fase TEST).
 
-- **Skills sob demanda**: cada skill (habilidade · um arquivo de regras sobre um assunto) carrega somente quando o ciclo precisa dela. Há skills para code style, testes, segurança, API, acesso a dados, observabilidade, CI/CD, cloud, SQL, UI/UX, revisão, performance e modelagem de domínio.
+- **Skills sob demanda**: cada skill (habilidade · um arquivo de regras sobre um assunto) carrega somente quando o ciclo precisa dela. Há skills para code style, testes, segurança, API, acesso a dados, observabilidade, CI/CD, cloud, SQL, UI/UX, revisão, performance, modelagem de domínio, versionamento e escrita de README.
+
+- **Versionamento como skill**: o `versioning.md` é dono do formato do commit e da tabela que deriva a versão a partir dos tipos de commit, então o número é calculado a partir dos commits em vez de escolhido na mão. Ele também declara os dois modos de release: `derived`, em que a CI calcula a versão e gera o changelog a partir dos corpos dos commits, e `manual`, em que o `npm run bump` roda localmente e o commit de release carrega o número. A fase END carrega esse arquivo em todo ciclo.
 
 - **Contexto de stack dinâmico**: o ciclo `land:` pergunta o seu stack (o conjunto de linguagens, runtimes e frameworks do projeto) e escreve `.ai/backlog/stack.md`. A fase CODE lê esse arquivo como fonte única de verdade. Não há catálogo de linguagens para manter.
 
@@ -71,7 +86,10 @@ npx sdg-agents
   <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/sdg-agents-cli/main/docs/img/sdg-agents-menu-v2.png" alt="Spec Driven Guide CLI em ação" /></kbd>
 </p>
 
-O assistente interativo pede o **flavor** (sabor · o padrão estrutural que o projeto segue). O stack vem depois, pelo ciclo `land:`, porque você declara melhor com o projeto já definido. Para instalar sem perguntas:
+O assistente interativo pede o **flavor** (sabor · o padrão estrutural que o projeto segue). O stack vem depois, pelo ciclo `land:`, porque você declara melhor com o projeto já definido.
+
+<details>
+<summary><strong>Instalação sem perguntas</strong></summary>
 
 ```bash
 # Instalação sem prompts (flavor lite + stack.md placeholder)
@@ -84,6 +102,8 @@ npx sdg-agents init --flavor vertical-slice
 npx sdg-agents init --flavor mvc
 ```
 
+</details>
+
 Depois de instalar, abra o chat do agente e escreva `land: <visão>`. O agente pergunta o stack, escreve `.ai/backlog/stack.md` e monta a primeira lista de tarefas.
 
 ---
@@ -93,6 +113,8 @@ Depois de instalar, abra o chat do agente e escreva `land: <visão>`. O agente p
 O `AGENTS.md` é um roteador: ele lista as skills disponíveis e manda carregar cada uma na hora certa. Só o `workflow.md` (o protocolo de 5 fases) fica sempre em contexto. O resto entra quando o ciclo pede.
 
 Ao lado dele, o `CLAUDE.md` é um ponteiro de uma linha que importa o `AGENTS.md` com `@`. O Claude Code lê esse arquivo sozinho a cada sessão. Para as outras IDEs, você aponta o arquivo de configuração nativo da ferramenta para o mesmo `AGENTS.md` (veja "Usando com outras IDEs" abaixo).
+
+> **Nota:** Se o seu agente não carregar as regras sozinho, cite o `AGENTS.md` no início da sessão.
 
 <details>
 <summary><strong>Árvore completa escrita pelo <code>init</code></strong></summary>
@@ -124,22 +146,28 @@ seu-projeto/
 
 Você começa a mensagem com um prefixo, e o agente entra no ciclo correspondente. São prefixos de texto, não slash commands (comandos iniciados por barra, como `/build`): nada é instalado na sua ferramenta.
 
-| Trigger (gatilho)   | Ciclo   | O que acontece                                                                                                                    |
-| :------------------ | :------ | :-------------------------------------------------------------------------------------------------------------------------------- |
-| `land: <descrição>` | Land    | Transforma uma visão solta em uma lista de tarefas `feat:` na ordem certa. Roda antes de existir código                           |
-| `feat: <descrição>` | Feature | Executa SPEC → PLAN → CODE → TEST → END                                                                                           |
-| `fix: <descrição>`  | Fix     | Mesmo ciclo, com foco em RCA (Root Cause Analysis · análise de causa raiz)                                                        |
-| `docs: <descrição>` | Docs    | Atualiza changelogs, ADRs (Architecture Decision Records · registros de decisão) e especificações                                 |
-| `audit: <escopo>`   | Audit   | Compara o projeto com as regras e aponta o drift (desvio entre o que está escrito e o que foi combinado)                          |
-| `end:`              | n/a     | Fecha o ciclo ativo: changelog, backlog, proposta de commit. Também recupera o ciclo se o agente perder o fio no meio da conversa |
-| Sem prefixo         | n/a     | O agente pergunta: "land, feat, fix, docs ou audit?"                                                                              |
+| Trigger (gatilho)            | Ciclo            | O que acontece                                                                                                               |
+| :--------------------------- | :--------------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| `land: <sua visão aqui>`     | Primeiro contato | Define a visão e o escopo do projeto antes de escrever a primeira linha                                                      |
+| `feat: <descreva a feature>` | Feature          | Percorre SPEC → PLAN → CODE → TEST → END para qualquer funcionalidade nova                                                   |
+| `fix: <descreva o problema>` | Correção de bug  | Diagnostica a causa raiz, corrige e confirma que nada mais quebrou                                                           |
+| `docs: <o que documentar>`   | Documentação     | Escreve ADRs (Architecture Decision Records · registros de decisão), changelogs e specs técnicas no template certo           |
+| `audit: <escopo a auditar>`  | Auditoria        | Verifica se as regras de governança estão aplicadas no projeto e devolve um plano de correção                                |
+| `end: <instrução opcional>`  | Fecha o ciclo    | Resume o que foi feito, atualiza o changelog e commita. Também recupera o ciclo se o agente perder o fio no meio da conversa |
+| Sem prefixo                  | n/a              | O agente pergunta: "land, feat, fix, docs ou audit?"                                                                         |
 
-O agente **para e aguarda sua aprovação** em SPEC e PLAN antes de escrever qualquer código.
+O agente **para e espera por você** três vezes: em SPEC e em PLAN antes de escrever qualquer código, e de novo depois do TEST, onde ele relata o que verificou e você resolve os últimos detalhes antes de o `end:` fechar o ciclo.
 
 ```
-SPEC  →  PLAN  →  CODE  →  TEST  →  END
-  ↑           ↑                       ↑
-  Wait        Wait                 "end:"
+  SPEC    o contrato       o que e por quê, escrito       ⏸  você aprova
+   │
+  PLAN    a estratégia     tarefas em ordem, seguíveis    ⏸  você aprova
+   │
+  CODE    a execução       o plano, nada além dele
+   │
+  TEST    a verificação    o feito bate com o combinado   ⏸  você revisa
+   │
+  END     a entrega        changelog, backlog, commit     ▸  você escreve end:
 ```
 
 Para o detalhe de cada fase, veja o [Guia Spec-Driven Development](docs/concepts/SPEC-DRIVEN-DEV-GUIDE.md).
@@ -212,6 +240,11 @@ O `sdg-agents` gera um `AGENTS.md` na raiz do repositório e um `CLAUDE.md` ao l
 
 ## Manutenção
 
+O `npx sdg-agents` abre um menu cuja opção **Settings** roda a auditoria de governança.
+
+<details>
+<summary><strong>Se preferir, rode direto pelo CLI</strong></summary>
+
 ```bash
 npx sdg-agents gate       # Passar o diff em staged pela barreira (serve como pre-commit, em qualquer linguagem)
 npx sdg-agents review     # Apontar o drift entre as regras locais e a fonte
@@ -219,6 +252,8 @@ npx sdg-agents audit      # Rodar a auditoria de governança (drift, narrativa, 
 npx sdg-agents narrative  # Checar só a narrativa do changelog
 npx sdg-agents clear      # Remover a pasta .ai/
 ```
+
+</details>
 
 ---
 

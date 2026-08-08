@@ -11,6 +11,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [7.0.1] - 2026-08-08
+
+### Fixed
+
+- **The README's pitch now sits above the concepts instead of below them.** A reader met a six-row glossary before learning what the tool asks of them, and the one sentence that separates this project from a prompt file was nowhere on the page. `Start with a prefix` opens the file now, carrying the line the site leads with: instruct the agent the way you would write a commit message. Under it, three ways to ask the same thing, a loose sentence, a hand-written spec, and a prefix, each with what comes back. The concepts table moved inside a `details`, which puts Quick Start roughly forty lines closer to the top without deleting anything a returning reader looks for. The note about referencing `AGENTS.md` when an agent ignores the rules moved down to What Gets Installed, next to the file it talks about. `README.pt-BR.md` mirrors all of it, section for section.
+
+- **Prefix descriptions matched to specdrivenguide.org, where they were already written.** The trigger tables in `README.md` and `CHEATSHEET.md` each carried their own wording for the same six cycles, so the site said `land:` defines vision and scope before the first line while the README said it turns a raw vision into a grounded backlog. The site's copy is now the one text in both, cycle names included, which turns a page a reader arrives from into a page that says what they just read. The tables also settled a contradiction they had been carrying: `CHEATSHEET.md` stated that `end:` takes no argument, while `sdg-end.md` opens on a section called Additional Context and the site shows `end: <optional instruction>`. Two sources against one, and the cheatsheet line is gone.
+
+- **`versioning.md` and `writing-readme.md` were shipping undocumented.** Both are loaded by command rather than by the router, which kept them out of the `SKILL_CATALOG` correctly and out of `PROJECT-STRUCTURE.md` by accident, leaving the skill enumeration in three documents describing a set two files short. Each has a section now, naming what it owns and which command loads it, and the README skill list names them alongside the rest. `versioning.md` also gets its own line in What the instruction set covers, since the two release modes it declares are the reason a team can ship without one person owning the version number.
+
+- **The phase diagram redrawn, with the stop between TEST and END that the protocol always had.** The old three-line sketch marked two waits and the `end:` trigger and said nothing about what any phase produces. The replacement gives each phase its subtitle from the site, what it delivers, and its stop, and it grows downward rather than sideways, so a narrow screen scrolls the page instead of the diagram. The third stop is the substantive change: the developer reads the TEST report and either sends the cycle back to CODE or types `end:`, and the diagram now shows it. `SPEC-DRIVEN-DEV-GUIDE.md` states it at Phase END, which opens on a check rather than a summary, because typing `end:` over a red report ships a changelog entry and a commit message for work that does not hold. `CONSTITUTION.md` counts the stops, the commit gate included.
+
+- **`AGENT-DEEP-FLOW.md` described a cycle three versions old.** Its mermaid graph ran TEST straight into END with no gate between them and closed on `Commit Suggestion` followed by `Next Steps`, drawing an agent that commits on its own. Phase SPEC listed three prefixes where the router has five, `land:` and `audit:` missing. Phase END described a changelog and a commit message and knew nothing about the release modes that decide whether either gets written. The graph now carries a Review Gate that loops back to CODE and a Commit Gate that loops back to the proposal, and the breakdown covers both modes, the bump, and the lock on the commit.
+
+- **`CHEATSHEET.md` gains a Governance Cycles section, because `land:` and `audit:` never ran the five phases.** Standard Lifecycle sat alone under a heading that implied it covered every prefix, while `land:` runs VISION through STOP and `audit:` runs Phase SPEC and stops there. Both are drawn on their own now, each in its own `details`, each closing on what the developer gets back: a `stack.md` and a task list shaped as the `feat:` prefixes to type next, or a finding list where each entry runs as its own `fix:` cycle. Keeping the audit's report separate from its repair is what leaves a change traceable to the cycle that made it.
+
+- **The Maintenance section listed the subcommands and never mentioned the menu.** `npx sdg-agents` opens a menu whose Settings entry runs the governance audit, through the same `AuditRunner.audit()` the subcommand calls. One line above the commands says so now, since a reader who never types a subcommand still has a way to audit.
+
 ## [7.0.0] - 2026-08-07
 
 ### Added

@@ -25,9 +25,20 @@
 
 A developer meeting the project for the first time reads from the top: Quick Start installs it, and How the Protocol Works explains what changes in the conversation with the agent afterwards. A contributor changing the instruction set reads from What Gets Installed down, where every generated file is named and pointed at its source.
 
-> **Note:** If your agent does not pick up the rules automatically, reference `AGENTS.md` at the start of the session.
+## Start with a prefix
 
-## Fundamental concepts
+Instruct the agent the way you would write a commit message.
+
+| How you ask         | What you type                                                     | What comes back                                                                                                |
+| :------------------ | :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
+| A loose ask         | `fix the login`                                                   | The agent guesses the scope and starts typing. You find out what it decided by reviewing everything afterwards |
+| A hand-written spec | contract, acceptance criteria and edge cases, written out by hand | It works well. Detail helps, and the agent can write that detail with you                                      |
+| ✅ A prefix         | `fix:` login accepts an empty password                            | The agent writes the spec, stops for your approval, then plans, codes and tests inside the same cycle          |
+
+The agent proposes the SPEC from the context it already holds about the project, and you align it together before any code. Where there is risk, spell out as much detail as you can.
+
+<details>
+<summary><strong>Fundamental concepts</strong></summary>
 
 | Concept            | What it is                                                                                              |
 | :----------------- | :------------------------------------------------------------------------------------------------------ |
@@ -38,6 +49,8 @@ A developer meeting the project for the first time reads from the top: Quick Sta
 | **Work Checklist** | The binary gate in `code-style.md`: Intent items recited at CODE entry, Form items verified at TEST     |
 | **Backlog**        | `.ai/backlog/`, where the project brief, the declared stack and the task state survive the session      |
 
+</details>
+
 <details>
 <summary><strong>What the instruction set covers</strong></summary>
 
@@ -45,7 +58,9 @@ A developer meeting the project for the first time reads from the top: Quick Sta
 
 - **Code style and quality gates**: one `WorkChecklist` in `code-style.md`, split into Intent items (recited at CODE entry) and Form items (verified at TEST), wired to the narrative heuristics in `governance.mjs`.
 
-- **Skills, on-demand**: self-contained skill units loaded only when the cycle needs them, covering code style, testing, security, API design, data access, observability, CI/CD, cloud, SQL style, UI/UX, review, performance, and domain modeling.
+- **Skills, on-demand**: self-contained skill units loaded only when the cycle needs them, covering code style, testing, security, API design, data access, observability, CI/CD, cloud, SQL style, UI/UX, review, performance, domain modeling, versioning, and README writing.
+
+- **Versioning, as a skill**: `versioning.md` owns the commit shape and the table that derives the version from the commit types, so the number is computed from the commits instead of picked by hand. It also declares the two release modes: `derived`, where CI computes the version and generates the changelog from the commit bodies, and `manual`, where `npm run bump` runs locally and the release commit carries the number. Phase END loads it on every cycle.
 
 - **Dynamic stack context**: the `land:` cycle elicits your languages and versions and writes `.ai/backlog/stack.md`, which Phase CODE reads as the single source of truth. No static idiom catalog to maintain.
 
@@ -71,7 +86,10 @@ npx sdg-agents
   <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/sdg-agents-cli/main/docs/img/sdg-agents-menu-v2.png" alt="Spec Driven Guide CLI in action" /></kbd>
 </p>
 
-The interactive wizard guides you through selecting an architectural flavor. Stack discovery (languages + versions) happens later via the `land:` cycle. It stays out of install so the developer can declare it deliberately, once the project brief is clear. For non-interactive use:
+The interactive wizard guides you through selecting an architectural flavor. Stack discovery (languages + versions) happens later via the `land:` cycle. It stays out of install so the developer can declare it deliberately, once the project brief is clear.
+
+<details>
+<summary><strong>Non-interactive install</strong></summary>
 
 ```bash
 # Zero-prompt install (lite flavor + placeholder stack.md)
@@ -84,6 +102,8 @@ npx sdg-agents init --flavor vertical-slice
 npx sdg-agents init --flavor mvc
 ```
 
+</details>
+
 After install, open the agent chat and run `land: <vision>`. The agent elicits the stack, writes `.ai/backlog/stack.md`, and seeds the backlog.
 
 ---
@@ -93,6 +113,8 @@ After install, open the agent chat and run `land: <vision>`. The agent elicits t
 `AGENTS.md` is a minimal router: it lists all available skills and loads them on demand. Only `workflow.md` (the 5-phase protocol) is always in context. Everything else activates only when the current cycle needs it.
 
 `CLAUDE.md` sits beside it as a thin pointer that `@`-imports `AGENTS.md`, so Claude Code auto-loads the governance on every session. Other IDEs are wired up by pointing their native config file at the same canonical file (see "Using with other IDEs" below).
+
+> **Note:** If your agent does not pick up the rules automatically, reference `AGENTS.md` at the start of the session.
 
 <details>
 <summary><strong>Full tree written by <code>init</code></strong></summary>
@@ -124,22 +146,28 @@ your-project/
 
 When you prefix a message to the agent, it enters the corresponding cycle:
 
-| Trigger               | Cycle   | What happens                                                                                                                                       |
-| :-------------------- | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `land: <description>` | Land    | Agent turns a raw vision into a grounded backlog of sequenced `feat:` tasks. Runs before any code is written                                       |
-| `feat: <description>` | Feature | Agent runs SPEC → PLAN → CODE → TEST → END                                                                                                         |
-| `fix: <description>`  | Fix     | Agent runs SPEC → PLAN → CODE → TEST → END with RCA focus                                                                                          |
-| `docs: <description>` | Docs    | Agent updates changelogs, ADRs, or specs                                                                                                           |
-| `audit: <scope>`      | Audit   | Agent verifies project alignment against rulesets (drift detection)                                                                                |
-| `end:`                | n/a     | Close the active cycle. Runs the END Phase checklist (changelog, backlog, commit). Also recovers a cycle if the agent loses track mid-conversation |
-| No prefix             | n/a     | Agent asks: "land, feat, fix, docs, or audit?", then proceeds                                                                                      |
+| Trigger                        | Cycle           | What happens                                                                                                               |
+| :----------------------------- | :-------------- | :------------------------------------------------------------------------------------------------------------------------- |
+| `land: <your vision here>`     | First contact   | Define your project's vision and scope before writing the first line                                                       |
+| `feat: <describe the feature>` | Feature         | Walk through SPEC → PLAN → CODE → TEST → END for any new feature                                                           |
+| `fix: <describe the problem>`  | Bug fix         | Diagnose the root cause, fix it, and confirm nothing else broke                                                            |
+| `docs: <what to document>`     | Documentation   | Write ADRs, changelogs, and technical specs with the right template                                                        |
+| `audit: <scope to audit>`      | Audit           | Check whether the governance rules are applied to the project and get back a correction plan                               |
+| `end: <optional instruction>`  | Close the cycle | Summarize what was done, update the changelog, and commit. Also recovers a cycle if the agent loses track mid-conversation |
+| No prefix                      | n/a             | Agent asks: "land, feat, fix, docs, or audit?", then proceeds                                                              |
 
-The agent **stops and waits for your approval** at SPEC and PLAN before writing any code.
+The agent **stops and waits for you** three times: at SPEC and at PLAN before writing any code, and again after TEST, where it reports what it verified and you settle the last details before `end:` closes the cycle.
 
 ```
-SPEC  →  PLAN  →  CODE  →  TEST  →  END
-  ↑           ↑                       ↑
-  Wait        Wait                 "end:"
+  SPEC    the contract        what and why, in writing      ⏸  you approve
+   │
+  PLAN    the strategy        ordered, followable tasks     ⏸  you approve
+   │
+  CODE    the execution       the plan, nothing more
+   │
+  TEST    the verification    built matches agreed          ⏸  you review
+   │
+  END     the delivery        changelog, backlog, commit    ▸  you type end:
 ```
 
 For a detailed walkthrough of each phase and its rules, see [Spec-Driven Development Guide](docs/concepts/SPEC-DRIVEN-DEV-GUIDE.md).
@@ -209,6 +237,11 @@ The agent asks for your languages and versions, classifies them by role, and wri
 
 ## Maintenance
 
+`npx sdg-agents` opens a menu whose **Settings** entry runs the governance audit.
+
+<details>
+<summary><strong>If you prefer, run it straight from the CLI</strong></summary>
+
 ```bash
 npx sdg-agents gate       # Review the staged diff against the gate (language-agnostic pre-commit)
 npx sdg-agents review     # Detect drift between local rules and source
@@ -216,6 +249,8 @@ npx sdg-agents audit      # Run the governance audit (drift, narrative, code sty
 npx sdg-agents narrative  # Check the changelog narrative on its own
 npx sdg-agents clear      # Remove the .ai/ folder
 ```
+
+</details>
 
 ---
 

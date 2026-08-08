@@ -53,22 +53,28 @@ graph TD
     T3 -- Failure (Max 3x) --> CODE
     T3 -- Blocked --> Stop((STOP & Report))
 
-    T5 --> END
+    T5 --> Review{Review Gate}
+    Review -- Adjust --> CODE
+    Review -- Approved --> END
 
     subgraph END [5. END: The Delivery]
-        E1[Task Summary] --> E2[CHANGELOG]
+        E1[Task Summary] --> E2[CHANGELOG or release mode]
         E2 --> E3[Backlog Sync]
         E3 --> E4[Context & Insights]
         E4 --> E5[Final Lint]
-        E5 --> E6[Commit Suggestion]
-        E6 --> E7[Next Steps]
+        E5 --> E6[Version Bump]
+        E6 --> E7[Commit Proposal]
+        E7 --> E8{Commit Gate}
     end
 
-    E7 --> Done((Done))
+    E8 -- Denied --> E7
+    E8 -- Approved --> Done((Done))
 
     style S5 fill:#f96,stroke:#333
     style P6 fill:#f96,stroke:#333
     style T3 fill:#f96,stroke:#333
+    style Review fill:#f96,stroke:#333
+    style E8 fill:#f96,stroke:#333
     style C4 fill:#ffa,stroke:#333
     style Stop fill:#f66,stroke:#333
 ```
@@ -85,7 +91,7 @@ graph TD
 
 The agent defines **what** to build before thinking about **how**.
 
-- **Intent Identification**: Classification as `feat:`, `fix:`, or `docs:`.
+- **Intent Identification**: Classification as `land:`, `feat:`, `fix:`, `docs:`, or `audit:`.
 - **Goal**: A one-sentence technical "North Star".
 - **Verification Checklist**: Up to 5 binary criteria used to validate the final delivery.
 - **Approval Gate**: Execution **must stop** here for **Developer verification**.
@@ -121,17 +127,23 @@ Verification against the original Spec's checklist.
 - **Regression Proof**: For bugs, the agent must prove the fix works without breaking existing logic.
 - **Fix Loop**: A built-in resilience mechanism allowing up to **3 refactor attempts** if tests fail. On the third failure, the Circuit Breaker triggers, and the agent stops and reports rather than continuing.
 - **Lint Fix**: Automated resolution of style violations before reporting success.
+- **Report and stop**: TEST closes with the result per checklist item plus lint and audit status, and the cycle waits there. It does not roll into END on its own.
+
+### The Review Gate, between TEST and END
+
+The third stop, and the one the other two make possible. The developer reads the TEST report and either sends the cycle back to CODE over a FAIL or an open question, or types `end:` to close it. Approving SPEC and PLAN decides what gets built; this gate decides whether what got built ships.
 
 ### 5. Phase: END
 
 > **Role: Planning** _(Claude Code, multi-agent mode)_
 
-Closing the loop and ensuring project observability.
+Closing the loop and ensuring project observability. END opens by confirming the TEST report came back green, then delivers.
 
 - **Artifact Sync**: Finished tasks move to `## Done` in `tasks.md`, and the `## Now` objective in the same file is rewritten or cleared. The objective lived in `context.md` until v5.10.0, one file away from the task list it describes.
 - **Knowledge Capture**: Patterns worth reusing go to `.ai/backlog/learned.md`; failures and their resolutions go to `.ai/backlog/troubleshoot.md`. Both are versioned, so the knowledge survives the session that produced it.
-- **Changelog**: Consistent history following the [Keep a Changelog](https://keepachangelog.com/) standard.
-- **Semantic Commit**: Proposing a commit message that reflects the actual intent and scope.
+- **Changelog**: it depends on the `release` mode declared in `context.md`. On `manual`, one entry per task under `## [Unreleased]`, following the [Keep a Changelog](https://keepachangelog.com/) standard. On `derived`, `CHANGELOG.md` is left alone, because CI generates it from the commit bodies, and writing both produces two sources that drift.
+- **Version**: on `manual`, `npm run bump <type>` runs before the commit and the subject carries the number. On `derived`, the commit type is what CI reads to compute the bump. `versioning.md` holds the table.
+- **Semantic Commit**: proposing a message that reflects the actual intent and scope, then stopping. The commit itself is **locked** behind explicit developer authorization, and no phase bypasses it.
 
 ---
 
