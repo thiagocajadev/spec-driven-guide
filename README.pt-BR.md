@@ -83,7 +83,7 @@ npx spec-driven-guide
 ```
 
 <p align="left">
-  <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/sdg-agents-menu-v2.png" alt="Spec Driven Guide CLI em ação" /></kbd>
+  <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/sdg-agents-menu.png" alt="Spec Driven Guide CLI em ação" /></kbd>
 </p>
 
 O assistente interativo pede o **flavor** (sabor · o padrão estrutural que o projeto segue). O stack vem depois, pelo ciclo `land:`, porque você declara melhor com o projeto já definido.

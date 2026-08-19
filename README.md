@@ -83,7 +83,7 @@ npx spec-driven-guide
 ```
 
 <p align="left">
-  <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/sdg-agents-menu-v2.png" alt="Spec Driven Guide CLI in action" /></kbd>
+  <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/sdg-agents-menu.png" alt="Spec Driven Guide CLI in action" /></kbd>
 </p>
 
 The interactive wizard guides you through selecting an architectural flavor. Stack discovery (languages + versions) happens later via the `land:` cycle. It stays out of install so the developer can declare it deliberately, once the project brief is clear.

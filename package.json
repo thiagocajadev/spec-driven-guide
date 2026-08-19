@@ -1,6 +1,6 @@
 {
   "name": "spec-driven-guide",
-  "version": "8.0.0",
+  "version": "8.0.1",
   "description": "Spec-driven governance for AI coding agents. A CLI that installs AGENTS.md and on-demand skills so Claude Code, Cursor, Copilot, Codex, Gemini and Windsurf follow one protocol: spec, plan, code, test, end.",
   "type": "module",
   "main": "./src/engine/bin/index.mjs",

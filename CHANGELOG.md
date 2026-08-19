@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [8.0.1] - 2026-08-19
+
+### Fixed
+
+- **The README screenshot shows the v8.0.0 menu, and its filename dropped the `-v2`.** The published capture still carried `Agents v2.12.0` in its title line, six major versions behind what the CLI prints, and the option rows still used the old separator. The replacement was cropped to the framing of the image it succeeds, 492 by 205 pixels, so the `<kbd>` frame in both READMEs keeps its proportions: the `npx spec-driven-guide` prompt line came off the top, the column of Inquirer markers came off the left, and the top padding was restored afterwards.
+
+  The rename from `sdg-agents-menu-v2.png` to `sdg-agents-menu.png` reverses one decision recorded in 8.0.0, which kept the asset filenames so that no mirrored README would break. `raw.githubusercontent.com` serves those files with a long cache, so replacing the bytes under a path already fetched shows the old capture to anyone whose cache still holds it, and a new path is the only invalidation the host offers. The `-v2` suffix also named a revision that no longer meant anything, since the file it distinguished itself from has not existed for months.
+
 ## [8.0.0] - 2026-08-19
 
 ### Changed
