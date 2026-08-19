@@ -24,7 +24,7 @@ How the instruction set stays cheap to load, and what it cost to get there. Sect
 **Workflow**:
 
 1. Edit `src/assets/` (source of truth), never `.ai/` directly.
-2. Regenerate: `npx sdg-agents init --quick`.
+2. Regenerate: `npx spec-driven-guide init --quick`.
 3. Validate: `npm test`.
 
 ## 4. Reduction Results

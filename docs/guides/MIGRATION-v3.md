@@ -2,6 +2,7 @@
 
 Every breaking upgrade the CLI has shipped, newest first, with the steps each one needs. The filename still says v3 because external links point at it; the content covers v2 through v6.
 
+> **v7.x → v8.0**: the package is now `spec-driven-guide`. See [MIGRATION-v8.md](MIGRATION-v8.md).
 > **v5.x → v6.0**: governance moved to a root `AGENTS.md` and the backlog is classified by volatility. See [v6.0 Migration Notes](#v6-migration-notes) below.
 > **v4.1 → v5.0**: static idioms removed, stack declared via `land:`, competencies fused. See [v5.0 Migration Notes](#v42-migration-notes-dynamic-stack-context).
 > **v2 → v3**: the historic reformulation, continue below.

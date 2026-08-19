@@ -467,7 +467,7 @@ function buildClaudeContent() {
 
     > [!IMPORTANT]
     > This file is read automatically by Claude Code on every session start.
-    > Do not edit manually. Regenerate with \`npx sdg-agents init\`.
+    > Do not edit manually. Regenerate with \`npx spec-driven-guide init\`.
 
     ## Auto-Load: Governance Context
 

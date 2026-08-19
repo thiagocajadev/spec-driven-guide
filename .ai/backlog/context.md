@@ -1,4 +1,4 @@
-# sdg-agents — CLI that generates AI governance context for any project
+# spec-driven-guide — CLI that generates AI governance context for any project
 
 stack: Node.js 24+, ESM, Inquirer, Chalk
 pattern: Revealing Module, generated output in .ai/
@@ -17,6 +17,11 @@ release: `manual`. Single maintainer, `npm run bump <type>` runs locally and the
 ## Decisions
 
 - Extracted from private monorepo (sdg-agents)
+- **Rename (v8.0.0)**: package, binary and repository are `spec-driven-guide`.
+  `sdg-agents` is deprecated on npm and stays installable. `SDG` remains the
+  internal acronym: `sdg-*` commands, `sdg-rules.json`, `AGENTS.sdg.md` sidecar,
+  phase banner. GitHub topics, description and homepage are applied on the
+  repository settings, not in a tracked file.
 - .ai/ is generated output — SSOT: `src/assets/skills/*` (skill units, canonical) + `src/assets/instructions/{commands,templates,flavors,idioms,competencies}` (non-skill rulesets). `src/assets/instructions/core/*` is **deprecated-pending-M3.6** (preserved only for round-trip validation; do NOT edit).
 - **Router identity**: project is a router, not a knowledge dump. `AGENTS.md` = minimal registry; skills load on demand per cycle phase (staff-dna always in Phase CODE; others by cycle command).
 - AGENTS.md content assembled in instruction-assembler.mjs

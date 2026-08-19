@@ -1,6 +1,6 @@
 <!-- prettier-ignore-start -->
 <div align="center">
-  <img src="https://raw.githubusercontent.com/thiagocajadev/sdg-agents-cli/main/docs/img/sdg-agents-icon-light.svg" alt="SDG Agents" width="480" height="480" style="border-radius: 1rem;">
+  <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/sdg-agents-icon-light.svg" alt="Spec-Driven Guide" width="480" height="480" style="border-radius: 1rem;">
   <h1 align="center">Spec-Driven Guide: Agents</h1>
   <p align="center">
     A CLI that installs a structured instruction set for AI agents into your project.<br>
@@ -9,9 +9,9 @@
   <p align="center">
       Read the manifesto and visual guide at <a href="https://specdrivenguide.org">specdrivenguide.org</a>
   </p>
-  <a href="https://www.npmjs.com/package/sdg-agents"><img src="https://img.shields.io/npm/v/sdg-agents?style=flat-square&logo=npm&color=cb3837" alt="npm version" /></a>
-  <a href="https://www.npmjs.com/package/sdg-agents"><img src="https://img.shields.io/npm/dm/sdg-agents?style=flat-square&logo=npm&color=cb3837" alt="npm downloads" /></a>
-  <a href="https://github.com/thiagocajadev/sdg-agents-cli/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/thiagocajadev/sdg-agents-cli/ci.yml?style=flat-square&logo=githubactions&logoColor=white&label=CI" alt="CI status" /></a>
+  <a href="https://www.npmjs.com/package/spec-driven-guide"><img src="https://img.shields.io/npm/v/spec-driven-guide?style=flat-square&logo=npm&color=cb3837" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/spec-driven-guide"><img src="https://img.shields.io/npm/dm/spec-driven-guide?style=flat-square&logo=npm&color=cb3837" alt="npm downloads" /></a>
+  <a href="https://github.com/thiagocajadev/spec-driven-guide/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/thiagocajadev/spec-driven-guide/ci.yml?style=flat-square&logo=githubactions&logoColor=white&label=CI" alt="CI status" /></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-24%20LTS-brightgreen?style=flat-square&logo=nodedotjs" alt="Node 24 LTS" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-ISC-blue?style=flat-square&logo=opensourceinitiative&logoColor=white" alt="License: ISC" /></a>
   <a href="https://agents.md"><img src="https://img.shields.io/badge/AGENTS.md-compatible-6e56cf?style=flat-square&logo=markdown&logoColor=white" alt="AGENTS.md compatible" /></a>
@@ -21,7 +21,7 @@
 
 <br>
 
-`sdg-agents` installs a set of markdown instruction files into your project. AI agents (Claude Code, Cursor, Windsurf, Copilot, Codex, and others) read these files and follow the defined protocol for every task.
+`spec-driven-guide` installs a set of markdown instruction files into your project. AI agents (Claude Code, Cursor, Windsurf, Copilot, Codex, and others) read these files and follow the defined protocol for every task.
 
 A developer meeting the project for the first time reads from the top: Quick Start installs it, and How the Protocol Works explains what changes in the conversation with the agent afterwards. A contributor changing the instruction set reads from What Gets Installed down, where every generated file is named and pointed at its source.
 
@@ -79,11 +79,11 @@ The agent proposes the SPEC from the context it already holds about the project,
 Requires **Node.js 24 LTS** or newer, the line the CLI is built and tested on.
 
 ```bash
-npx sdg-agents
+npx spec-driven-guide
 ```
 
 <p align="left">
-  <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/sdg-agents-cli/main/docs/img/sdg-agents-menu-v2.png" alt="Spec Driven Guide CLI in action" /></kbd>
+  <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/sdg-agents-menu-v2.png" alt="Spec Driven Guide CLI in action" /></kbd>
 </p>
 
 The interactive wizard guides you through selecting an architectural flavor. Stack discovery (languages + versions) happens later via the `land:` cycle. It stays out of install so the developer can declare it deliberately, once the project brief is clear.
@@ -93,13 +93,13 @@ The interactive wizard guides you through selecting an architectural flavor. Sta
 
 ```bash
 # Zero-prompt install (lite flavor + placeholder stack.md)
-npx sdg-agents init --quick
+npx spec-driven-guide init --quick
 
 # Vertical Slice, any stack
-npx sdg-agents init --flavor vertical-slice
+npx spec-driven-guide init --flavor vertical-slice
 
 # MVC, any stack
-npx sdg-agents init --flavor mvc
+npx spec-driven-guide init --flavor mvc
 ```
 
 </details>
@@ -192,7 +192,7 @@ For the data flow diagram of each flavor, see [Architectural Pipelines](docs/ref
 
 ## Stack Declaration via `land:`
 
-Stack is **dynamic, not cataloged**. After `sdg-agents init`, run the `land:` cycle to declare the project's languages, runtimes, and framework versions:
+Stack is **dynamic, not cataloged**. After `spec-driven-guide init`, run the `land:` cycle to declare the project's languages, runtimes, and framework versions:
 
 ```
 land: a Node.js + TypeScript API serving a React dashboard
@@ -214,20 +214,20 @@ The agent asks for your languages and versions, classifies them by role, and wri
 
 ## Using with other IDEs
 
-`sdg-agents` generates a single canonical governance file at `AGENTS.md` in the repo root, plus a `CLAUDE.md` pointer beside it. Codex and Claude Code pick theirs up with no extra step. For other tools, add a one-line pointer in your IDE's native rules file: `Read AGENTS.md before any task.`
+`spec-driven-guide` generates a single canonical governance file at `AGENTS.md` in the repo root, plus a `CLAUDE.md` pointer beside it. Codex and Claude Code pick theirs up with no extra step. For other tools, add a one-line pointer in your IDE's native rules file: `Read AGENTS.md before any task.`
 
 <details>
 <summary><strong>Native config file, per agent</strong></summary>
 
-| Agent            | Native config file                 | How to wire it                                                        |
-| :--------------- | :--------------------------------- | :-------------------------------------------------------------------- |
-| Claude Code      | `CLAUDE.md` (root, auto-generated) | Auto-loaded. No action required.                                      |
-| Cursor           | `.cursor/rules/sdg-agents.mdc`     | Create the file with a single line: `Read AGENTS.md before any task.` |
-| Windsurf         | `.windsurfrules`                   | Same pointer line.                                                    |
-| GitHub Copilot   | `.github/copilot-instructions.md`  | Same pointer line.                                                    |
-| Codex CLI        | `AGENTS.md` (root)                 | Auto-loaded. No action required.                                      |
-| Gemini CLI       | `GEMINI.md`                        | Same pointer line.                                                    |
-| Cline / Roo Code | `.clinerules`                      | Same pointer line.                                                    |
+| Agent            | Native config file                    | How to wire it                                                        |
+| :--------------- | :------------------------------------ | :-------------------------------------------------------------------- |
+| Claude Code      | `CLAUDE.md` (root, auto-generated)    | Auto-loaded. No action required.                                      |
+| Cursor           | `.cursor/rules/spec-driven-guide.mdc` | Create the file with a single line: `Read AGENTS.md before any task.` |
+| Windsurf         | `.windsurfrules`                      | Same pointer line.                                                    |
+| GitHub Copilot   | `.github/copilot-instructions.md`     | Same pointer line.                                                    |
+| Codex CLI        | `AGENTS.md` (root)                    | Auto-loaded. No action required.                                      |
+| Gemini CLI       | `GEMINI.md`                           | Same pointer line.                                                    |
+| Cline / Roo Code | `.clinerules`                         | Same pointer line.                                                    |
 
 </details>
 
@@ -237,17 +237,17 @@ The agent asks for your languages and versions, classifies them by role, and wri
 
 ## Maintenance
 
-`npx sdg-agents` opens a menu whose **Settings** entry runs the governance audit.
+`npx spec-driven-guide` opens a menu whose **Settings** entry runs the governance audit.
 
 <details>
 <summary><strong>If you prefer, run it straight from the CLI</strong></summary>
 
 ```bash
-npx sdg-agents gate       # Review the staged diff against the gate (language-agnostic pre-commit)
-npx sdg-agents review     # Detect drift between local rules and source
-npx sdg-agents audit      # Run the governance audit (drift, narrative, code style, hygiene)
-npx sdg-agents narrative  # Check the changelog narrative on its own
-npx sdg-agents clear      # Remove the .ai/ folder
+npx spec-driven-guide gate       # Review the staged diff against the gate (language-agnostic pre-commit)
+npx spec-driven-guide review     # Detect drift between local rules and source
+npx spec-driven-guide audit      # Run the governance audit (drift, narrative, code style, hygiene)
+npx spec-driven-guide narrative  # Check the changelog narrative on its own
+npx spec-driven-guide clear      # Remove the .ai/ folder
 ```
 
 </details>

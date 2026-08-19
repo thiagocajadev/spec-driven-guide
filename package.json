@@ -1,11 +1,11 @@
 {
-  "name": "sdg-agents",
-  "version": "7.0.1",
-  "description": "AI-Native Governance Framework: router-model instruction set with on-demand skills, 8 Engineering Laws, and multi-agent support for Claude, Cursor, Copilot, Gemini, Codex, Windsurf, and Roo Code.",
+  "name": "spec-driven-guide",
+  "version": "8.0.0",
+  "description": "Spec-driven governance for AI coding agents. A CLI that installs AGENTS.md and on-demand skills so Claude Code, Cursor, Copilot, Codex, Gemini and Windsurf follow one protocol: spec, plan, code, test, end.",
   "type": "module",
   "main": "./src/engine/bin/index.mjs",
   "bin": {
-    "sdg-agents": "src/engine/bin/index.mjs"
+    "spec-driven-guide": "src/engine/bin/index.mjs"
   },
   "engines": {
     "node": ">=24.0.0"
@@ -29,16 +29,27 @@
   "keywords": [
     "ai",
     "agents",
-    "specs",
-    "markdown",
+    "agents-md",
+    "spec-driven-development",
+    "spec-driven",
+    "ai-governance",
+    "ai-coding-assistant",
     "claude",
+    "claude-code",
     "cursor",
     "windsurf",
     "copilot",
     "codex",
     "gemini",
+    "agent-rules",
+    "ai-rules",
+    "coding-standards",
+    "prompt-engineering",
+    "llm",
+    "specs",
     "rules",
     "architecture",
+    "markdown",
     "cli",
     "developer-tools"
   ],
@@ -51,12 +62,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thiagocajadev/sdg-agents-cli.git"
+    "url": "git+https://github.com/thiagocajadev/spec-driven-guide.git"
   },
   "bugs": {
-    "url": "https://github.com/thiagocajadev/sdg-agents-cli/issues"
+    "url": "https://github.com/thiagocajadev/spec-driven-guide/issues"
   },
-  "homepage": "https://github.com/thiagocajadev/sdg-agents-cli#readme",
+  "homepage": "https://specdrivenguide.org",
   "dependencies": {
     "@inquirer/prompts": "^8.5.2",
     "dedent": "^1.7.2"

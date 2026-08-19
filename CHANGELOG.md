@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [8.0.0] - 2026-08-19
+
+### Changed
+
+- **The package is `spec-driven-guide`, and `sdg-agents` is deprecated pointing at it.** The old name carried neither the brand nor a term anyone searches: `SDG` resolves to the UN Sustainable Development Goals across every engine, and the field this project works in is written out as spec-driven, never abbreviated to SDG by anyone but this repository. The hyphens are load-bearing rather than cosmetic, since a search for `spec driven` splits on them and finds nothing inside a mashed compound, which is what ruled out the alternatives weighed along the way. npm has no rename and no alias, so `sdg-agents` stays installable and permanently deprecated with a message naming the successor, which is the only redirect the registry offers. Publishing the hyphenated form also blocks anyone else from taking `specdrivenguide` or `spec_driven_guide`, by npm's own moniker rule against names identical without punctuation.
+
+  The version did not reset. `spec-driven-guide` is a fresh package where any starting number would have been legal, and 1.0.0 was rejected on the evidence: Babel carried `babel-core` 6.26.3 into `@babel/core` 7.0.0 and Vue carried `vue-cli` 2.9.6 into `@vue/cli` 3.0.0, both renaming the same product, while the one project that did reset had rewritten itself into a new monorepo first. A deprecation notice sending a reader from 7.0.1 to a 1.0.0 replacement reads as a downgrade at the exact moment of most doubt.
+
+  Two of the swept sites are behaviour rather than text. `fs-utils.mjs` and `prompt-utils.mjs` both decide maintainer mode by comparing the `package.json` name against a literal, so a partial application would have left the CLI unable to recognise its own repository and would have disabled drift detection in silence; both flip in this commit, and the flag reads `isFrameworkPackage` now instead of naming the literal it compares. `version-utils.mjs` polls a package that does not exist until the first publish, verified to fail silently on its not-ok branch. Three files were left alone on purpose: the `CHANGELOG.md` history, `CHANGELOG-archive.md` and `MIGRATION-v3.md` name what the package was called at the time, and rewriting a record to match the present is how a record stops being one. The icon and menu assets keep their filenames, because renaming an asset breaks the raw URL of every README already mirrored elsewhere.
+
+- **`SDG` stays as the internal acronym, by decision rather than by omission.** The cycle commands, `sdg-rules.json`, the `AGENTS.sdg.md` sidecar and the `SDG` phase banner are read by agents inside a repository and never by an index, so the argument that moved the package name does not reach them. Cascading the rename there would have been a breaking change for every installed project in exchange for nothing.
+
+- **The four indexing fields that were empty are filled.** Every repository in the account carried an empty topic list, and this one also had no homepage and a seven-word description naming nothing a person would type. npm keywords went from 14 to 25, adding the high-intent terms the old list missed entirely, `agents-md`, `spec-driven-development`, `ai-governance`, `claude-code`, `agent-rules` and `prompt-engineering` among them, and `homepage` points at specdrivenguide.org rather than back at the repository's own README.
+
 ## [7.0.1] - 2026-08-08
 
 ### Fixed

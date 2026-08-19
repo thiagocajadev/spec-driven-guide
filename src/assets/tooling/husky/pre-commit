@@ -30,7 +30,7 @@ if [ -z "$DIFF" ]; then
 fi
 
 PROMPT_EXIT=0
-PROMPT=$(printf '%s' "$DIFF" | npx --no-install sdg-agents gate --prompt) || PROMPT_EXIT=$?
+PROMPT=$(printf '%s' "$DIFF" | npx --no-install spec-driven-guide gate --prompt) || PROMPT_EXIT=$?
 
 if [ "$PROMPT_EXIT" -ne 0 ] || [ -z "$PROMPT" ]; then
   echo "  ⚠️  SDG Gate: could not build the review prompt (exit $PROMPT_EXIT). Skipping review." >&2
@@ -47,4 +47,4 @@ if [ "$LLM_EXIT" -ne 0 ] || [ -z "$REVIEW" ]; then
   exit 0
 fi
 
-printf '%s' "$REVIEW" | npx --no-install sdg-agents gate --check
+printf '%s' "$REVIEW" | npx --no-install spec-driven-guide gate --check

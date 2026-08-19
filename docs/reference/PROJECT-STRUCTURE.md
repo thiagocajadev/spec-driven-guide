@@ -1,6 +1,6 @@
 # Project Structure
 
-This document describes every directory and file installed by `sdg-agents init`.
+This document describes every directory and file installed by `spec-driven-guide init`.
 
 ## Installed Tree
 

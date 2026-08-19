@@ -63,4 +63,4 @@ Data path for building reusable UI components with local state.
 ---
 
 > [!NOTE]
-> Select your flavor during `npx sdg-agents` initialization or with the `--flavor` flag. You can see all options in the [Quick Reference](CHEATSHEET.md).
+> Select your flavor during `npx spec-driven-guide` initialization or with the `--flavor` flag. You can see all options in the [Quick Reference](CHEATSHEET.md).

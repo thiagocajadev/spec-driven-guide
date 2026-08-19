@@ -1,6 +1,6 @@
 <!-- prettier-ignore-start -->
 <div align="center">
-  <img src="https://raw.githubusercontent.com/thiagocajadev/sdg-agents-cli/main/docs/img/sdg-agents-icon-light.svg" alt="SDG Agents" width="480" height="480" style="border-radius: 1rem;">
+  <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/sdg-agents-icon-light.svg" alt="Spec-Driven Guide" width="480" height="480" style="border-radius: 1rem;">
   <h1 align="center">Spec-Driven Guide: Agents</h1>
   <p align="center">
     Um CLI (Command Line Interface · interface de linha de comando) que instala um conjunto de instruções para agentes de IA no seu projeto.<br>
@@ -9,9 +9,9 @@
   <p align="center">
       Leia o manifesto e o guia visual em <a href="https://specdrivenguide.org">specdrivenguide.org</a>
   </p>
-  <a href="https://www.npmjs.com/package/sdg-agents"><img src="https://img.shields.io/npm/v/sdg-agents?style=flat-square&logo=npm&color=cb3837" alt="versão npm" /></a>
-  <a href="https://www.npmjs.com/package/sdg-agents"><img src="https://img.shields.io/npm/dm/sdg-agents?style=flat-square&logo=npm&color=cb3837" alt="downloads npm" /></a>
-  <a href="https://github.com/thiagocajadev/sdg-agents-cli/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/thiagocajadev/sdg-agents-cli/ci.yml?style=flat-square&logo=githubactions&logoColor=white&label=CI" alt="status do CI" /></a>
+  <a href="https://www.npmjs.com/package/spec-driven-guide"><img src="https://img.shields.io/npm/v/spec-driven-guide?style=flat-square&logo=npm&color=cb3837" alt="versão npm" /></a>
+  <a href="https://www.npmjs.com/package/spec-driven-guide"><img src="https://img.shields.io/npm/dm/spec-driven-guide?style=flat-square&logo=npm&color=cb3837" alt="downloads npm" /></a>
+  <a href="https://github.com/thiagocajadev/spec-driven-guide/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/thiagocajadev/spec-driven-guide/ci.yml?style=flat-square&logo=githubactions&logoColor=white&label=CI" alt="status do CI" /></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-24%20LTS-brightgreen?style=flat-square&logo=nodedotjs" alt="Node 24 LTS" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-ISC-blue?style=flat-square&logo=opensourceinitiative&logoColor=white" alt="License: ISC" /></a>
   <a href="https://agents.md"><img src="https://img.shields.io/badge/AGENTS.md-compat%C3%ADvel-6e56cf?style=flat-square&logo=markdown&logoColor=white" alt="compatível com AGENTS.md" /></a>
@@ -21,7 +21,7 @@
 
 <br>
 
-`sdg-agents` instala arquivos de instrução em markdown no seu projeto. Agentes de IA (Claude Code, Cursor, Windsurf, Copilot, Codex e outros) leem esses arquivos e seguem o protocolo em cada tarefa.
+`spec-driven-guide` instala arquivos de instrução em markdown no seu projeto. Agentes de IA (Claude Code, Cursor, Windsurf, Copilot, Codex e outros) leem esses arquivos e seguem o protocolo em cada tarefa.
 
 Quem chega ao projeto pela primeira vez lê de cima para baixo: o Início Rápido instala, e Como o Protocolo Funciona explica o que muda na conversa com o agente depois disso. Quem vai alterar o conjunto de instruções lê a partir de O Que É Instalado, onde cada arquivo gerado é nomeado e apontado para a sua origem.
 
@@ -79,11 +79,11 @@ O agente propõe a SPEC a partir do contexto que ele já tem do projeto, e você
 Requer **Node.js 24 LTS** ou mais novo, a linha em que o CLI é construído e testado.
 
 ```bash
-npx sdg-agents
+npx spec-driven-guide
 ```
 
 <p align="left">
-  <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/sdg-agents-cli/main/docs/img/sdg-agents-menu-v2.png" alt="Spec Driven Guide CLI em ação" /></kbd>
+  <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/sdg-agents-menu-v2.png" alt="Spec Driven Guide CLI em ação" /></kbd>
 </p>
 
 O assistente interativo pede o **flavor** (sabor · o padrão estrutural que o projeto segue). O stack vem depois, pelo ciclo `land:`, porque você declara melhor com o projeto já definido.
@@ -93,13 +93,13 @@ O assistente interativo pede o **flavor** (sabor · o padrão estrutural que o p
 
 ```bash
 # Instalação sem prompts (flavor lite + stack.md placeholder)
-npx sdg-agents init --quick
+npx spec-driven-guide init --quick
 
 # Vertical Slice, qualquer stack
-npx sdg-agents init --flavor vertical-slice
+npx spec-driven-guide init --flavor vertical-slice
 
 # MVC, qualquer stack
-npx sdg-agents init --flavor mvc
+npx spec-driven-guide init --flavor mvc
 ```
 
 </details>
@@ -192,7 +192,7 @@ Para o diagrama de fluxo de dados de cada flavor, veja [Pipelines Arquiteturais]
 
 ## Declaração de Stack via `land:`
 
-O stack é declarado, não escolhido de um catálogo. Depois do `sdg-agents init`, rode o ciclo `land:` para informar as linguagens, os runtimes (tempo de execução · Node, JVM, CLR) e as versões de framework do projeto:
+O stack é declarado, não escolhido de um catálogo. Depois do `spec-driven-guide init`, rode o ciclo `land:` para informar as linguagens, os runtimes (tempo de execução · Node, JVM, CLR) e as versões de framework do projeto:
 
 ```
 land: uma API Node.js + TypeScript servindo um dashboard React
@@ -217,20 +217,20 @@ O agente pergunta as suas linguagens e versões, classifica cada uma por papel e
 
 ## Usando com outras IDEs
 
-O `sdg-agents` gera um `AGENTS.md` na raiz do repositório e um `CLAUDE.md` ao lado. Codex e Claude Code leem os seus sem passo extra. Para as outras ferramentas, escreva uma linha no arquivo de regras nativo da IDE apontando para o `AGENTS.md`: `Read AGENTS.md before any task.`
+O `spec-driven-guide` gera um `AGENTS.md` na raiz do repositório e um `CLAUDE.md` ao lado. Codex e Claude Code leem os seus sem passo extra. Para as outras ferramentas, escreva uma linha no arquivo de regras nativo da IDE apontando para o `AGENTS.md`: `Read AGENTS.md before any task.`
 
 <details>
 <summary><strong>Arquivo de configuração nativo, por agente</strong></summary>
 
-| Agente           | Arquivo de config nativo          | Como conectar                                                         |
-| :--------------- | :-------------------------------- | :-------------------------------------------------------------------- |
-| Claude Code      | `CLAUDE.md` (raiz, auto-gerado)   | Carregado automaticamente. Nenhuma ação necessária.                   |
-| Cursor           | `.cursor/rules/sdg-agents.mdc`    | Crie o arquivo com uma única linha: `Read AGENTS.md before any task.` |
-| Windsurf         | `.windsurfrules`                  | Mesma linha de ponteiro.                                              |
-| GitHub Copilot   | `.github/copilot-instructions.md` | Mesma linha de ponteiro.                                              |
-| Codex CLI        | `AGENTS.md` (raiz)                | Carregado automaticamente. Nenhuma ação necessária.                   |
-| Gemini CLI       | `GEMINI.md`                       | Mesma linha de ponteiro.                                              |
-| Cline / Roo Code | `.clinerules`                     | Mesma linha de ponteiro.                                              |
+| Agente           | Arquivo de config nativo              | Como conectar                                                         |
+| :--------------- | :------------------------------------ | :-------------------------------------------------------------------- |
+| Claude Code      | `CLAUDE.md` (raiz, auto-gerado)       | Carregado automaticamente. Nenhuma ação necessária.                   |
+| Cursor           | `.cursor/rules/spec-driven-guide.mdc` | Crie o arquivo com uma única linha: `Read AGENTS.md before any task.` |
+| Windsurf         | `.windsurfrules`                      | Mesma linha de ponteiro.                                              |
+| GitHub Copilot   | `.github/copilot-instructions.md`     | Mesma linha de ponteiro.                                              |
+| Codex CLI        | `AGENTS.md` (raiz)                    | Carregado automaticamente. Nenhuma ação necessária.                   |
+| Gemini CLI       | `GEMINI.md`                           | Mesma linha de ponteiro.                                              |
+| Cline / Roo Code | `.clinerules`                         | Mesma linha de ponteiro.                                              |
 
 </details>
 
@@ -240,17 +240,17 @@ O `sdg-agents` gera um `AGENTS.md` na raiz do repositório e um `CLAUDE.md` ao l
 
 ## Manutenção
 
-O `npx sdg-agents` abre um menu cuja opção **Settings** roda a auditoria de governança.
+O `npx spec-driven-guide` abre um menu cuja opção **Settings** roda a auditoria de governança.
 
 <details>
 <summary><strong>Se preferir, rode direto pelo CLI</strong></summary>
 
 ```bash
-npx sdg-agents gate       # Passar o diff em staged pela barreira (serve como pre-commit, em qualquer linguagem)
-npx sdg-agents review     # Apontar o drift entre as regras locais e a fonte
-npx sdg-agents audit      # Rodar a auditoria de governança (drift, narrativa, estilo, higiene)
-npx sdg-agents narrative  # Checar só a narrativa do changelog
-npx sdg-agents clear      # Remover a pasta .ai/
+npx spec-driven-guide gate       # Passar o diff em staged pela barreira (serve como pre-commit, em qualquer linguagem)
+npx spec-driven-guide review     # Apontar o drift entre as regras locais e a fonte
+npx spec-driven-guide audit      # Rodar a auditoria de governança (drift, narrativa, estilo, higiene)
+npx spec-driven-guide narrative  # Checar só a narrativa do changelog
+npx spec-driven-guide clear      # Remover a pasta .ai/
 ```
 
 </details>

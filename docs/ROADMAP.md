@@ -1,6 +1,6 @@
 # Roadmap
 
-This document traces the evolution of **sdg-agents-cli** from foundation to a closed core, and lists the companion **extensions** planned to grow around it rather than inside it.
+This document traces the evolution of **spec-driven-guide** from foundation to a closed core, and lists the companion **extensions** planned to grow around it rather than inside it.
 
 ## Milestones
 

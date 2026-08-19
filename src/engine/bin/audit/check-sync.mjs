@@ -156,7 +156,7 @@ function reportResult(drifts) {
   }
 
   console.error(
-    "\n  Fix: apply the same edits to both copies, or re-run `npx sdg-agents init` to regenerate.\n",
+    "\n  Fix: apply the same edits to both copies, or re-run `npx spec-driven-guide init` to regenerate.\n",
   );
 
   const driftFailure = fail({ message: "SYNC_DRIFT", count: drifts.length });

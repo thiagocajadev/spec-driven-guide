@@ -10,16 +10,16 @@ The fastest paths from zero to a governed project:
 
 ```bash
 # Interactive wizard: walks you through architectural flavor + partner info
-npx sdg-agents
+npx spec-driven-guide
 
 # Zero-prompt install (lite flavor + stack.md placeholder)
-npx sdg-agents init --quick
+npx spec-driven-guide init --quick
 
 # Non-interactive: vertical-slice (most common)
-npx sdg-agents init --flavor vertical-slice
+npx spec-driven-guide init --flavor vertical-slice
 
 # Preview what would be written without touching the filesystem
-npx sdg-agents init --flavor mvc --dry-run
+npx spec-driven-guide init --flavor mvc --dry-run
 ```
 
 After install, open the agent chat and run `land: <one-line vision>`. The agent elicits the stack, writes `.ai/backlog/stack.md`, and seeds the backlog.
@@ -38,10 +38,10 @@ Select the flavor that matches your project's data flow and structure:
 | `legacy`         | Refactor-safe bridge patterns           | Migrating existing codebases   |
 
 ```bash
-npx sdg-agents init --flavor vertical-slice
-npx sdg-agents init --flavor mvc
-npx sdg-agents init --flavor lite
-npx sdg-agents init --flavor legacy
+npx spec-driven-guide init --flavor vertical-slice
+npx spec-driven-guide init --flavor mvc
+npx spec-driven-guide init --flavor lite
+npx spec-driven-guide init --flavor legacy
 ```
 
 ---
@@ -80,11 +80,11 @@ The agent may only fetch enrichment from these canonical sources:
 ## Maintenance Commands
 
 ```bash
-npx sdg-agents gate       # Review the staged diff against the gate (language-agnostic pre-commit)
-npx sdg-agents review     # Detect drift between local rules and source engine
-npx sdg-agents audit      # Run the governance audit (drift, narrative, code style, hygiene)
-npx sdg-agents narrative  # Check the changelog narrative on its own
-npx sdg-agents clear      # Remove the entire .ai/ governance layer
+npx spec-driven-guide gate       # Review the staged diff against the gate (language-agnostic pre-commit)
+npx spec-driven-guide review     # Detect drift between local rules and source engine
+npx spec-driven-guide audit      # Run the governance audit (drift, narrative, code style, hygiene)
+npx spec-driven-guide narrative  # Check the changelog narrative on its own
+npx spec-driven-guide clear      # Remove the entire .ai/ governance layer
 ```
 
 ---

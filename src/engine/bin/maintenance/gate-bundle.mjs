@@ -102,7 +102,7 @@ function printUsage() {
     "  SDG Gate: Language-agnostic pre-commit code reviewer",
     "",
     "  Usage:",
-    "    git diff --staged | sdg-agents gate --prompt | <llm-cli> | sdg-agents gate --check",
+    "    git diff --staged | spec-driven-guide gate --prompt | <llm-cli> | spec-driven-guide gate --check",
     "",
     "  Flags:",
     "    --prompt   Read diff from stdin, print review prompt to stdout",

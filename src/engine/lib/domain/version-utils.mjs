@@ -2,7 +2,7 @@
  * Version Utils: Logic for checking updates on npm registry.
  */
 
-const REGISTRY_URL = "https://registry.npmjs.org/sdg-agents/latest";
+const REGISTRY_URL = "https://registry.npmjs.org/spec-driven-guide/latest";
 const CHECK_TIMEOUT_MS = 2000;
 
 /**

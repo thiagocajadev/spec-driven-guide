@@ -1,6 +1,6 @@
 # Tooling (optional, inert)
 
-Pre-made scripts and hooks. **Nothing is wired by default**. `sdg-agents init` copies
+Pre-made scripts and hooks. **Nothing is wired by default**. `spec-driven-guide init` copies
 these files into `.ai/tooling/`, but no `package.json`, no `.husky/`, no devDep is
 modified by the CLI. Activate on demand with agent assistance or manually.
 
@@ -91,7 +91,7 @@ Runs the SDG gate against staged changes, blocking commit on BLOCK violations.
 Four stages, each feeding the next:
 
 ```
-git diff --staged  →  sdg-agents gate --prompt  →  <llm-cli>  →  sdg-agents gate --check
+git diff --staged  →  spec-driven-guide gate --prompt  →  <llm-cli>  →  spec-driven-guide gate --check
 ```
 
 **The review is opt-in.** `SDG_GATE_LLM` ships empty, and an empty value makes

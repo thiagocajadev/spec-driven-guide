@@ -125,9 +125,9 @@ function isMaintainerMode() {
   const pkgPath = path.join(projectRoot, "package.json");
   const pkg = safeReadJson(pkgPath);
   const assetsPath = path.join(projectRoot, "src", "assets", "instructions");
-  const isSdgAgents = pkg?.name === "sdg-agents";
+  const isFrameworkPackage = pkg?.name === "spec-driven-guide";
   const hasAssets = fileSystem.existsSync(assetsPath);
-  const maintainerMode = isSdgAgents && hasAssets;
+  const maintainerMode = isFrameworkPackage && hasAssets;
   return maintainerMode;
 }
 

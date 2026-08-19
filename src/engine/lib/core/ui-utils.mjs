@@ -208,7 +208,7 @@ function printHeader(version) {
 function printUpdateNotification(current, latest) {
   const headline = `\n  🚀 New version available: v${latest} (current: v${current})`;
   console.log(headline);
-  console.log("  Update with: npm install -g sdg-agents\n");
+  console.log("  Update with: npm install -g spec-driven-guide\n");
 }
 
 function printFooter() {
@@ -217,11 +217,11 @@ function printFooter() {
 
 function printHelp(version) {
   console.log(`
-  sdg-agents v${version}
-  AI-Native Governance Framework: inject staff-level engineering rules into your project.
+  spec-driven-guide v${version}
+  Spec-driven governance for AI coding agents: one protocol for every project.
 
   Usage:
-    npx sdg-agents [command] [options]
+    npx spec-driven-guide [command] [options]
 
   Commands:
     init         Install the instruction set (interactive or via flags)
@@ -239,10 +239,10 @@ function printHelp(version) {
     --dry-run            Preview without writing files
 
   Examples:
-    npx sdg-agents
-    npx sdg-agents init --quick
-    npx sdg-agents init --flavor vertical-slice
-    npx sdg-agents clear
+    npx spec-driven-guide
+    npx spec-driven-guide init --quick
+    npx spec-driven-guide init --flavor vertical-slice
+    npx spec-driven-guide clear
 
   After install, run \`land:\` in your agent chat to discover and declare the project stack.
 `);

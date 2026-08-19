@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * sdg-agents: Main CLI Entry Point
+ * spec-driven-guide: Main CLI Entry Point
  * Supports interactive and non-interactive modes.
  */
 

@@ -128,7 +128,7 @@ function isMaintainerMode() {
       fileSystem.readFileSync(packagePath, "utf8"),
     );
 
-    const isMaintainer = packageData.name === "sdg-agents";
+    const isMaintainer = packageData.name === "spec-driven-guide";
     return isMaintainer;
   } catch {
     return false;

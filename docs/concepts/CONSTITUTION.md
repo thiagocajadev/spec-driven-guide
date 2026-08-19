@@ -1,6 +1,6 @@
 # The SDG Constitution: 8 Engineering Laws
 
-This document defines the philosophical and technical foundation of `sdg-agents`.
+This document defines the philosophical and technical foundation of `spec-driven-guide`.
 
 ## How the Model Works
 
