@@ -1,8 +1,10 @@
-# Spec-Driven Development Guide (5-Phase Task Cycle)
+# Spec-Driven Guide (5-Phase Task Cycle)
 
-The **Spec-Driven Guide (SDG)** enforces a standardized lifecycle for every task, ensuring that code is only written after the intent and implementation plan are fully approved.
+**Spec-Driven Guide (SDG)** is built on Spec-Driven Development and keeps its core: a specification agreed before code exists, and a verification checklist that says when the work is done. What it drops is the apparatus that turns the method into ceremony. There is no directory of specification artifacts to maintain, no template to fill for a typo, and no phase that produces a document nobody reads. The spec is written in the conversation, at the size the demand deserves.
 
-The cycle follows five mandatory phases: **SPEC → PLAN → CODE → TEST → END**.
+That is the optimization the name carries. A guide, not a methodology to administer: software engineering applied where it changes the outcome, and absent where it only adds weight.
+
+The cycle runs five phases: **SPEC → PLAN → CODE → TEST → END**. The spec scales with the demand. The stops do not: no code before the SPEC is approved, no commit before the developer says so.
 
 > [!TIP]
 > For the internal sub-steps and decision gates behind each phase, read the [Agent Deep-Flow Guide](AGENT-DEEP-FLOW.md).

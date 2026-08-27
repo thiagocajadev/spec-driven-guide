@@ -1,4 +1,4 @@
-# Working Protocol (Spec Driven Design + Token Discipline)
+# Working Protocol (Spec-Driven Cycle + Token Discipline)
 
 <ruleset name="WorkingProtocol">
 
@@ -9,6 +9,16 @@
 - **CODE**: Follow the plan. Nothing more.
 - **TEST**: Verify build matches agreement. Catch problems before ship.
 - **END**: Close cycle: changelog, backlog sync, move on.
+
+## Proportion
+
+**The spec scales with the demand. The gates do not.** A typo earns three lines of SPEC; a new
+domain earns a contract, its states and its failure modes. Writing a full specification for a
+one-line change is ceremony, and ceremony is what makes a protocol get skipped.
+
+What never scales down is the stop before CODE, the stop before commit, and the verification
+checklist. A small change nobody approved is still unapproved work, and a change too small to
+verify is too small to have been worth making.
 
 ## Phase Banner
 
@@ -100,7 +110,7 @@ It reads its state from `.ai/backlog/tasks.md`, not from the conversation, which
    - `derived`: **do not touch `CHANGELOG.md`.** The release tooling generates it from the commit subjects and bodies, so the commit body **is** the changelog entry. Writing both creates two sources that drift by the second release. Spend the care on the body.
    - `manual`: ONE entry per completed task under `## [Unreleased]`, which the bump promotes on release.
    - Section mapping, used by both modes: `feat:` → `### Added` | `land:` → `### Added` | `fix:` → `### Fixed` | `docs:` → `### Fixed` | `audit:` → `### Changed`
-3. **Backlog Sync**: Finished tasks → `## Done` in `tasks.md`, each as `- [DONE] ...`. Then run `npm run prune`, which keeps the last 3 entries in `## Done` (SSOT for history = CHANGELOG + git log).
+3. **Backlog Sync**: Finished tasks → `## Done` in `tasks.md`, each as `- [DONE] ...`. Then run `npm run prune`, which keeps the last 3 entries in `## Done` (SSOT for history = CHANGELOG + git log). A lesson worth keeping goes to `learned.md`, a failure with its cause to `troubleshoot.md`, and neither goes to the harness memory store: `AGENTS.md`, Persistence Policy.
 4. **Objective Update**: Update `## Now` in `tasks.md` with next objective or clear it.
 5. **Map Reset**: Overwrite `impact-map.md` with idle state. Missing → skip.
 6. **Lint**: Run linter, block commit if errors remain.
@@ -108,6 +118,31 @@ It reads its state from `.ai/backlog/tasks.md`, not from the conversation, which
 8. **Session Gate [HARD STOP]**: Write next objective to `tasks.md`. Stop: _"Cycle complete. Context exhausted. **Open a new session**. Next: [objective]."_
 
 > **SOVEREIGN GATE**: Never bypass human verification for commits.
+
+</rule>
+
+## Rule: Guardrails
+
+<rule name="Guardrails">
+
+What the protocol takes off the agent's hands, so the developer is not the one catching it in review.
+
+| Guardrail                    | What it prevents                                                                      |
+| :--------------------------- | :------------------------------------------------------------------------------------ |
+| **Prefix required**          | A cycle guessed from a loose ask. No prefix, ask which one                            |
+| **Mid-cycle classification** | A follow-up message silently reopening the cycle as a new one                         |
+| **Assumptions stated**       | An unstated reading shipped as the request. Two readings that diverge materially: ask |
+| **SPEC and PLAN gates**      | Code written before the contract is agreed                                            |
+| **Work Checklist**           | A write tool firing before the standards are in the agent's head                      |
+| **Scope lock**               | The refactor nobody asked for, riding along with the fix                              |
+| **Blocker surface**          | A workaround invented in silence instead of a question asked out loud                 |
+| **Circuit Breaker**          | The loop: 3 failed TESTs, 3 identical errors, or 3 turns without progress, then stop  |
+| **Commit gate**              | A commit the developer never approved                                                 |
+| **Evidence**                 | A claim about this codebase asserted from memory                                      |
+
+**Evidence, in full.** A statement about this repository is grounded in a file read this session and carries its `file:line`, or it ships marked unverified. Absent means unverified: not read is not the same as not there, and "I did not check" is a cheap and valid answer. This binds the research behind a SPEC, the report that closes TEST, and the summary at END. Outside the repository, only the `land:` allow-list is fetchable, and a source is never invented.
+
+**What none of this does.** No instruction stops a model from being confident. These rules narrow where confidence can do damage and make an ungrounded claim visibly irregular. The checks that hold on their own are mechanical: the tests, the linter, `audit:`, the hooks.
 
 </rule>
 

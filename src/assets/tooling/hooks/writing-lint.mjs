@@ -25,9 +25,10 @@ import fileSystem from "node:fs";
 import { fileURLToPath } from "node:url";
 
 /**
- * why: the hook is copied to .claude/hooks/ on install, so resolving from
- * import.meta.url points at the wrong tree. The project root is the only
- * anchor both the installed copy and the maintainer copy agree on.
+ * why: the same script runs from two trees, `.ai/tooling/hooks/` in a consumer
+ * project and `src/assets/tooling/hooks/` in this one, and the lexicon sits at a
+ * different depth in each. The project root is the only anchor both agree on,
+ * which is what rules out resolving from import.meta.url.
  */
 const LEXICON_CANDIDATE_DIRECTORIES = [
   path.join(".ai", "skills", "lexicon"),

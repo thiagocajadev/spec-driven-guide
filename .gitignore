@@ -12,9 +12,7 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Environment
-.env
 .env.local
-.env.*
 
 # Editor
 .idea/
@@ -42,13 +40,21 @@ pnpm-debug.log*
 AGENTS.md
 CLAUDE.md
 
-# Volatile session state. Already covered by `.ai/backlog/*` above, but
-# writeGitignore() matches literal lines: drop these and every dogfood run
-# appends them back.
+# >>> spec-driven-guide, managed block
+# Rewritten whole on every init. Lines outside the markers are yours.
+
+# Environment: never commit secrets
+.env
+.env.*
+
+# AI artifacts: session state, not project logic
 .ai/backlog/tasks.md
 .ai/backlog/impact-map.md
 .ai/last-prompt.md
-
-# Scratch
 tmp/
 temp/
+
+# Runtime scratch: the harness writes it, the repository never carries it
+.claude/
+
+# <<< spec-driven-guide

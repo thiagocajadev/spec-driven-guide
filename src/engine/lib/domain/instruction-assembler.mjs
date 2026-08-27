@@ -12,7 +12,7 @@ import { ManifestUtils } from "./manifest-utils.mjs";
 import { FsUtils } from "../core/fs-utils.mjs";
 
 const { displayName } = DisplayUtils;
-const { computeHashes } = ManifestUtils;
+const { computeHashes, loadManifest } = ManifestUtils;
 const { getDirname, writeJsonAtomic, safeReadJson } = FsUtils;
 
 const __dirname = getDirname(import.meta.url);
@@ -138,6 +138,7 @@ const SKILL_CATALOG = [
 function buildMasterInstructions(selections) {
   const header = buildHeader();
   const sessionStart = buildSessionStart();
+  const persistencePolicy = buildPersistencePolicy();
   const semanticRouter = buildSemanticRouter();
   const skillRouter = buildSkillRouter(selections);
   const agentRoles = buildAgentRoles();
@@ -145,6 +146,7 @@ function buildMasterInstructions(selections) {
   const fullInstructionContent = [
     header,
     sessionStart,
+    persistencePolicy,
     semanticRouter,
     skillRouter,
     agentRoles,
@@ -171,6 +173,19 @@ function buildMasterInstructions(selections) {
       3. Read \`.ai/backlog/tasks.md\`: \`## Now\` holds the objective; check for \`[IN_PROGRESS]\`. If found: load workflow.md and resume.`;
 
     return sessionStartString;
+  }
+
+  function buildPersistencePolicy() {
+    const policyString = dedent`
+      ## Persistence Policy
+
+      > Memory belongs to the repository, not to the machine.
+
+      - What this project taught: \`.ai/backlog/learned.md\` (patterns) and \`.ai/backlog/troubleshoot.md\` (failures).
+      - Harness memory store: only what no repository owns.
+      - Never both. Two copies drift, and only one is in review.`;
+
+    return policyString;
   }
 
   function buildSemanticRouter() {
@@ -584,68 +599,137 @@ function hasManagedSentinel(content, sentinel) {
   return isManaged;
 }
 
+const MANAGED_BLOCK_START = "# >>> spec-driven-guide, managed block";
+const MANAGED_BLOCK_END = "# <<< spec-driven-guide";
+
 /**
- * Writes or updates .gitignore with SDG-managed entries.
- * Idempotent: each block only appends entries not already present.
- * Backlog is classified by volatility: session state is ignored, while
- * context, stack, learned and troubleshoot stay versioned as team knowledge.
+ * The block is rewritten whole on every run, which is what lets an entry be
+ * retired as easily as added. Backlog is classified by volatility: session
+ * state is ignored, while context, stack, learned and troubleshoot stay
+ * versioned as team knowledge.
+ */
+const MANAGED_BLOCKS = [
+  {
+    header: "# Environment: never commit secrets",
+    entries: [".env", ".env.*"],
+  },
+  {
+    header: "# AI artifacts: session state, not project logic",
+    entries: [
+      ".ai/backlog/tasks.md",
+      ".ai/backlog/impact-map.md",
+      ".ai/last-prompt.md",
+      "tmp/",
+      "temp/",
+    ],
+  },
+  {
+    header:
+      "# Runtime scratch: the harness writes it, the repository never carries it",
+    entries: [".claude/"],
+  },
+];
+
+/**
+ * why: only a vendor directory carrying nothing prescribed belongs in the block
+ * above. `.cursor/` holds the pointer file the README asks the developer to
+ * commit, and `.kiro/` holds steering and specs its own documentation calls
+ * non-optional in git. Ignoring either repeats, against another tool, the
+ * `.ai/backlog/` defect this block exists to fix.
+ */
+
+/**
+ * why: `.ai/backlog/` was emitted before the volatility policy, and left in the
+ * body it keeps learned.md and troubleshoot.md out of git in every project
+ * installed before v6. The two em dash headers are stored data from before the
+ * punctuation sweep, kept for the same reason the legacy sentinels are.
+ */
+const LEGACY_GITIGNORE_LINES = [
+  "# Environment — never commit secrets",
+  "# AI artifacts — session state, not project logic",
+  ".ai/backlog/",
+];
+
+const RECLAIMED_LINES = [
+  ...MANAGED_BLOCKS.flatMap((block) => [block.header, ...block.entries]),
+  ...LEGACY_GITIGNORE_LINES,
+];
+
+/**
+ * Writes the SDG-managed block into .gitignore. Everything outside the two
+ * markers belongs to the developer and survives untouched; everything the CLI
+ * ever emitted loose is reclaimed into the block, so an entry the canon drops
+ * stops being ignored instead of lingering forever.
  */
 function writeGitignore(targetDirectory) {
   const gitignorePath = path.join(targetDirectory, ".gitignore");
-
-  const BLOCKS = [
-    {
-      header: "# Environment: never commit secrets",
-      entries: [".env", ".env.*"],
-    },
-    {
-      header: "# AI artifacts: session state, not project logic",
-      entries: [
-        ".ai/backlog/tasks.md",
-        ".ai/backlog/impact-map.md",
-        ".ai/last-prompt.md",
-        "tmp/",
-        "temp/",
-      ],
-    },
-  ];
 
   const existingContent = fileSystem.existsSync(gitignorePath)
     ? fileSystem.readFileSync(gitignorePath, "utf8")
     : "";
 
-  const existingLines = existingContent.split("\n").map((line) => line.trim());
+  const developerBody = extractDeveloperBody(existingContent);
+  const managedBlock = renderManagedBlock();
 
-  const blocksToAppend = BLOCKS.map((block) => {
-    const missingEntries = block.entries.filter(
-      (entry) => !existingLines.includes(entry),
-    );
+  const separator = developerBody.length > 0 ? "\n\n" : "";
+  const content = `${developerBody}${separator}${managedBlock}\n`;
 
-    if (missingEntries.length === 0) {
-      const emptyBlock = null;
-      return emptyBlock;
-    }
-
-    const alreadyHasHeader = existingContent.includes(block.header);
-    const lines = alreadyHasHeader
-      ? missingEntries
-      : [block.header, ...missingEntries];
-
-    const blockContent = lines.join("\n");
-    return blockContent;
-  }).filter(Boolean);
-
-  if (blocksToAppend.length === 0) {
+  if (content === existingContent) {
     return;
   }
 
-  const separator =
-    existingContent.length > 0 && !existingContent.endsWith("\n") ? "\n" : "";
+  fileSystem.writeFileSync(gitignorePath, content);
+}
 
-  fileSystem.appendFileSync(
-    gitignorePath,
-    `${separator}\n${blocksToAppend.join("\n\n")}\n`,
+function extractDeveloperBody(existingContent) {
+  const withoutBlock = removeManagedBlock(existingContent);
+
+  const keptLines = withoutBlock
+    .split("\n")
+    .filter((line) => !RECLAIMED_LINES.includes(line.trim()));
+
+  const collapsedBody = keptLines.join("\n").replace(/\n{3,}/g, "\n\n");
+  const developerBody = collapsedBody.trim();
+  return developerBody;
+}
+
+function removeManagedBlock(existingContent) {
+  const startIndex = existingContent.indexOf(MANAGED_BLOCK_START);
+
+  if (startIndex === -1) {
+    const unmanagedResult = existingContent;
+    return unmanagedResult;
+  }
+
+  const beforeBlock = existingContent.slice(0, startIndex);
+  const endIndex = existingContent.indexOf(MANAGED_BLOCK_END, startIndex);
+
+  if (endIndex === -1) {
+    const truncatedResult = beforeBlock;
+    return truncatedResult;
+  }
+
+  const afterBlock = existingContent.slice(endIndex + MANAGED_BLOCK_END.length);
+  const strippedContent = `${beforeBlock}${afterBlock}`;
+  return strippedContent;
+}
+
+function renderManagedBlock() {
+  const sections = MANAGED_BLOCKS.map((block) =>
+    [block.header, ...block.entries].join("\n"),
   );
+
+  const blockLines = [
+    MANAGED_BLOCK_START,
+    "# Rewritten whole on every init. Lines outside the markers are yours.",
+    "",
+    sections.join("\n\n"),
+    "",
+    MANAGED_BLOCK_END,
+  ];
+
+  const managedBlock = blockLines.join("\n");
+  return managedBlock;
 }
 
 /**
@@ -806,6 +890,125 @@ function removeGeneratedInstructions(targetDirectory) {
   fileSystem.rmSync(generatedInstructionsDir, { recursive: true, force: true });
 }
 
+/**
+ * Manifest keys are prefixed by asset family. Only the families the init copies
+ * file by file can go stale: `.ai/instructions/` is wiped whole before every
+ * regen, so templates, competencies and flavor are rebuilt rather than pruned.
+ */
+const PRUNABLE_EMISSION_ROOTS = {
+  skills: [".ai", "skills"],
+  commands: [".ai", "commands"],
+  tooling: [".ai", "tooling"],
+};
+
+/**
+ * Deletes what the canon dropped. The previous manifest's `contentHashes` keys
+ * inventory what an earlier release emitted, so a key the current canon no
+ * longer produces names a file this version would never write. A file the
+ * developer added by hand was never in a manifest, which puts it out of reach.
+ * Returns the manifest keys removed, for the caller to report.
+ */
+function pruneStaleEmissions(targetDirectory, selections) {
+  const previousManifest = loadManifest(targetDirectory);
+  const previousHashes = previousManifest?.contentHashes;
+
+  if (!previousHashes) {
+    const firstInstallResult = [];
+    return firstInstallResult;
+  }
+
+  const currentHashes = computeHashes(selections, SOURCE_INSTRUCTIONS);
+  const staleKeys = Object.keys(previousHashes).filter(
+    (manifestKey) => !(manifestKey in currentHashes),
+  );
+
+  const removedKeys = staleKeys
+    .map((manifestKey) => removeEmittedFile(targetDirectory, manifestKey))
+    .filter(Boolean);
+
+  pruneEmptyDirectories(targetDirectory);
+
+  return removedKeys;
+}
+
+function removeEmittedFile(targetDirectory, manifestKey) {
+  const emittedPath = resolveEmittedPath(targetDirectory, manifestKey);
+
+  if (!emittedPath) {
+    const unmappedResult = null;
+    return unmappedResult;
+  }
+
+  if (!fileSystem.existsSync(emittedPath)) {
+    const alreadyGoneResult = null;
+    return alreadyGoneResult;
+  }
+
+  fileSystem.rmSync(emittedPath);
+
+  const removedResult = manifestKey;
+  return removedResult;
+}
+
+/**
+ * why: the manifest is a file on disk and a tampered key would otherwise steer
+ * `rmSync` outside the tree the CLI owns. Containment is checked against the
+ * resolved root, never against the key's own text.
+ */
+function resolveEmittedPath(targetDirectory, manifestKey) {
+  const segments = manifestKey.split(/[\\/]/);
+  const [family] = segments;
+  const rootSegments = PRUNABLE_EMISSION_ROOTS[family];
+
+  if (!rootSegments) {
+    const unprunableResult = null;
+    return unprunableResult;
+  }
+
+  const rootDirectory = path.resolve(targetDirectory, ...rootSegments);
+  const emittedPath = path.resolve(rootDirectory, ...segments.slice(1));
+  const isInsideRoot = emittedPath.startsWith(`${rootDirectory}${path.sep}`);
+
+  if (!isInsideRoot) {
+    const escapingResult = null;
+    return escapingResult;
+  }
+
+  return emittedPath;
+}
+
+/**
+ * A family that lost a whole subdirectory, `skills/lexicon` among the shapes
+ * this has taken, leaves the directory behind once its files go. The roots
+ * themselves always survive: the next injection writes into them.
+ */
+function pruneEmptyDirectories(targetDirectory) {
+  for (const rootSegments of Object.values(PRUNABLE_EMISSION_ROOTS)) {
+    const rootDirectory = path.join(targetDirectory, ...rootSegments);
+    removeEmptyChildren(rootDirectory);
+  }
+}
+
+function removeEmptyChildren(directory) {
+  if (!fileSystem.existsSync(directory)) {
+    return;
+  }
+
+  const childDirectories = fileSystem
+    .readdirSync(directory, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory());
+
+  for (const child of childDirectories) {
+    const childPath = path.join(directory, child.name);
+    removeEmptyChildren(childPath);
+
+    const isEmpty = fileSystem.readdirSync(childPath).length === 0;
+    if (isEmpty) {
+      fileSystem.rmdirSync(childPath);
+    }
+  }
+}
+
 export const InstructionAssembler = {
   buildMasterInstructions,
   buildClaudeContent,
@@ -816,4 +1019,5 @@ export const InstructionAssembler = {
   writeAutomationScripts,
   writeToolingAssets,
   removeGeneratedInstructions,
+  pruneStaleEmissions,
 };

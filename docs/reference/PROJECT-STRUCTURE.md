@@ -34,7 +34,7 @@ your-project/
 │   │   ├── flavors/             ← Architectural patterns (vertical-slice, mvc, lite, legacy)
 │   │   └── competencies/        ← Delivery contract: BFF envelope + UI contract execution (fused)
 │   ├── commands/                ← Cycle command files (feat/fix/docs/audit/land/end)
-│   └── backlog/                 ← Harness Engineering (Memory), classified by volatility
+│   └── backlog/                 ← Memory, classified by volatility
 │       ├── context.md           ← Project brief: vision, decisions, current state (versioned)
 │       ├── stack.md             ← Developer-declared languages/runtimes/versions (populated by land:, versioned)
 │       ├── learned.md           ← Lessons learned: success patterns and research findings (versioned)

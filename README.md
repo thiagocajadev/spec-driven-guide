@@ -37,17 +37,20 @@ Instruct the agent the way you would write a commit message.
 
 The agent proposes the SPEC from the context it already holds about the project, and you align it together before any code. Where there is risk, spell out as much detail as you can.
 
+**The spec scales with the demand. The gates do not.** A typo earns three lines; a new domain earns a contract. This is the balance the framework exists for: the engineering that changes the outcome, without the ceremony that makes a protocol get skipped.
+
 <details>
 <summary><strong>Fundamental concepts</strong></summary>
 
-| Concept            | What it is                                                                                              |
-| :----------------- | :------------------------------------------------------------------------------------------------------ |
-| **Cycle**          | One unit of work, opened by a prefix (`feat:`, `fix:`, `docs:`, `audit:`, `land:`) and closed by `end:` |
-| **Phase**          | One of the five steps a cycle runs through: SPEC, PLAN, CODE, TEST, END                                 |
-| **Skill**          | A self-contained ruleset in `.ai/skills/`, loaded only when the cycle's domain calls for it             |
-| **Flavor**         | The architectural shape of the project, chosen at install: vertical slice, MVC, lite, or legacy         |
-| **Work Checklist** | The binary gate in `code-style.md`: Intent items recited at CODE entry, Form items verified at TEST     |
-| **Backlog**        | `.ai/backlog/`, where the project brief, the declared stack and the task state survive the session      |
+| Concept            | What it is                                                                                                                                                                                                                      |
+| :----------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Cycle**          | One unit of work, opened by a prefix (`feat:`, `fix:`, `docs:`, `audit:`, `land:`) and closed by `end:`                                                                                                                         |
+| **Phase**          | One of the five steps a cycle runs through: SPEC, PLAN, CODE, TEST, END                                                                                                                                                         |
+| **Skill**          | A self-contained ruleset in `.ai/skills/`, loaded only when the cycle's domain calls for it                                                                                                                                     |
+| **Flavor**         | The architectural shape of the project, chosen at install: vertical slice, MVC, lite, or legacy                                                                                                                                 |
+| **Work Checklist** | The binary gate in `code-style.md`: Intent items recited at CODE entry, Form items verified at TEST                                                                                                                             |
+| **Backlog**        | `.ai/backlog/`, where the project brief, the declared stack and the task state survive the session                                                                                                                              |
+| **Harness**        | Everything around the model: the guides that steer it before it acts, the sensors that check it after, and the memory it carries. SDG is the portable layer of it; Claude Code, Cursor or Codex is the runtime it installs into |
 
 </details>
 
@@ -132,7 +135,7 @@ your-project/
 │   ├── instructions/            ← Flavors, fused delivery competency, templates
 │   ├── commands/                ← Cycle commands (feat/fix/docs/audit/land/end)
 │   ├── tooling/                 ← Inert tooling bundle (scripts + husky hooks, activate on demand)
-│   └── backlog/                 ← Harness Engineering (Memory): versioned knowledge, volatile state gitignored
+│   └── backlog/                 ← Memory: versioned knowledge, volatile state gitignored
 │       └── ...                  ← (See docs/reference/PROJECT-STRUCTURE.md for details)
 ```
 
@@ -170,8 +173,36 @@ The agent **stops and waits for you** three times: at SPEC and at PLAN before wr
   END     the delivery        changelog, backlog, commit    ▸  you type end:
 ```
 
-For a detailed walkthrough of each phase and its rules, see [Spec-Driven Development Guide](docs/concepts/SPEC-DRIVEN-DEV-GUIDE.md).
+For a detailed walkthrough of each phase and its rules, see [Spec-Driven Guide](docs/concepts/SPEC-DRIVEN-GUIDE.md).
 For a visual breakdown of the internal decision gates and loops, see [Agent Deep-Flow](docs/concepts/AGENT-DEEP-FLOW.md).
+
+---
+
+## Guardrails
+
+The protocol holds the reins in ten places, so you are not the one catching these in review:
+
+<details>
+<summary><strong>The ten guardrails</strong></summary>
+
+| Guardrail                    | What it prevents                                                                     |
+| :--------------------------- | :----------------------------------------------------------------------------------- |
+| **Prefix required**          | A cycle guessed from a loose ask. No prefix, the agent asks which one                |
+| **Mid-cycle classification** | A follow-up message silently reopening the cycle as a new one                        |
+| **Assumptions stated**       | An unstated reading shipped as the request. Where two readings diverge, it asks      |
+| **SPEC and PLAN gates**      | Code written before you agreed to the contract                                       |
+| **Work Checklist**           | A file written before the standards are in the agent's head                          |
+| **Scope lock**               | The refactor nobody asked for, riding along with the fix                             |
+| **Blocker surface**          | A workaround invented in silence instead of a question asked out loud                |
+| **Circuit Breaker**          | The loop: 3 failed TESTs, 3 identical errors, or 3 turns without progress, then stop |
+| **Commit gate**              | A commit you never approved                                                          |
+| **Evidence**                 | A claim about your codebase asserted from memory instead of from a file it read      |
+
+</details>
+
+**Evidence** is the one aimed straight at hallucination: a statement about your repository is grounded in a file read this session and carries its `file:line`, or it ships marked unverified. Absent means unverified, and "I did not check" is a cheap, valid answer.
+
+**What none of this does.** No instruction stops a model from being confident. The guardrails narrow where confidence can do damage and make an ungrounded claim visibly irregular. The checks that hold on their own are mechanical: the tests, the linter, `audit:`, the hooks.
 
 ---
 
@@ -214,7 +245,7 @@ The agent asks for your languages and versions, classifies them by role, and wri
 
 ## Using with other IDEs
 
-`spec-driven-guide` generates a single canonical governance file at `AGENTS.md` in the repo root, plus a `CLAUDE.md` pointer beside it. Codex and Claude Code pick theirs up with no extra step. For other tools, add a one-line pointer in your IDE's native rules file: `Read AGENTS.md before any task.`
+`spec-driven-guide` generates a single canonical governance file at `AGENTS.md` in the repo root, plus a `CLAUDE.md` pointer beside it. Codex, Kiro and Claude Code pick theirs up with no extra step. For other tools, add a one-line pointer in your IDE's native rules file: `Read AGENTS.md before any task.`
 
 <details>
 <summary><strong>Native config file, per agent</strong></summary>
@@ -226,6 +257,7 @@ The agent asks for your languages and versions, classifies them by role, and wri
 | Windsurf         | `.windsurfrules`                      | Same pointer line.                                                    |
 | GitHub Copilot   | `.github/copilot-instructions.md`     | Same pointer line.                                                    |
 | Codex CLI        | `AGENTS.md` (root)                    | Auto-loaded. No action required.                                      |
+| Kiro             | `AGENTS.md` (root)                    | Auto-loaded. No action required.                                      |
 | Gemini CLI       | `GEMINI.md`                           | Same pointer line.                                                    |
 | Cline / Roo Code | `.clinerules`                         | Same pointer line.                                                    |
 
@@ -267,7 +299,7 @@ Start with the [Quick Reference (CHEATSHEET)](docs/reference/CHEATSHEET.md) for 
 
 - [Engineering Constitution](docs/concepts/CONSTITUTION.md): the philosophical principles behind the rules (reference only; runtime rules live in `code-style.md`)
 
-- [Spec-Driven Development Guide](docs/concepts/SPEC-DRIVEN-DEV-GUIDE.md): a walkthrough of each phase and its rules
+- [Spec-Driven Guide](docs/concepts/SPEC-DRIVEN-GUIDE.md): a walkthrough of each phase and its rules
 
 - [Agent Deep-Flow](docs/concepts/AGENT-DEEP-FLOW.md): the internal decision gates and loops
 

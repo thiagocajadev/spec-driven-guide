@@ -37,17 +37,20 @@ Instrua o agente do mesmo jeito que você escreveria uma mensagem de commit.
 
 O agente propõe a SPEC a partir do contexto que ele já tem do projeto, e vocês alinham juntos antes de qualquer código. Onde houver risco, detalhe o quanto puder.
 
+**A spec escala com a demanda. Os gates não.** Um typo rende três linhas; um domínio novo rende um contrato. É esse o equilíbrio que o framework existe para dar: a engenharia que muda o resultado, sem a cerimônia que faz um protocolo ser pulado.
+
 <details>
 <summary><strong>Conceitos fundamentais</strong></summary>
 
-| Conceito           | O que é                                                                                                              |
-| :----------------- | :------------------------------------------------------------------------------------------------------------------- |
-| **Ciclo**          | Uma unidade de trabalho, aberta por um prefixo (`feat:`, `fix:`, `docs:`, `audit:`, `land:`) e fechada por `end:`    |
-| **Fase**           | Um dos cinco passos que o ciclo percorre: SPEC, PLAN, CODE, TEST, END                                                |
-| **Skill**          | Um conjunto de regras sobre um assunto, em `.ai/skills/`, carregado só quando o domínio do ciclo pede                |
-| **Flavor**         | O formato arquitetural do projeto, escolhido na instalação: vertical slice, MVC, lite ou legacy                      |
-| **Work Checklist** | A barreira binária em `code-style.md`: itens de Intent recitados ao entrar em CODE, itens de Form conferidos em TEST |
-| **Backlog**        | `.ai/backlog/`, onde o resumo do projeto, o stack declarado e o estado das tarefas sobrevivem à sessão               |
+| Conceito           | O que é                                                                                                                                                                                                                       |
+| :----------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Ciclo**          | Uma unidade de trabalho, aberta por um prefixo (`feat:`, `fix:`, `docs:`, `audit:`, `land:`) e fechada por `end:`                                                                                                             |
+| **Fase**           | Um dos cinco passos que o ciclo percorre: SPEC, PLAN, CODE, TEST, END                                                                                                                                                         |
+| **Skill**          | Um conjunto de regras sobre um assunto, em `.ai/skills/`, carregado só quando o domínio do ciclo pede                                                                                                                         |
+| **Flavor**         | O formato arquitetural do projeto, escolhido na instalação: vertical slice, MVC, lite ou legacy                                                                                                                               |
+| **Work Checklist** | A barreira binária em `code-style.md`: itens de Intent recitados ao entrar em CODE, itens de Form conferidos em TEST                                                                                                          |
+| **Backlog**        | `.ai/backlog/`, onde o resumo do projeto, o stack declarado e o estado das tarefas sobrevivem à sessão                                                                                                                        |
+| **Harness**        | Tudo em volta do modelo: os guias que o orientam antes de agir, os sensores que o conferem depois, e a memória que ele carrega. O SDG é a camada portátil disso; Claude Code, Cursor ou Codex é o runtime onde ele se instala |
 
 </details>
 
@@ -170,8 +173,36 @@ O agente **para e espera por você** três vezes: em SPEC e em PLAN antes de esc
   END     a entrega        changelog, backlog, commit     ▸  você escreve end:
 ```
 
-Para o detalhe de cada fase, veja o [Guia Spec-Driven Development](docs/concepts/SPEC-DRIVEN-DEV-GUIDE.md).
+Para o detalhe de cada fase, veja o [Spec-Driven Guide](docs/concepts/SPEC-DRIVEN-GUIDE.md).
 Para o diagrama dos pontos de parada e dos loops internos, veja o [Agent Deep-Flow](docs/concepts/AGENT-DEEP-FLOW.md).
+
+---
+
+## Guardrails
+
+O protocolo assume as rédeas em dez pontos, para que você não seja quem pega isso na revisão:
+
+<details>
+<summary><strong>Os dez guardrails</strong></summary>
+
+| Guardrail                  | O que evita                                                                                     |
+| :------------------------- | :---------------------------------------------------------------------------------------------- |
+| **Prefixo obrigatório**    | Um ciclo adivinhado a partir de um pedido solto. Sem prefixo, o agente pergunta qual é          |
+| **Mensagem classificada**  | Um recado no meio do ciclo reabrindo ele em silêncio como um ciclo novo                         |
+| **Assumptions declaradas** | Uma leitura não dita entregue como se fosse o pedido. Onde duas leituras divergem, ele pergunta |
+| **Gates de SPEC e PLAN**   | Código escrito antes de você concordar com o contrato                                           |
+| **Work Checklist**         | Um arquivo escrito antes dos padrões estarem na cabeça do agente                                |
+| **Trava de escopo**        | A refatoração que ninguém pediu, pegando carona no fix                                          |
+| **Blocker à vista**        | Um contorno inventado em silêncio no lugar de uma pergunta feita em voz alta                    |
+| **Circuit Breaker**        | O loop: 3 TESTs falhos, 3 erros iguais, ou 3 turnos sem progresso, e então para                 |
+| **Gate de commit**         | Um commit que você nunca aprovou                                                                |
+| **Evidência**              | Uma afirmação sobre o seu código feita de memória, não de um arquivo que ele leu                |
+
+</details>
+
+**Evidência** é a que mira direto na alucinação: uma afirmação sobre o seu repositório nasce de um arquivo lido nesta sessão e carrega o `file:line`, ou vai marcada como não verificada. Ausente significa não verificado, e "não conferi" é uma resposta barata e válida.
+
+**O que nada disso faz.** Nenhuma instrução impede um modelo de ser confiante. Os guardrails estreitam onde a confiança causa dano e tornam visivelmente irregular a afirmação sem base. O que barra sozinho é mecânico: os testes, o linter, o `audit:`, os hooks.
 
 ---
 
@@ -217,7 +248,7 @@ O agente pergunta as suas linguagens e versões, classifica cada uma por papel e
 
 ## Usando com outras IDEs
 
-O `spec-driven-guide` gera um `AGENTS.md` na raiz do repositório e um `CLAUDE.md` ao lado. Codex e Claude Code leem os seus sem passo extra. Para as outras ferramentas, escreva uma linha no arquivo de regras nativo da IDE apontando para o `AGENTS.md`: `Read AGENTS.md before any task.`
+O `spec-driven-guide` gera um `AGENTS.md` na raiz do repositório e um `CLAUDE.md` ao lado. Codex, Kiro e Claude Code leem os seus sem passo extra. Para as outras ferramentas, escreva uma linha no arquivo de regras nativo da IDE apontando para o `AGENTS.md`: `Read AGENTS.md before any task.`
 
 <details>
 <summary><strong>Arquivo de configuração nativo, por agente</strong></summary>
@@ -229,6 +260,7 @@ O `spec-driven-guide` gera um `AGENTS.md` na raiz do repositório e um `CLAUDE.m
 | Windsurf         | `.windsurfrules`                      | Mesma linha de ponteiro.                                              |
 | GitHub Copilot   | `.github/copilot-instructions.md`     | Mesma linha de ponteiro.                                              |
 | Codex CLI        | `AGENTS.md` (raiz)                    | Carregado automaticamente. Nenhuma ação necessária.                   |
+| Kiro             | `AGENTS.md` (raiz)                    | Carregado automaticamente. Nenhuma ação necessária.                   |
 | Gemini CLI       | `GEMINI.md`                           | Mesma linha de ponteiro.                                              |
 | Cline / Roo Code | `.clinerules`                         | Mesma linha de ponteiro.                                              |
 
@@ -268,7 +300,7 @@ Comece pela [Referência Rápida (CHEATSHEET)](docs/reference/CHEATSHEET.md), co
 
 - [Pipelines Arquiteturais](docs/reference/PIPELINES.md): o caminho dos dados em cada flavor
 
-- [Guia Spec-Driven Development](docs/concepts/SPEC-DRIVEN-DEV-GUIDE.md): o detalhe de cada fase e suas regras
+- [Spec-Driven Guide](docs/concepts/SPEC-DRIVEN-GUIDE.md): o detalhe de cada fase e suas regras
 
 - [Agent Deep-Flow](docs/concepts/AGENT-DEEP-FLOW.md): os pontos de parada e os loops internos
 

@@ -23,6 +23,7 @@ const {
   writeAutomationScripts,
   writeToolingAssets,
   removeGeneratedInstructions,
+  pruneStaleEmissions,
 } = InstructionAssembler;
 const { success } = ResultUtils;
 const { bootstrapIfDirect } = FsUtils;
@@ -253,6 +254,7 @@ function applyQuickPipeline(targetDirectory, selections) {
 
   printStep(2, 5, "Injecting rules...");
   injectRulesets(targetDirectory, selections);
+  pruneStaleEmissions(targetDirectory, selections);
 
   printStep(3, 5, "Assembling AGENTS.md...");
   const content = buildMasterInstructions(selections);
@@ -277,6 +279,7 @@ function applyAgentsPipeline(targetDirectory, selections) {
 
   printStep(2, 5, "Injecting rules...");
   injectRulesets(targetDirectory, selections);
+  pruneStaleEmissions(targetDirectory, selections);
 
   printStep(3, 5, "Assembling AGENTS.md...");
   const content = buildMasterInstructions(selections);

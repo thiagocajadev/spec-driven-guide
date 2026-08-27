@@ -453,15 +453,13 @@ Or ask your agent: "wire Biome into my project."
 Advisory hook that scans Markdown writes against the lexicons in
 `.ai/skills/lexicon/`. Reports to stderr; never blocks the tool call.
 
-1. Copy the hook script into the project:
+It reads the harness hook payload from stdin, so it is registered rather than
+copied. Nothing is written into a vendor directory: the script runs from where
+the install already put it.
 
-```
-mkdir -p .claude/hooks
-cp .ai/tooling/hooks/writing-lint.mjs .claude/hooks/writing-lint.mjs
-chmod +x .claude/hooks/writing-lint.mjs
-```
-
-2. Register it as a PostToolUse hook in `.claude/settings.json`:
+1. Register it as a `PostToolUse` hook in your **user-level** harness settings,
+   `~/.claude/settings.json` for Claude Code, so no configuration file lands in
+   the repository:
 
 ```json
 {
@@ -472,7 +470,7 @@ chmod +x .claude/hooks/writing-lint.mjs
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/writing-lint.mjs"
+            "command": "node .ai/tooling/hooks/writing-lint.mjs"
           }
         ]
       }
@@ -480,6 +478,10 @@ chmod +x .claude/hooks/writing-lint.mjs
   }
 }
 ```
+
+2. A project-level `.claude/settings.json` works the same way and is your call.
+   The managed `.gitignore` block keeps that directory out of the repository:
+   governance lives in `.ai/`, harness configuration does not enter git.
 
 3. Test by editing a scoped file (e.g. `docs/test.md`) with a banned term.
    Stderr should show `<file>:<line> <class> (<language>): "<term>"`, plus

@@ -5,6 +5,8 @@
 > which reports anything here that belongs in a skill instead.
 > It holds the evidence and never the canon: a finding that became a rule goes up into the
 > skill that owns that rule, and stays here only as the record of how it got there.
+> It lives in the repository on purpose. A lesson written into the harness memory store instead
+> is invisible to the team, to `audit:` and to git, and it does not survive the machine.
 
 ## Success Patterns
 

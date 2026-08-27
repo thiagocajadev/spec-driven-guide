@@ -107,6 +107,25 @@ Prefix your message to the AI Agent to activate the corresponding governance cyc
 
 ---
 
+## Guardrails
+
+Ten constraints the protocol enforces on every cycle. Full text in `.ai/instructions/templates/workflow.md`, rule `Guardrails`.
+
+| Guardrail                | Enforced at                                          |
+| :----------------------- | :--------------------------------------------------- |
+| Prefix required          | Intent Routing, no prefix means the agent asks       |
+| Mid-cycle classification | Intent Routing, mid-cycle messages                   |
+| Assumptions stated       | Phase SPEC, step 5                                   |
+| SPEC and PLAN gates      | Phase SPEC step 7, Phase PLAN step 8                 |
+| Work Checklist           | Phase CODE step 1, blocking every write tool         |
+| Scope lock               | Phase CODE step 3                                    |
+| Blocker surface          | Phase CODE step 4                                    |
+| Circuit Breaker          | Phase TEST step 5, Token Discipline operational      |
+| Commit gate              | Phase END step 7, SOVEREIGN GATE                     |
+| Evidence                 | Rule Guardrails, binding SPEC research, TEST and END |
+
+---
+
 ## Standard Lifecycle
 
 Every `feat:`, `fix:`, and `docs:` task follows this sequence. For `land:` and `audit:`, see Governance Cycles below.

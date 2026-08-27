@@ -17,6 +17,7 @@ const {
   writeToolingAssets,
   writeBacklogFiles,
   removeGeneratedInstructions,
+  pruneStaleEmissions,
 } = InstructionAssembler;
 
 const VOLATILE_ENTRIES = [
@@ -511,7 +512,14 @@ describe("InstructionAssembler", () => {
 
   describe("Token Budget Guard", () => {
     const WORST_CASE_INPUT = { flavor: "vertical-slice" };
-    const TOKEN_BUDGET_BYTES = 2700;
+    /**
+     * why: raised from 2700 when the Persistence Policy landed. That section is
+     * the one rule that has to outrank a harness default, which puts it in the
+     * always-loaded router rather than in a skill loaded on demand. The budget
+     * moved by what the section costs and by nothing else: the guard exists to
+     * stop the router drifting back into a knowledge dump.
+     */
+    const TOKEN_BUDGET_BYTES = 3000;
 
     it(`should stay under ${TOKEN_BUDGET_BYTES} bytes`, () => {
       const actual = buildMasterInstructions(WORST_CASE_INPUT);
@@ -823,6 +831,126 @@ describe("InstructionAssembler", () => {
       }
     });
 
+    it("reclaims the pre-v6 blanket backlog entry", () => {
+      const tmpDir = makeTempDir();
+      const legacyContent = [
+        "node_modules/",
+        "",
+        "# AI artifacts — session state, not project logic",
+        ".ai/backlog/",
+        ".ai/last-prompt.md",
+        "",
+      ].join("\n");
+
+      try {
+        fileSystem.writeFileSync(gitignorePathOf(tmpDir), legacyContent);
+
+        writeGitignore(tmpDir);
+
+        const actualLines = readGitignore(tmpDir).split("\n");
+        const actualHasBlanketEntry = actualLines.includes(".ai/backlog/");
+        const expectedHasBlanketEntry = false;
+
+        assert.equal(
+          actualHasBlanketEntry,
+          expectedHasBlanketEntry,
+          "the pre-v6 line keeps learned.md and troubleshoot.md out of git",
+        );
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+
+    it("preserves lines the developer wrote outside the block", () => {
+      const tmpDir = makeTempDir();
+      const developerLines = ["node_modules/", "coverage/", "*.tsbuildinfo"];
+
+      try {
+        fileSystem.writeFileSync(
+          gitignorePathOf(tmpDir),
+          `${developerLines.join("\n")}\n`,
+        );
+
+        writeGitignore(tmpDir);
+        // eslint-disable-next-line local/duplicate-consecutive-statement -- the second run is the assertion: an update must not eat the body it found.
+        writeGitignore(tmpDir);
+
+        const actualContent = readGitignore(tmpDir);
+        const actualMissing = developerLines.filter(
+          (line) => !actualContent.includes(line),
+        );
+
+        const expectedMissing = [];
+
+        assert.deepEqual(actualMissing, expectedMissing);
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+
+    it("keeps runtime scratch out of the repository", () => {
+      const tmpDir = makeTempDir();
+
+      try {
+        writeGitignore(tmpDir);
+
+        const actualLines = readGitignore(tmpDir).split("\n");
+        const actualHasScratchEntry = actualLines.includes(".claude/");
+        const expectedHasScratchEntry = true;
+
+        assert.equal(actualHasScratchEntry, expectedHasScratchEntry);
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+
+    it("never ignores a vendor directory holding prescribed files", () => {
+      const tmpDir = makeTempDir();
+      const PRESCRIBED_ROOTS = [".cursor/", ".kiro/", ".windsurf/", ".gemini/"];
+
+      try {
+        writeGitignore(tmpDir);
+
+        const actualLines = readGitignore(tmpDir).split("\n");
+        const actualIgnored = PRESCRIBED_ROOTS.filter((entry) =>
+          actualLines.includes(entry),
+        );
+
+        const expectedIgnored = [];
+
+        assert.deepEqual(
+          actualIgnored,
+          expectedIgnored,
+          "the README asks for a committed file inside .cursor/, and Kiro versions .kiro/",
+        );
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+
+    it("writes one managed block however many times it runs", () => {
+      const tmpDir = makeTempDir();
+
+      try {
+        writeGitignore(tmpDir);
+        // eslint-disable-next-line local/duplicate-consecutive-statement -- three runs, one block: the repetition is what idempotency means here.
+        writeGitignore(tmpDir);
+        // eslint-disable-next-line local/duplicate-consecutive-statement -- see above.
+        writeGitignore(tmpDir);
+
+        const actualMarkerCount = countOccurrences(
+          readGitignore(tmpDir),
+          "# >>> spec-driven-guide, managed block",
+        );
+
+        const expectedMarkerCount = 1;
+
+        assert.equal(actualMarkerCount, expectedMarkerCount);
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+
     it("is idempotent across repeated init runs", () => {
       const tmpDir = makeTempDir();
 
@@ -873,6 +1001,166 @@ describe("InstructionAssembler", () => {
 
       try {
         assert.doesNotThrow(() => removeGeneratedInstructions(tmpDir));
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+  });
+
+  describe("pruneStaleEmissions()", () => {
+    const PRUNE_SELECTIONS = {
+      mode: "quick",
+      flavor: "lite",
+      track: null,
+      bump: false,
+    };
+
+    function seedManifestWithFossil(targetDirectory, fossilKey) {
+      writeManifest(targetDirectory, PRUNE_SELECTIONS, "8.0.1");
+
+      const manifestPath = path.join(
+        targetDirectory,
+        ".ai",
+        ".sdg-manifest.json",
+      );
+
+      const manifest = JSON.parse(
+        fileSystem.readFileSync(manifestPath, "utf8"),
+      );
+
+      manifest.contentHashes[fossilKey] = "0".repeat(64);
+      fileSystem.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+    }
+
+    function seedEmittedFile(targetDirectory, relativeSegments) {
+      const emittedPath = path.join(targetDirectory, ...relativeSegments);
+      fileSystem.mkdirSync(path.dirname(emittedPath), { recursive: true });
+      fileSystem.writeFileSync(emittedPath, "# emitted by an earlier release");
+
+      return emittedPath;
+    }
+
+    it("deletes a skill the canon no longer carries", () => {
+      const tmpDir = makeTempDir();
+
+      try {
+        const fossilPath = seedEmittedFile(tmpDir, [
+          ".ai",
+          "skills",
+          "staff-dna.md",
+        ]);
+
+        seedManifestWithFossil(tmpDir, "skills/staff-dna.md");
+
+        pruneStaleEmissions(tmpDir, PRUNE_SELECTIONS);
+
+        const actualFossilExists = fileSystem.existsSync(fossilPath);
+        const expectedFossilExists = false;
+
+        assert.equal(actualFossilExists, expectedFossilExists);
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+
+    it("keeps a file no manifest ever claimed", () => {
+      const tmpDir = makeTempDir();
+
+      try {
+        const handWrittenPath = seedEmittedFile(tmpDir, [
+          ".ai",
+          "skills",
+          "house-rules.md",
+        ]);
+
+        seedManifestWithFossil(tmpDir, "skills/staff-dna.md");
+
+        pruneStaleEmissions(tmpDir, PRUNE_SELECTIONS);
+
+        const actualHandWrittenExists = fileSystem.existsSync(handWrittenPath);
+
+        const expectedHandWrittenExists = true;
+
+        assert.equal(actualHandWrittenExists, expectedHandWrittenExists);
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+
+    it("removes a directory left empty by its last stale file", () => {
+      const tmpDir = makeTempDir();
+
+      try {
+        seedEmittedFile(tmpDir, [".ai", "skills", "lexicon", "fr.md"]);
+        seedManifestWithFossil(tmpDir, "skills/lexicon/fr.md");
+
+        pruneStaleEmissions(tmpDir, PRUNE_SELECTIONS);
+
+        const lexiconDirectory = path.join(tmpDir, ".ai", "skills", "lexicon");
+        const actualDirectoryExists = fileSystem.existsSync(lexiconDirectory);
+        const expectedDirectoryExists = false;
+
+        assert.equal(actualDirectoryExists, expectedDirectoryExists);
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+
+    it("is a no-op on a project carrying no manifest", () => {
+      const tmpDir = makeTempDir();
+
+      try {
+        const untouchedPath = seedEmittedFile(tmpDir, [
+          ".ai",
+          "skills",
+          "staff-dna.md",
+        ]);
+
+        const actualRemovedKeys = pruneStaleEmissions(tmpDir, PRUNE_SELECTIONS);
+        const expectedRemovedKeys = [];
+        const actualUntouchedExists = fileSystem.existsSync(untouchedPath);
+        const expectedUntouchedExists = true;
+
+        assert.deepEqual(actualRemovedKeys, expectedRemovedKeys);
+        assert.equal(actualUntouchedExists, expectedUntouchedExists);
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+
+    it("never reaches the backlog", () => {
+      const tmpDir = makeTempDir();
+
+      try {
+        writeBacklogFiles(tmpDir, PRUNE_SELECTIONS);
+        seedManifestWithFossil(tmpDir, "backlog/learned.md");
+
+        const learnedPath = path.join(tmpDir, ".ai", "backlog", "learned.md");
+
+        pruneStaleEmissions(tmpDir, PRUNE_SELECTIONS);
+
+        const actualLearnedExists = fileSystem.existsSync(learnedPath);
+        const expectedLearnedExists = true;
+
+        assert.equal(actualLearnedExists, expectedLearnedExists);
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+
+    it("refuses a manifest key escaping the emission root", () => {
+      const tmpDir = makeTempDir();
+
+      try {
+        const outsidePath = seedEmittedFile(tmpDir, ["outside.md"]);
+        seedManifestWithFossil(tmpDir, "skills/../../outside.md");
+
+        pruneStaleEmissions(tmpDir, PRUNE_SELECTIONS);
+
+        const actualOutsideExists = fileSystem.existsSync(outsidePath);
+        const expectedOutsideExists = true;
+
+        assert.equal(actualOutsideExists, expectedOutsideExists);
       } finally {
         cleanup(tmpDir);
       }
