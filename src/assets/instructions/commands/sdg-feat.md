@@ -2,7 +2,7 @@
 
 Initializing feature: $ARGUMENTS.
 
-> **Load now**: `.ai/instructions/templates/workflow.md`
+> **Load now**: `.ai/kit/instructions/templates/workflow.md`
 
 ## Phase: SPEC → MODE: PLANNING
 
@@ -17,4 +17,4 @@ Follow Phase SPEC. Context charges:
   - **Frontend SPEC**: Section structure, layout skeleton, states (Loading/Empty/Error). Load `competencies/delivery.md` (Frontend section).
 - **Verification**: Min 3 checks: Happy Path, Edge Case, Expected Failure.
 
-> Read `.ai/instructions/templates/agent-roles.md` for multi-agent handoff protocol.
+> Read `.ai/kit/instructions/templates/agent-roles.md` for multi-agent handoff protocol.

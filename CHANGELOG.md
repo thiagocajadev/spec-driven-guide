@@ -11,6 +11,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [10.0.0] - 2026-08-28
+
+### Added
+
+- **`.ai/` separates by ownership, and the framework's copy leaves version control.** One directory held two things belonging to different people, and only the `.gitignore` knew where the line ran. `.ai/backlog/` is what the developer and the agent write, and it stays versioned. `.ai/kit/` is what the CLI installs, and it does not: an install went from 80 tracked files and roughly 9000 lines to 11 tracked files and 254. The measurement that opened the cycle also corrected it. An update was never the noisy part, since git compares content and 73 of the 80 files come out byte-identical, so v8.0.1 to v9.0.0 produced a 7-file diff. The install is what carried the weight, and the boundary is what carried the ambiguity. A wrapper directory was chosen over a negation ladder in the `.gitignore` for a reason the ladder itself demonstrates: with `.ai/*` plus negations, a file the developer writes inside `.ai/` is discarded in silence, which is the polarity a `git check-ignore` on this repository confirmed. With the wrapper, one line is ignored and everything else is kept by default.
+
+- **`.ai/kit/` is cleared whole before every install, and what it held is named.** Pruning by manifest inventory, shipped in v9.0.0, could never reach a file the developer added by hand, and the code said so: a file that was never in a manifest is out of reach. Clearing reaches it, and is safe only because the backlog now sits outside the directory being cleared. Every removed file the incoming canon does not carry is printed with its path, so a deletion the developer did not expect is reported rather than silent. The contract this establishes is worth stating plainly: an edit inside `.ai/kit/` is lost on the next install, with no diff to warn about it.
+
+- **`restore` rebuilds the tree a commit describes, and verifies it.** The kit is a pure function of the pinned version and the recorded selections, both of which `.ai/.sdg-manifest.json` carries and git keeps, so a clone with no `.ai/kit/` can reproduce exactly what its commit held. The command refuses any release but the one the manifest pins, naming the exact `npx spec-driven-guide@<version> restore` to run, because restoring with a different release rebuilds a different tree under the same commit. It then hashes every restored file on disk against the manifest, rather than hashing the package the files came from, which is what makes the answer about the project instead of about the installed CLI.
+
+- **An install reuses the selections the manifest recorded.** With the kit out of git, a re-install that asks again is a re-install that can answer differently with nothing in the diff to show it: a project installed with the MVC flavor and re-run with `--quick` silently became Lite. Whatever the caller leaves unstated is now taken from the manifest, and a stated answer still wins. Where the installed CLI differs from the pinned release, the install says so and names the command that reproduces the recorded tree.
+
+- **`audit:` fails on any reference still pointing outside `.ai/kit/`.** The move rewrote 223 paths across 34 files, and a reference left behind resolves to nothing while an agent follows it, with no error raised anywhere. The scan runs in maintainer mode over `src/assets`, `docs` and both READMEs. Five documents are excluded by name, four because they record what earlier versions did and one because a migration guide has to print the paths its reader is about to untrack.
+
+### Changed
+
+- **`tasks.md` separates the queue from the session pointer.** The file was classified as session state in v6.0 and the classification was right about the principle and wrong about the unit: of its 154 lines in this repository, 141 were `## Backlog` entries carrying the reasoning behind decisions not yet taken, and 8 were the current objective. The durable half stays in `tasks.md` and is versioned now, which is the first release where a backlog entry survives a lost disk. `## Now` and `## Active` move to `session.md`, which stays local, because a shared session pointer makes one developer's agent resume another developer's task, and because a merge conflict inside markdown is read by an agent as instruction.
+
+- **The managed `.gitignore` block covers what SDG installs, and nothing else.** `.claude/` came out: it holds `settings.json`, `commands/` and `agents/`, which the developer writes and a team shares, so the blanket entry discarded them the way the pre-v6 `.ai/backlog/` line discarded team knowledge. `.cursor/` and `.kiro/` were spared on exactly that reasoning one release earlier, and the comment stating it sat two lines above the entry that broke it. `.ai/last-prompt.md` came out with it, an entry that outlived by six majors the feature removed in v3.0.0. Both, plus `.ai/backlog/tasks.md`, are reclaimed rather than dropped, so the lines disappear from projects that already carry them.
+
+- **A recommended `.gitignore` ships in the tooling catalog.** Generating it at install was rejected: the file would land inside the kit without being in the manifest, and the off-canon report would name it as debris on the next run. It ships as an asset, and a test writes a real `.gitignore` into a temporary directory and compares the two blocks, so changing the writer and forgetting the sample fails before release rather than after.
+
+- **The installed tree is documented as it is.** Both READMEs open the tree with the backlog and follow with the kit, naming who writes each file and whether git keeps it. `PROJECT-STRUCTURE.md` described `.ai/backlog/` as gitignored, which stopped being true in v6.0.
+
+### Removed
+
+- **`pruneStaleEmissions` and `removeGeneratedInstructions`, superseded by the clearing.** Their helpers went with them, and `instruction-assembler.mjs` lost 140 lines it had been carrying past the 500-line ceiling this project sets.
+
+- **The `.ai/last-prompt.md` machinery, dead since v3.0.0.** Five functions with no caller, two constants and two orphaned imports, 103 lines. The residue file it left in this repository was still on disk four months after the feature that wrote it was removed, because nothing has ever cleared `.ai/` outside the directory the install owns.
+
+### BREAKING CHANGES
+
+1. **The installed tree moved to `.ai/kit/`.** Run `npx spec-driven-guide init --quick`, then `git rm -r --cached .ai/skills .ai/instructions .ai/commands .ai/tooling`. The install removes the old tree, names any file no release wrote before removing it, and prints the command. Anything invoking the tooling by path, a `package.json` script or a husky hook among them, needs the `kit/` segment added.
+2. **`.ai/kit/` is no longer versioned.** A fresh clone does not carry it. Run `npx spec-driven-guide restore`, and add that step to any CI job that reads the tree.
+3. **`tasks.md` splits.** The install writes `session.md` only when none exists, so an existing `tasks.md` keeps its `## Now` and `## Active`. Move those two sections across by hand.
+
+See [Migration v9 → v10](docs/guides/MIGRATION-v10.md).
+
 ## [9.0.0] - 2026-08-27
 
 ### Added

@@ -16,14 +16,12 @@ const {
   writeManifest,
   writeToolingAssets,
   writeBacklogFiles,
-  removeGeneratedInstructions,
-  pruneStaleEmissions,
 } = InstructionAssembler;
 
 const VOLATILE_ENTRIES = [
-  ".ai/backlog/tasks.md",
+  ".ai/kit/",
+  ".ai/backlog/session.md",
   ".ai/backlog/impact-map.md",
-  ".ai/last-prompt.md",
 ];
 
 const VERSIONED_BACKLOG_FILES = [
@@ -380,8 +378,8 @@ describe("InstructionAssembler", () => {
     const baseSelections = { flavor: "lite" };
 
     it("points at code-style.md and workflow.md in the header", () => {
-      const expectedCodeStyleRef = ".ai/skills/code-style.md";
-      const expectedWorkflowRef = ".ai/instructions/templates/workflow.md";
+      const expectedCodeStyleRef = ".ai/kit/skills/code-style.md";
+      const expectedWorkflowRef = ".ai/kit/instructions/templates/workflow.md";
 
       const actual = buildMasterInstructions(baseSelections);
       const hasCodeStyleRef = actual.includes(expectedCodeStyleRef);
@@ -412,7 +410,7 @@ describe("InstructionAssembler", () => {
       const actual = buildMasterInstructions(baseSelections);
 
       const hasDeliveryRef = actual.includes(
-        ".ai/instructions/competencies/delivery.md",
+        ".ai/kit/instructions/competencies/delivery.md",
       );
 
       const hasNoBackendSplit = !actual.includes("competencies/backend.md");
@@ -518,8 +516,15 @@ describe("InstructionAssembler", () => {
      * always-loaded router rather than in a skill loaded on demand. The budget
      * moved by what the section costs and by nothing else: the guard exists to
      * stop the router drifting back into a knowledge dump.
+     *
+     * why: raised again from 3000 when `.ai/` split by ownership. Twenty-three
+     * routed paths gained the `kit/` segment, and the router states each one in
+     * full because an agent follows an explicit path more reliably than a root
+     * declared once and a bare filename after it. Sixty-nine bytes is what that
+     * reliability costs in the always-loaded file, and it buys the whole tree
+     * leaving version control.
      */
-    const TOKEN_BUDGET_BYTES = 3000;
+    const TOKEN_BUDGET_BYTES = 3200;
 
     it(`should stay under ${TOKEN_BUDGET_BYTES} bytes`, () => {
       const actual = buildMasterInstructions(WORST_CASE_INPUT);
@@ -563,14 +568,14 @@ describe("InstructionAssembler", () => {
   });
 
   describe("writeToolingAssets()", () => {
-    it("copies tooling directory into .ai/tooling/ preserving structure", () => {
+    it("copies tooling directory into .ai/kit/tooling/ preserving structure", () => {
       const tmpDir = makeTempDir();
       const expectedFiles = [
-        path.join(".ai", "tooling", "scripts", "prune-backlog.mjs"),
-        path.join(".ai", "tooling", "scripts", "bump-version.mjs"),
-        path.join(".ai", "tooling", "husky", "pre-commit"),
-        path.join(".ai", "tooling", "husky", "commit-msg"),
-        path.join(".ai", "tooling", "README.md"),
+        path.join(".ai", "kit", "tooling", "scripts", "prune-backlog.mjs"),
+        path.join(".ai", "kit", "tooling", "scripts", "bump-version.mjs"),
+        path.join(".ai", "kit", "tooling", "husky", "pre-commit"),
+        path.join(".ai", "kit", "tooling", "husky", "commit-msg"),
+        path.join(".ai", "kit", "tooling", "README.md"),
       ];
 
       try {
@@ -599,6 +604,7 @@ describe("InstructionAssembler", () => {
           const hookPath = path.join(
             tmpDir,
             ".ai",
+            "kit",
             "tooling",
             "husky",
             hookName,
@@ -619,7 +625,13 @@ describe("InstructionAssembler", () => {
 
     it("is idempotent when invoked twice", () => {
       const tmpDir = makeTempDir();
-      const referencePath = path.join(tmpDir, ".ai", "tooling", "README.md");
+      const referencePath = path.join(
+        tmpDir,
+        ".ai",
+        "kit",
+        "tooling",
+        "README.md",
+      );
 
       try {
         writeToolingAssets(tmpDir);
@@ -647,7 +659,7 @@ describe("InstructionAssembler", () => {
           "## Tooling (optional)",
         );
 
-        const actualHasToolingPath = actualContent.includes(".ai/tooling/");
+        const actualHasToolingPath = actualContent.includes(".ai/kit/tooling/");
 
         assert.ok(actualHasToolingSection);
         assert.ok(actualHasToolingPath);
@@ -656,24 +668,55 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("keeps the Now objective in tasks.md and out of context.md", () => {
+    it("keeps the Now objective in session.md, out of tasks.md and context.md", () => {
       const tmpDir = makeTempDir();
       const contextPath = path.join(tmpDir, ".ai", "backlog", "context.md");
       const tasksPath = path.join(tmpDir, ".ai", "backlog", "tasks.md");
+      const sessionPath = path.join(tmpDir, ".ai", "backlog", "session.md");
 
       try {
         writeBacklogFiles(tmpDir, { flavor: "lite" });
 
         const contextContent = fileSystem.readFileSync(contextPath, "utf8");
         const tasksContent = fileSystem.readFileSync(tasksPath, "utf8");
+        const sessionContent = fileSystem.readFileSync(sessionPath, "utf8");
 
         const actualContextHasNow = contextContent.includes("## Now");
         const expectedContextHasNow = false;
         const actualTasksHasNow = tasksContent.includes("## Now");
-        const expectedTasksHasNow = true;
+        const expectedTasksHasNow = false;
+        const actualSessionHasNow = sessionContent.includes("## Now");
+        const expectedSessionHasNow = true;
 
         assert.equal(actualContextHasNow, expectedContextHasNow);
         assert.equal(actualTasksHasNow, expectedTasksHasNow);
+        assert.equal(actualSessionHasNow, expectedSessionHasNow);
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+
+    it("keeps the durable queue in tasks.md, out of session.md", () => {
+      const tmpDir = makeTempDir();
+      const tasksPath = path.join(tmpDir, ".ai", "backlog", "tasks.md");
+      const sessionPath = path.join(tmpDir, ".ai", "backlog", "session.md");
+
+      try {
+        writeBacklogFiles(tmpDir, { flavor: "lite" });
+
+        const tasksContent = fileSystem.readFileSync(tasksPath, "utf8");
+        const sessionContent = fileSystem.readFileSync(sessionPath, "utf8");
+
+        const actualTasksHasBacklog = tasksContent.includes("## Backlog");
+        const expectedTasksHasBacklog = true;
+        const actualTasksHasDone = tasksContent.includes("## Done");
+        const expectedTasksHasDone = true;
+        const actualSessionHasBacklog = sessionContent.includes("## Backlog");
+        const expectedSessionHasBacklog = false;
+
+        assert.equal(actualTasksHasBacklog, expectedTasksHasBacklog);
+        assert.equal(actualTasksHasDone, expectedTasksHasDone);
+        assert.equal(actualSessionHasBacklog, expectedSessionHasBacklog);
       } finally {
         cleanup(tmpDir);
       }
@@ -888,17 +931,23 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("keeps runtime scratch out of the repository", () => {
+    it("takes no position on another tool's directory", () => {
       const tmpDir = makeTempDir();
+      const legacyContent = [
+        "# Runtime scratch: the harness writes it, the repository never carries it",
+        ".claude/",
+        "",
+      ].join("\n");
 
       try {
+        fileSystem.writeFileSync(gitignorePathOf(tmpDir), legacyContent);
         writeGitignore(tmpDir);
 
-        const actualLines = readGitignore(tmpDir).split("\n");
-        const actualHasScratchEntry = actualLines.includes(".claude/");
-        const expectedHasScratchEntry = true;
+        const actualContent = readGitignore(tmpDir);
+        const actualIgnoresVendor = actualContent.includes(".claude/");
+        const expectedIgnoresVendor = false;
 
-        assert.equal(actualHasScratchEntry, expectedHasScratchEntry);
+        assert.equal(actualIgnoresVendor, expectedIgnoresVendor);
       } finally {
         cleanup(tmpDir);
       }
@@ -965,202 +1014,6 @@ describe("InstructionAssembler", () => {
         const expectedContent = contentAfterFirstRun;
 
         assert.equal(actualContent, expectedContent);
-      } finally {
-        cleanup(tmpDir);
-      }
-    });
-  });
-
-  describe("removeGeneratedInstructions()", () => {
-    it("deletes legacy .ai/instructions/idioms/ tree", () => {
-      const tmpDir = makeTempDir();
-      const staleDir = path.join(tmpDir, ".ai", "instructions", "idioms");
-      const staleFile = path.join(staleDir, "typescript", "patterns.md");
-
-      try {
-        fileSystem.mkdirSync(path.dirname(staleFile), { recursive: true });
-        fileSystem.writeFileSync(staleFile, "# stale");
-
-        removeGeneratedInstructions(tmpDir);
-
-        const staleStillExists = fileSystem.existsSync(staleDir);
-        const expectedAbsent = false;
-
-        assert.equal(
-          staleStillExists,
-          expectedAbsent,
-          "stale idioms dir must be removed",
-        );
-      } finally {
-        cleanup(tmpDir);
-      }
-    });
-
-    it("is a no-op when no stale idioms exist", () => {
-      const tmpDir = makeTempDir();
-
-      try {
-        assert.doesNotThrow(() => removeGeneratedInstructions(tmpDir));
-      } finally {
-        cleanup(tmpDir);
-      }
-    });
-  });
-
-  describe("pruneStaleEmissions()", () => {
-    const PRUNE_SELECTIONS = {
-      mode: "quick",
-      flavor: "lite",
-      track: null,
-      bump: false,
-    };
-
-    function seedManifestWithFossil(targetDirectory, fossilKey) {
-      writeManifest(targetDirectory, PRUNE_SELECTIONS, "8.0.1");
-
-      const manifestPath = path.join(
-        targetDirectory,
-        ".ai",
-        ".sdg-manifest.json",
-      );
-
-      const manifest = JSON.parse(
-        fileSystem.readFileSync(manifestPath, "utf8"),
-      );
-
-      manifest.contentHashes[fossilKey] = "0".repeat(64);
-      fileSystem.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
-    }
-
-    function seedEmittedFile(targetDirectory, relativeSegments) {
-      const emittedPath = path.join(targetDirectory, ...relativeSegments);
-      fileSystem.mkdirSync(path.dirname(emittedPath), { recursive: true });
-      fileSystem.writeFileSync(emittedPath, "# emitted by an earlier release");
-
-      return emittedPath;
-    }
-
-    it("deletes a skill the canon no longer carries", () => {
-      const tmpDir = makeTempDir();
-
-      try {
-        const fossilPath = seedEmittedFile(tmpDir, [
-          ".ai",
-          "skills",
-          "staff-dna.md",
-        ]);
-
-        seedManifestWithFossil(tmpDir, "skills/staff-dna.md");
-
-        pruneStaleEmissions(tmpDir, PRUNE_SELECTIONS);
-
-        const actualFossilExists = fileSystem.existsSync(fossilPath);
-        const expectedFossilExists = false;
-
-        assert.equal(actualFossilExists, expectedFossilExists);
-      } finally {
-        cleanup(tmpDir);
-      }
-    });
-
-    it("keeps a file no manifest ever claimed", () => {
-      const tmpDir = makeTempDir();
-
-      try {
-        const handWrittenPath = seedEmittedFile(tmpDir, [
-          ".ai",
-          "skills",
-          "house-rules.md",
-        ]);
-
-        seedManifestWithFossil(tmpDir, "skills/staff-dna.md");
-
-        pruneStaleEmissions(tmpDir, PRUNE_SELECTIONS);
-
-        const actualHandWrittenExists = fileSystem.existsSync(handWrittenPath);
-
-        const expectedHandWrittenExists = true;
-
-        assert.equal(actualHandWrittenExists, expectedHandWrittenExists);
-      } finally {
-        cleanup(tmpDir);
-      }
-    });
-
-    it("removes a directory left empty by its last stale file", () => {
-      const tmpDir = makeTempDir();
-
-      try {
-        seedEmittedFile(tmpDir, [".ai", "skills", "lexicon", "fr.md"]);
-        seedManifestWithFossil(tmpDir, "skills/lexicon/fr.md");
-
-        pruneStaleEmissions(tmpDir, PRUNE_SELECTIONS);
-
-        const lexiconDirectory = path.join(tmpDir, ".ai", "skills", "lexicon");
-        const actualDirectoryExists = fileSystem.existsSync(lexiconDirectory);
-        const expectedDirectoryExists = false;
-
-        assert.equal(actualDirectoryExists, expectedDirectoryExists);
-      } finally {
-        cleanup(tmpDir);
-      }
-    });
-
-    it("is a no-op on a project carrying no manifest", () => {
-      const tmpDir = makeTempDir();
-
-      try {
-        const untouchedPath = seedEmittedFile(tmpDir, [
-          ".ai",
-          "skills",
-          "staff-dna.md",
-        ]);
-
-        const actualRemovedKeys = pruneStaleEmissions(tmpDir, PRUNE_SELECTIONS);
-        const expectedRemovedKeys = [];
-        const actualUntouchedExists = fileSystem.existsSync(untouchedPath);
-        const expectedUntouchedExists = true;
-
-        assert.deepEqual(actualRemovedKeys, expectedRemovedKeys);
-        assert.equal(actualUntouchedExists, expectedUntouchedExists);
-      } finally {
-        cleanup(tmpDir);
-      }
-    });
-
-    it("never reaches the backlog", () => {
-      const tmpDir = makeTempDir();
-
-      try {
-        writeBacklogFiles(tmpDir, PRUNE_SELECTIONS);
-        seedManifestWithFossil(tmpDir, "backlog/learned.md");
-
-        const learnedPath = path.join(tmpDir, ".ai", "backlog", "learned.md");
-
-        pruneStaleEmissions(tmpDir, PRUNE_SELECTIONS);
-
-        const actualLearnedExists = fileSystem.existsSync(learnedPath);
-        const expectedLearnedExists = true;
-
-        assert.equal(actualLearnedExists, expectedLearnedExists);
-      } finally {
-        cleanup(tmpDir);
-      }
-    });
-
-    it("refuses a manifest key escaping the emission root", () => {
-      const tmpDir = makeTempDir();
-
-      try {
-        const outsidePath = seedEmittedFile(tmpDir, ["outside.md"]);
-        seedManifestWithFossil(tmpDir, "skills/../../outside.md");
-
-        pruneStaleEmissions(tmpDir, PRUNE_SELECTIONS);
-
-        const actualOutsideExists = fileSystem.existsSync(outsidePath);
-        const expectedOutsideExists = true;
-
-        assert.equal(actualOutsideExists, expectedOutsideExists);
       } finally {
         cleanup(tmpDir);
       }

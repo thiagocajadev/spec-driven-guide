@@ -6,7 +6,7 @@
 
 ## API Contract Resilience
 
-- **Envelope SSOT**: shape, meta fields, and error codes defined in `.ai/instructions/competencies/delivery.md` (Backend section). Do not redefine here.
+- **Envelope SSOT**: shape, meta fields, and error codes defined in `.ai/kit/instructions/competencies/delivery.md` (Backend section). Do not redefine here.
 - **Typed Error Payloads**: Explicit string constants (`NOT_FOUND`, `INVALID_INPUT`); never free-form messages. HTTP 409: `CONFLICT` for unique constraints, `BUSINESS_RULE_VIOLATION` for domain rules.
 - **Idempotency**: Require `Idempotency-Key` headers for non-safe ops (POST/PUT/PATCH) with financial/inventory side effects.
 

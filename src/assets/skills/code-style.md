@@ -138,6 +138,6 @@
 | `padding-line-between-statements`       | Blank line before/after top-level function declarations                                                                                                  |
 | `prettier`                              | Formatting, indentation, quotes, semicolons, dot-chain wrapping (printWidth 80)                                                                          |
 
-Activation recipe: `.ai/tooling/eslint-config/snippet.mjs` + `.ai/tooling/README.md`.
+Activation recipe: `.ai/kit/tooling/eslint-config/snippet.mjs` + `.ai/kit/tooling/README.md`.
 
 </ruleset>

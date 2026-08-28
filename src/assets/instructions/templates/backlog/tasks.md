@@ -1,17 +1,10 @@
 # Tasks
 
-> Managed by AI agents. Update status after each atomic task.
+> The team's queue and its record. Versioned: a backlog entry carries the
+> reasoning behind a decision not yet taken, and no other file holds it.
+> Session state, the current objective and the task in flight, lives in
+> `session.md`, per developer.
 > Recovery: if lost, ask the agent to read recent git commits and reconstruct.
-> This file is per-developer working state. Keep it out of version control;
-> `context.md` carries what the team shares.
-
-## Now
-
-<!-- current objective in one line, or empty between cycles -->
-
-## Active
-
-<!-- - [IN_PROGRESS] phase: <SPEC|PLAN|CODE|TEST|END>. description: where it stopped and what comes next -->
 
 ## Backlog
 

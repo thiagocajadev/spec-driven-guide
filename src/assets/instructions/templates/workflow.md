@@ -28,19 +28,19 @@ Every turn inside an active cycle opens with one line, before anything else:
 
 For example: `SDG · fix: · Phase CODE · task 2/5`.
 
-It reads its state from `.ai/backlog/tasks.md`, not from the conversation, which is what lets it survive a new session. One line is the whole cost, and it is what makes a skipped phase visible while it is happening instead of at the review.
+It reads its state from `.ai/backlog/session.md`, not from the conversation, which is what lets it survive a new session. One line is the whole cost, and it is what makes a skipped phase visible while it is happening instead of at the review.
 
 ## Intent Routing
 
-| Signal    | Action                                     |
-| :-------- | :----------------------------------------- |
-| `land:`   | `.ai/commands/sdg-land.md` → Land Cycle    |
-| `feat:`   | `.ai/commands/sdg-feat.md` → Feature Cycle |
-| `fix:`    | `.ai/commands/sdg-fix.md` → Fix Cycle      |
-| `docs:`   | `.ai/commands/sdg-docs.md` → Docs Cycle    |
-| `end:`    | `.ai/commands/sdg-end.md` → END Phase      |
-| `audit:`  | `.ai/commands/sdg-audit.md` → Audit Cycle  |
-| No prefix | Ask: "land, feat, fix, docs, or audit?"    |
+| Signal    | Action                                         |
+| :-------- | :--------------------------------------------- |
+| `land:`   | `.ai/kit/commands/sdg-land.md` → Land Cycle    |
+| `feat:`   | `.ai/kit/commands/sdg-feat.md` → Feature Cycle |
+| `fix:`    | `.ai/kit/commands/sdg-fix.md` → Fix Cycle      |
+| `docs:`   | `.ai/kit/commands/sdg-docs.md` → Docs Cycle    |
+| `end:`    | `.ai/kit/commands/sdg-end.md` → END Phase      |
+| `audit:`  | `.ai/kit/commands/sdg-audit.md` → Audit Cycle  |
+| No prefix | Ask: "land, feat, fix, docs, or audit?"        |
 
 **Mid-cycle messages**: Q&A (answer+resume), adjustment (update plan+continue), pivot (re-spec), or out-of-scope (defer). Never interpret as new cycle while one is active.
 
@@ -68,7 +68,7 @@ It reads its state from `.ai/backlog/tasks.md`, not from the conversation, which
 2. **Logical Sequencing**: Order by dependency.
 3. **Effort Tagging**: `[S]` small, `[M]` medium, `[L]` large (must split).
 4. **Sub-task Split**: Every `[L]` → numbered steps (1.1, 1.2...).
-5. **Backlog Sync**: Save to `.ai/backlog/tasks.md`, mark first as in-progress.
+5. **Backlog Sync**: Save the task list to `.ai/backlog/tasks.md`. Write the objective and the first task to `.ai/backlog/session.md`, marked in-progress.
 6. **Impact Map**: Write `.ai/backlog/impact-map.md`. `git diff --name-only HEAD` for changed files. Trace imports for dependents. Sections: `## Changed`, `## Blast Radius`, `## Tests at Risk`, `## Safe`.
 7. **Cost Estimate**: `wc -c` on Changed + Blast Radius files. Sum / 4 + context + 8K overhead. Show: `Task estimate: ~N tokens`.
 8. **Approval Gate**: Stop. Wait for approval.
@@ -111,11 +111,11 @@ It reads its state from `.ai/backlog/tasks.md`, not from the conversation, which
    - `manual`: ONE entry per completed task under `## [Unreleased]`, which the bump promotes on release.
    - Section mapping, used by both modes: `feat:` → `### Added` | `land:` → `### Added` | `fix:` → `### Fixed` | `docs:` → `### Fixed` | `audit:` → `### Changed`
 3. **Backlog Sync**: Finished tasks → `## Done` in `tasks.md`, each as `- [DONE] ...`. Then run `npm run prune`, which keeps the last 3 entries in `## Done` (SSOT for history = CHANGELOG + git log). A lesson worth keeping goes to `learned.md`, a failure with its cause to `troubleshoot.md`, and neither goes to the harness memory store: `AGENTS.md`, Persistence Policy.
-4. **Objective Update**: Update `## Now` in `tasks.md` with next objective or clear it.
+4. **Objective Update**: Update `## Now` in `session.md` with next objective or clear it.
 5. **Map Reset**: Overwrite `impact-map.md` with idle state. Missing → skip.
 6. **Lint**: Run linter, block commit if errors remain.
 7. **Commit [LOCKED]**: Read `release` in `context.md`. On `derived` (default), skip the bump, since CI computes the version, and propose `<type>: <description>`. On `manual`, run `npm run bump <type>` first, then propose `<type>: release v<version> - <description>`. Either way `git add .` comes before the proposal and `versioning.md`, `VersionControl`, owns the shape. **STOP: await explicit approval before `git commit`.**
-8. **Session Gate [HARD STOP]**: Write next objective to `tasks.md`. Stop: _"Cycle complete. Context exhausted. **Open a new session**. Next: [objective]."_
+8. **Session Gate [HARD STOP]**: Write next objective to `session.md`. Stop: _"Cycle complete. Context exhausted. **Open a new session**. Next: [objective]."_
 
 > **SOVEREIGN GATE**: Never bypass human verification for commits.
 
@@ -150,15 +150,15 @@ What the protocol takes off the agent's hands, so the developer is not the one c
 
 <rule name="TaskHandoff">
 
-`.ai/backlog/tasks.md` is the SSOT for work state. Any agent, any session can continue.
+`.ai/backlog/session.md` is the SSOT for where the cycle stopped, and `.ai/backlog/tasks.md` for the queue behind it. Any agent, any session can continue.
 
-**Checkpoint** (after each atomic task): Mark `- [DONE]` → `## Done`, bullet included, since `prune` only recognizes entries with it. Next task → `## Active` as `- [IN_PROGRESS]` with context note.
+**Checkpoint** (after each atomic task): Mark `- [DONE]` → `## Done`, bullet included, since `prune` only recognizes entries with it. Next task → `## Active` in `session.md` as `- [IN_PROGRESS]` with context note.
 
 The `## Active` entry carries the current phase, which is what the Phase Banner reads. A cycle whose phase lives only in the conversation does not survive a new session, and recovering it costs more than writing it did.
 
 **Proactive Handoff** (approaching limit): Write checkpoint. Announce: _"Approaching context limit. Saved checkpoint. Start new session."_
 
-**Recovery** (tasks.md lost): `git log --oneline -20` → rebuild.
+**Recovery** (session.md lost): `git log --oneline -20` → rebuild.
 
 </rule>
 

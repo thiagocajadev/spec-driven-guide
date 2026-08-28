@@ -2,8 +2,10 @@ import fileSystem from "node:fs";
 import path from "node:path";
 
 import { FsUtils } from "../core/fs-utils.mjs";
+import { KitEmission } from "./kit-emission.mjs";
 
 const { copyRecursiveSync, getDirname } = FsUtils;
+const { resolveKitPath } = KitEmission;
 
 const __dirname = getDirname(import.meta.url);
 const SOURCE_ASSETS = path.join(__dirname, "../../..", "assets");
@@ -13,9 +15,9 @@ const SOURCE_COMMANDS = path.join(SOURCE_INSTRUCTIONS, "commands");
 const SOURCE_COMPETENCIES = path.join(SOURCE_INSTRUCTIONS, "competencies");
 
 function prepareProjectStructure(targetDirectory) {
-  const instructionsDir = path.join(targetDirectory, ".ai", "instructions");
-  const commandsDir = path.join(targetDirectory, ".ai", "commands");
-  const skillsDir = path.join(targetDirectory, ".ai", "skills");
+  const instructionsDir = resolveKitPath(targetDirectory, "instructions");
+  const commandsDir = resolveKitPath(targetDirectory, "commands");
+  const skillsDir = resolveKitPath(targetDirectory, "skills");
 
   fileSystem.mkdirSync(instructionsDir, { recursive: true });
   fileSystem.mkdirSync(commandsDir, { recursive: true });
@@ -24,13 +26,9 @@ function prepareProjectStructure(targetDirectory) {
 
 function injectRulesets(targetDirectory, selections) {
   const { flavor } = selections;
-  const projectAiInstructions = path.join(
-    targetDirectory,
-    ".ai",
-    "instructions",
-  );
+  const projectAiInstructions = resolveKitPath(targetDirectory, "instructions");
 
-  const projectAiSkills = path.join(targetDirectory, ".ai", "skills");
+  const projectAiSkills = resolveKitPath(targetDirectory, "skills");
 
   if (fileSystem.existsSync(SOURCE_SKILLS)) {
     copyRecursiveSync(SOURCE_SKILLS, projectAiSkills);
@@ -51,18 +49,18 @@ function injectRulesets(targetDirectory, selections) {
   if (fileSystem.existsSync(SOURCE_COMMANDS)) {
     copyRecursiveSync(
       SOURCE_COMMANDS,
-      path.join(targetDirectory, ".ai", "commands"),
+      resolveKitPath(targetDirectory, "commands"),
     );
   }
 }
 
 function collectOutputSummary() {
   const directories = [
-    ".ai/skills/",
-    ".ai/instructions/flavor/",
-    ".ai/instructions/competencies/",
-    ".ai/instructions/templates/",
-    ".ai/commands/",
+    ".ai/kit/skills/",
+    ".ai/kit/instructions/flavor/",
+    ".ai/kit/instructions/competencies/",
+    ".ai/kit/instructions/templates/",
+    ".ai/kit/commands/",
   ];
 
   const summary = { directories };

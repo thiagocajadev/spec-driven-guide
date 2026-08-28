@@ -4,17 +4,18 @@ This document traces the evolution of **spec-driven-guide** from foundation to a
 
 ## Milestones
 
-| Target   | Focus                                                                                                                                                                                                                                                                                                                                             | Status     |
-| :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------- |
-| **v1.0** | **Foundation**: CLI, 5-phase protocol, multi-stack, initial idioms.                                                                                                                                                                                                                                                                               | ✅ Shipped |
-| **v1.x** | **Resilience & Hardening**: SSOT, Token Discipline, Universal Cycle Coverage.                                                                                                                                                                                                                                                                     | ✅ Shipped |
-| **v2.0** | **Governance Observability**: Formal auditing via `audit:` and Circuit Breaker logic.                                                                                                                                                                                                                                                             | ✅ Shipped |
-| **v3.0** | **Reformulation & Multi-Agent**: Semantic router, skills on-demand, multi-agent, multi-idiom, token compaction (~25K tokens saved).                                                                                                                                                                                                               | ✅ Shipped |
-| **v4.0** | **Narrative Heuristics Maturity**: Vertical Density detector (double-blank + Explaining Return Tight + Orphan-of-1), logic-in-return classifier, 12-token banned abbreviations, multi-language section banners, three-form Pedagogical Tone + Default Content Structure.                                                                          | ✅ Shipped |
-| **v4.1** | **Governance Slim-Down**: `staff-dna.md` removed, `code-style.md` rewritten lean, `PreCodeChecklist` + `PreFinishGate` consolidated (8 + 8 items), audit Law 1/Law 8 validators retired.                                                                                                                                                          | ✅ Shipped |
-| **v5.0** | **Dynamic Stack Context**: Static idiom catalog (15 dirs, ~50KB) removed. Stack is now developer-declared during `land:` in `.ai/backlog/stack.md`, optionally enriched via an allow-listed doc-fetch. `competencies/{backend,frontend}.md` fused into single `delivery.md`. Major bump due to removed CLI surface (`--idiom`, `update`, `sync`). | ✅ Shipped |
-| **v5.x** | **Lint Enforcement**: Governance heuristics that could be mechanized moved into four local ESLint rules shipped with the CLI. Gate pre-filter, `checklist-soul.md`, the `ok`-discriminated response envelope.                                                                                                                                     | ✅ Shipped |
-| **v6.0** | **Harness Alignment**: `AGENTS.md` at the repo root where harnesses already look. Backlog reclassified by volatility, so team knowledge is versioned instead of discarded. Biome repositioned as a baseline. Fifth local ESLint rule.                                                                                                             | ✅ Shipped |
+| Target    | Focus                                                                                                                                                                                                                                                                                                                                             | Status     |
+| :-------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------- |
+| **v1.0**  | **Foundation**: CLI, 5-phase protocol, multi-stack, initial idioms.                                                                                                                                                                                                                                                                               | ✅ Shipped |
+| **v1.x**  | **Resilience & Hardening**: SSOT, Token Discipline, Universal Cycle Coverage.                                                                                                                                                                                                                                                                     | ✅ Shipped |
+| **v2.0**  | **Governance Observability**: Formal auditing via `audit:` and Circuit Breaker logic.                                                                                                                                                                                                                                                             | ✅ Shipped |
+| **v3.0**  | **Reformulation & Multi-Agent**: Semantic router, skills on-demand, multi-agent, multi-idiom, token compaction (~25K tokens saved).                                                                                                                                                                                                               | ✅ Shipped |
+| **v4.0**  | **Narrative Heuristics Maturity**: Vertical Density detector (double-blank + Explaining Return Tight + Orphan-of-1), logic-in-return classifier, 12-token banned abbreviations, multi-language section banners, three-form Pedagogical Tone + Default Content Structure.                                                                          | ✅ Shipped |
+| **v4.1**  | **Governance Slim-Down**: `staff-dna.md` removed, `code-style.md` rewritten lean, `PreCodeChecklist` + `PreFinishGate` consolidated (8 + 8 items), audit Law 1/Law 8 validators retired.                                                                                                                                                          | ✅ Shipped |
+| **v5.0**  | **Dynamic Stack Context**: Static idiom catalog (15 dirs, ~50KB) removed. Stack is now developer-declared during `land:` in `.ai/backlog/stack.md`, optionally enriched via an allow-listed doc-fetch. `competencies/{backend,frontend}.md` fused into single `delivery.md`. Major bump due to removed CLI surface (`--idiom`, `update`, `sync`). | ✅ Shipped |
+| **v5.x**  | **Lint Enforcement**: Governance heuristics that could be mechanized moved into four local ESLint rules shipped with the CLI. Gate pre-filter, `checklist-soul.md`, the `ok`-discriminated response envelope.                                                                                                                                     | ✅ Shipped |
+| **v6.0**  | **Harness Alignment**: `AGENTS.md` at the repo root where harnesses already look. Backlog reclassified by volatility, so team knowledge is versioned instead of discarded. Biome repositioned as a baseline. Fifth local ESLint rule.                                                                                                             | ✅ Shipped |
+| **v10.0** | **Ownership Split**: `.ai/kit/` holds what the CLI installs and leaves version control; `.ai/backlog/` holds what the project writes. The kit is cleared whole on every install and restored from the committed manifest. `tasks.md` splits into a versioned queue and a local session pointer.                                                   | ✅ Shipped |
 
 > **Core is closed.** Further growth happens via **separate extension packages**, not core bloat. The CLI, the 5-phase protocol, the narrative heuristics, the gate and audit suite, and the `land:`-driven stack context together are the finished product. See [Extensions](#extensions) below for companion projects.
 
@@ -64,6 +65,28 @@ Governance was living where the CLI put it rather than where tools look for it. 
 - **A fifth local ESLint rule.** `duplicate-consecutive-statement` reports two adjacent statements with identical source text. Deliberate repetition carries an `eslint-disable-next-line` plus a comment saying why.
 
 The vendor-neutral constraint held throughout: no `.claude/` directory, no per-harness folders, and enforcement in git and lint rather than in a harness hook.
+
+### v10.0: Ownership Split (Current)
+
+`.ai/` held two things belonging to different owners, and only the `.gitignore` knew where the line
+was. v10 draws it in the tree instead.
+
+- **`.ai/kit/` holds what the CLI installs, and leaves git.** Skills, instructions, commands and tooling
+  are written by the CLI, pinned by `.ai/.sdg-manifest.json`, and regenerable from it. An install
+  went from 80 tracked files to 11, and an update from a diff nobody reads to a version and a set of
+  hashes.
+- **The kit is cleared whole before every install.** Pruning by manifest inventory could never reach
+  a file the developer added by hand, because no manifest ever listed it. Clearing can, and what it
+  removes is named rather than dropped in silence.
+- **`restore` rebuilds a clone.** It reads the manifest, refuses any release but the one pinned, and
+  verifies every restored file against the recorded hashes.
+- **`tasks.md` splits by volatility.** The queue and its record stay versioned, where a backlog entry
+  carries reasoning no other file holds. `## Now` and `## Active` move to `session.md`, local,
+  because a shared session pointer makes one developer's agent resume another's task.
+- **The sweep is guarded.** `audit:` fails on any reference still pointing outside `.ai/kit/`, since
+  an agent follows a stale path into nothing without raising an error.
+
+See [Migration v9 → v10](guides/MIGRATION-v10.md).
 
 ---
 

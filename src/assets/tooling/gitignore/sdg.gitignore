@@ -1,0 +1,48 @@
+# Recommended .gitignore for a project governed by spec-driven-guide.
+#
+# Copy the sections you need. The block between the two markers is the one the
+# CLI writes into your real .gitignore and rewrites whole on every init, so keep
+# it verbatim; everything above it is yours and is never touched.
+
+# Dependencies
+node_modules/
+vendor/
+target/
+bin/
+obj/
+
+# Build output
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor
+.idea/
+.vscode/
+
+# >>> spec-driven-guide, managed block
+# Rewritten whole on every init. Lines outside the markers are yours.
+
+# Environment: never commit secrets
+.env
+.env.*
+
+# SDG kit: written by the CLI, pinned by the manifest
+.ai/kit/
+
+# AI artifacts: session state, not project logic
+.ai/backlog/session.md
+.ai/backlog/impact-map.md
+tmp/
+temp/
+
+# <<< spec-driven-guide

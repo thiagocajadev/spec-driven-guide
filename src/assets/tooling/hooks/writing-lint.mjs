@@ -25,13 +25,13 @@ import fileSystem from "node:fs";
 import { fileURLToPath } from "node:url";
 
 /**
- * why: the same script runs from two trees, `.ai/tooling/hooks/` in a consumer
+ * why: the same script runs from two trees, `.ai/kit/tooling/hooks/` in a consumer
  * project and `src/assets/tooling/hooks/` in this one, and the lexicon sits at a
  * different depth in each. The project root is the only anchor both agree on,
  * which is what rules out resolving from import.meta.url.
  */
 const LEXICON_CANDIDATE_DIRECTORIES = [
-  path.join(".ai", "skills", "lexicon"),
+  path.join(".ai", "kit", "skills", "lexicon"),
   path.join("src", "assets", "skills", "lexicon"),
 ];
 

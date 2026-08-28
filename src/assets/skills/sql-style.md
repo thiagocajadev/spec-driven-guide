@@ -4,7 +4,7 @@
 
 > Load in Phase CODE when writing, reviewing, or refactoring SQL.
 > Formatting is owned by **SQLFluff**: enforce via CI, not review comments.
-> For structural data access rules (pooling, transactions, indexes), see `.ai/skills/data-access.md`.
+> For structural data access rules (pooling, transactions, indexes), see `.ai/kit/skills/data-access.md`.
 
 ## Formatter-enforced (SQLFluff auto-fix)
 
@@ -18,7 +18,7 @@
 | `layout.operators`           | Trailing `AND` / `OR` (after operator)          |
 | `references.qualification`   | Requires `table_name.column_name` qualification |
 
-Activation recipe: `.ai/tooling/sqlfluff/.sqlfluff` + `.ai/tooling/README.md`.
+Activation recipe: `.ai/kit/tooling/sqlfluff/.sqlfluff` + `.ai/kit/tooling/README.md`.
 
 ## Vertical Style
 

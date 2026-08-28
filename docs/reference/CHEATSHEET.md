@@ -82,6 +82,7 @@ The agent may only fetch enrichment from these canonical sources:
 ```bash
 npx spec-driven-guide gate       # Review the staged diff against the gate (language-agnostic pre-commit)
 npx spec-driven-guide review     # Detect drift between local rules and source engine
+npx spec-driven-guide restore    # Rebuild .ai/kit/ from the committed manifest
 npx spec-driven-guide audit      # Run the governance audit (drift, narrative, code style, hygiene)
 npx spec-driven-guide narrative  # Check the changelog narrative on its own
 npx spec-driven-guide clear      # Remove the entire .ai/ governance layer
@@ -109,7 +110,7 @@ Prefix your message to the AI Agent to activate the corresponding governance cyc
 
 ## Guardrails
 
-Ten constraints the protocol enforces on every cycle. Full text in `.ai/instructions/templates/workflow.md`, rule `Guardrails`.
+Ten constraints the protocol enforces on every cycle. Full text in `.ai/kit/instructions/templates/workflow.md`, rule `Guardrails`.
 
 | Guardrail                | Enforced at                                          |
 | :----------------------- | :--------------------------------------------------- |

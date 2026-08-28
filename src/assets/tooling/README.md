@@ -1,7 +1,7 @@
 # Tooling (optional, inert)
 
 Pre-made scripts and hooks. **Nothing is wired by default**. `spec-driven-guide init` copies
-these files into `.ai/tooling/`, but no `package.json`, no `.husky/`, no devDep is
+these files into `.ai/kit/tooling/`, but no `package.json`, no `.husky/`, no devDep is
 modified by the CLI. Activate on demand with agent assistance or manually.
 
 ## Inventory
@@ -11,7 +11,7 @@ modified by the CLI. Activate on demand with agent assistance or manually.
 Trims `.ai/backlog/tasks.md` `## Done` section to the N most recent entries.
 
 ```
-node .ai/tooling/scripts/prune-backlog.mjs [--keep N]
+node .ai/kit/tooling/scripts/prune-backlog.mjs [--keep N]
 ```
 
 - Default `N = 3`.
@@ -23,7 +23,7 @@ node .ai/tooling/scripts/prune-backlog.mjs [--keep N]
 Minimal semver bump. Only rewrites `package.json.version`.
 
 ```
-node .ai/tooling/scripts/bump-version.mjs <patch|minor|major>
+node .ai/kit/tooling/scripts/bump-version.mjs <patch|minor|major>
 ```
 
 - Does NOT touch `CHANGELOG.md`.
@@ -43,7 +43,7 @@ keeps producing the same numbers, and the move never renumbers a release.
 Pairs with `bump-version.mjs`, which stays a pure writer:
 
 ```
-node .ai/tooling/scripts/bump-version.mjs $(node .ai/tooling/scripts/derive-bump.mjs)
+node .ai/kit/tooling/scripts/bump-version.mjs $(node .ai/kit/tooling/scripts/derive-bump.mjs)
 ```
 
 Two files rather than one, because reading history is a query and writing the
@@ -184,7 +184,7 @@ The rules live in `skills/writing-soul.md`, in English. The instances live in
 `skills/lexicon/<language>.md`, one file per language, and the hook loads every
 lexicon it finds. Adding a term is a text edit, never a code change, and a
 document written in any language with a lexicon gets the same gate. The hook
-resolves the lexicon from the project root, trying `.ai/skills/lexicon/` and
+resolves the lexicon from the project root, trying `.ai/kit/skills/lexicon/` and
 then `src/assets/skills/lexicon/`.
 
 Scope: `src/assets/skills/*.md`, `src/content/**.md` and `.mdx`, `docs/**.md`,
@@ -212,12 +212,12 @@ npm install --save-dev eslint @eslint/js prettier eslint-plugin-prettier eslint-
 ```js
 import js from "@eslint/js";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
-import { sdgEslintConfig } from ".ai/tooling/eslint-config/snippet.mjs";
+import { sdgEslintConfig } from ".ai/kit/tooling/eslint-config/snippet.mjs";
 
 export default [js.configs.recommended, prettierRecommended, sdgEslintConfig];
 ```
 
-3. Copy `.ai/tooling/eslint-config/.prettierrc` to your project root (or merge with your existing config).
+3. Copy `.ai/kit/tooling/eslint-config/.prettierrc` to your project root (or merge with your existing config).
 
 4. Wire auto-fix on save in VSCode (`.vscode/settings.json`):
 
@@ -247,13 +247,13 @@ Or ask your agent: "wire the SDG ESLint rules into my eslint.config.mjs."
 ```
 npm install --save-dev husky
 npx husky init
-cp .ai/tooling/husky/pre-commit .husky/pre-commit
-cp .ai/tooling/husky/commit-msg .husky/commit-msg
+cp .ai/kit/tooling/husky/pre-commit .husky/pre-commit
+cp .ai/kit/tooling/husky/commit-msg .husky/commit-msg
 chmod +x .husky/pre-commit .husky/commit-msg
 ```
 
 Copy the two hooks, not the test beside them: `husky-hooks.test.mjs` stays in
-`.ai/tooling/husky/`, where a test runner can reach it, and points at the files
+`.ai/kit/tooling/husky/`, where a test runner can reach it, and points at the files
 in that directory rather than at the installed copies.
 
 Both hooks run unchanged on husky 9 and on v10. `pre-commit` reviews nothing
@@ -271,9 +271,9 @@ the action generates both from the commits.
 
 ```
 mkdir -p .github/workflows
-cp .ai/tooling/github-actions/release-please.yml .github/workflows/release.yml
-cp .ai/tooling/github-actions/release-please-config.json .release-please-config.json
-cp .ai/tooling/github-actions/release-please-manifest.json .release-please-manifest.json
+cp .ai/kit/tooling/github-actions/release-please.yml .github/workflows/release.yml
+cp .ai/kit/tooling/github-actions/release-please-config.json .release-please-config.json
+cp .ai/kit/tooling/github-actions/release-please-manifest.json .release-please-manifest.json
 ```
 
 2. Set the manifest to the version already published, so the first run computes
@@ -316,10 +316,10 @@ Edit `package.json`:
 ```json
 {
   "scripts": {
-    "prune:backlog": "node .ai/tooling/scripts/prune-backlog.mjs",
-    "bump:version": "node .ai/tooling/scripts/bump-version.mjs",
-    "bump:auto": "node .ai/tooling/scripts/bump-version.mjs $(node .ai/tooling/scripts/derive-bump.mjs)",
-    "release:local": "npm run bump:auto && node .ai/tooling/scripts/promote-changelog.mjs"
+    "prune:backlog": "node .ai/kit/tooling/scripts/prune-backlog.mjs",
+    "bump:version": "node .ai/kit/tooling/scripts/bump-version.mjs",
+    "bump:auto": "node .ai/kit/tooling/scripts/bump-version.mjs $(node .ai/kit/tooling/scripts/derive-bump.mjs)",
+    "release:local": "npm run bump:auto && node .ai/kit/tooling/scripts/promote-changelog.mjs"
   }
 }
 ```
@@ -344,7 +344,7 @@ pip install sqlfluff
 2. Copy the standard config to your project root:
 
 ```
-cp .ai/tooling/sqlfluff/.sqlfluff .sqlfluff
+cp .ai/kit/tooling/sqlfluff/.sqlfluff .sqlfluff
 ```
 
 3. Wire format-on-save in VSCode (`.vscode/settings.json`):
@@ -385,7 +385,7 @@ formatting and common ES style; the visual-density rules stay in ESLint.
 
 Two things the config already handles, both of which abort Biome otherwise:
 it excludes `.ai/`, because Biome 2.x reads the template copy still sitting in
-`.ai/tooling/biome/` as a second root config; and it sets `vcs.useIgnoreFile`,
+`.ai/kit/tooling/biome/` as a second root config; and it sets `vcs.useIgnoreFile`,
 which needs a git repository with a `.gitignore` present.
 
 1. Install Biome:
@@ -397,7 +397,7 @@ npm install --save-dev --save-exact @biomejs/biome
 2. Copy the config to your project root:
 
 ```
-cp .ai/tooling/biome/biome.json biome.json
+cp .ai/kit/tooling/biome/biome.json biome.json
 ```
 
 3. Add an opt-in script to `package.json` (does NOT replace `lint`):
@@ -451,7 +451,7 @@ Or ask your agent: "wire Biome into my project."
 ### Activate writing-lint hook
 
 Advisory hook that scans Markdown writes against the lexicons in
-`.ai/skills/lexicon/`. Reports to stderr; never blocks the tool call.
+`.ai/kit/skills/lexicon/`. Reports to stderr; never blocks the tool call.
 
 It reads the harness hook payload from stdin, so it is registered rather than
 copied. Nothing is written into a vendor directory: the script runs from where
@@ -470,7 +470,7 @@ the install already put it.
         "hooks": [
           {
             "type": "command",
-            "command": "node .ai/tooling/hooks/writing-lint.mjs"
+            "command": "node .ai/kit/tooling/hooks/writing-lint.mjs"
           }
         ]
       }

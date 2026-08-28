@@ -9,7 +9,7 @@
 
 ## Commit shape
 
-**Subject**: `<type>[scope][!]: <description>`. Types are `feat`, `fix`, `docs`, `audit`, `land`, `chore`, `refactor`, `test` and `perf`. The `commit-msg` hook in `.ai/tooling/husky/` rejects anything else.
+**Subject**: `<type>[scope][!]: <description>`. Types are `feat`, `fix`, `docs`, `audit`, `land`, `chore`, `refactor`, `test` and `perf`. The `commit-msg` hook in `.ai/kit/tooling/husky/` rejects anything else.
 
 **Description**: lowercase, no trailing period. It names what changed, never that something changed. `fix: husky hooks under sh -e` over `fix: bug fixes`.
 
@@ -36,7 +36,7 @@ Declared once as `release` in `context.md`. When the key is absent, read it as `
 
 A CI job computes the version from the table above. The subject never carries it, because the tag already does, and **`CHANGELOG.md` is generated rather than written**: the commit body is the changelog entry, so writing both produces two sources that drift.
 
-`release-please` accumulates commits into a release pull request that a human merges when ready. `semantic-release` ships on every merge instead. Prefer the first, since it keeps the approval this ruleset treats as non-negotiable. The workflow ships inert in `.ai/tooling/github-actions/`.
+`release-please` accumulates commits into a release pull request that a human merges when ready. `semantic-release` ships on every merge instead. Prefer the first, since it keeps the approval this ruleset treats as non-negotiable. The workflow ships inert in `.ai/kit/tooling/github-actions/`.
 
 The pull happens once per release, at the merge, never once per commit. Between releases the local `package.json` holds the previous version, which is the accurate state: the new version does not exist until the release does.
 
@@ -44,7 +44,7 @@ The pull happens once per release, at the merge, never once per commit. Between 
 
 The maintainer runs the release locally and the commit carries the version: `<type>: release v<major.minor.patch> - <description>`. Fits a single-maintainer repository, where the human is the pipeline, and costs no CI. It does not survive contact with a team, since two people releasing means two people deciding the number.
 
-Three scripts in `.ai/tooling/scripts/` do locally what CI does in the other mode, one job each:
+Three scripts in `.ai/kit/tooling/scripts/` do locally what CI does in the other mode, one job each:
 
 | Script                  | Reads             | Writes              |
 | :---------------------- | :---------------- | :------------------ |

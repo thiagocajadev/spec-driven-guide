@@ -49,7 +49,10 @@ function printSuccessAgents(targetDir) {
     "  AGENTS.md                (canonical governance at the repo root)",
   );
 
-  console.log("  .ai/                     (skills, commands and templates)");
+  console.log(
+    "  .ai/kit/                 (skills, commands and templates, not versioned)",
+  );
+
   console.log(
     "  .ai/backlog/             (team knowledge, versioned; session state gitignored)",
   );
@@ -69,7 +72,10 @@ function printQuickSuccess(targetDir) {
     "  AGENTS.md                (canonical governance at the repo root)",
   );
 
-  console.log("  .ai/                     (skills, commands and templates)");
+  console.log(
+    "  .ai/kit/                 (skills, commands and templates, not versioned)",
+  );
+
   console.log(
     "  .ai/backlog/             (team knowledge, versioned; session state gitignored)",
   );
@@ -108,6 +114,71 @@ function printForeignClaudeWarning() {
   console.log("      Claude Code reads that exact filename, so no sidecar was");
   console.log("      written. Add this line to it yourself:\n");
   console.log("        @AGENTS.md\n");
+}
+
+/**
+ * Names what the cleared kit held and the incoming canon does not carry. The
+ * clearing is by design, so the developer is told what left rather than finding
+ * out later that an edit inside `.ai/kit/` was never going to survive.
+ */
+function printOffCanonRemovals(removedFiles) {
+  if (removedFiles.length === 0) {
+    return;
+  }
+
+  console.log(
+    `  🧹 ${removedFiles.length} file(s) outside the canon removed from .ai/kit/:`,
+  );
+
+  for (const relativePath of removedFiles) {
+    console.log(`      .ai/kit/${relativePath}`);
+  }
+}
+
+/**
+ * Names the release that produced the installed tree when this CLI is a
+ * different one, with the command that reproduces it exactly.
+ */
+function printVersionNotice(pinnedVersion, currentVersion) {
+  console.log(
+    `  ⚠️  This CLI is v${currentVersion}, the manifest pins v${pinnedVersion}.`,
+  );
+
+  console.log(
+    `      Reproduce that tree with: npx spec-driven-guide@${pinnedVersion} init`,
+  );
+}
+
+/**
+ * Reports the one-time move of a pre-split install. The custom files are named
+ * before the removal because this is the only run where somebody can lose work
+ * they did not know the tree was carrying.
+ */
+function printLegacyMigration(migrationReport) {
+  console.log(
+    `  📦 Moved a pre-v10 install: ${migrationReport.removedCount} file(s) removed from .ai/, rebuilt under .ai/kit/.`,
+  );
+
+  printLegacyCustomFiles(migrationReport.customFiles);
+
+  console.log("      Untrack what git still holds:");
+  console.log(
+    "        git rm -r --cached .ai/skills .ai/instructions .ai/commands .ai/tooling",
+  );
+}
+
+function printLegacyCustomFiles(customFiles) {
+  if (customFiles.length === 0) {
+    return;
+  }
+
+  console.log(
+    `      ${customFiles.length} of them were not written by any release:`,
+  );
+
+  for (const relativePath of customFiles) {
+    console.log(`        .ai/${relativePath}`);
+  }
 }
 
 function printQuickDryRun(targetDir) {
@@ -225,6 +296,7 @@ function printHelp(version) {
 
   Commands:
     init         Install the instruction set (interactive or via flags)
+    restore      Rebuild .ai/kit/ from the tracked manifest
     clear        Remove the .ai/ folder
     audit        Detect drift and law violations
     review       Compare local rules vs source
@@ -258,6 +330,9 @@ export const BundleUI = {
   printSuccessAgents,
   printQuickSuccess,
   printAgentConfigWarnings,
+  printOffCanonRemovals,
+  printLegacyMigration,
+  printVersionNotice,
   printQuickDryRun,
   printDryRunPreview,
   printBuildSummary,

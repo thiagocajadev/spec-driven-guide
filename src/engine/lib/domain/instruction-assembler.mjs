@@ -10,10 +10,12 @@ import dedent from "dedent";
 import { DisplayUtils } from "../core/display-utils.mjs";
 import { ManifestUtils } from "./manifest-utils.mjs";
 import { FsUtils } from "../core/fs-utils.mjs";
+import { KitEmission } from "./kit-emission.mjs";
 
 const { displayName } = DisplayUtils;
 const { computeHashes, loadManifest } = ManifestUtils;
 const { getDirname, writeJsonAtomic, safeReadJson } = FsUtils;
+const { resolveKitPath } = KitEmission;
 
 const __dirname = getDirname(import.meta.url);
 const SOURCE_INSTRUCTIONS = path.join(
@@ -49,82 +51,82 @@ const AGENTS_SIDECAR_NAME = "AGENTS.sdg.md";
  */
 const SKILL_CATALOG = [
   {
-    path: ".ai/skills/code-style.md",
+    path: ".ai/kit/skills/code-style.md",
     category: "core",
     description: "Code Style & Standards",
   },
   {
-    path: ".ai/instructions/competencies/delivery.md",
+    path: ".ai/kit/instructions/competencies/delivery.md",
     category: "delivery",
     description: "BFF envelope + Frontend contract execution",
   },
   {
-    path: ".ai/skills/api-design.md",
+    path: ".ai/kit/skills/api-design.md",
     category: "backend",
     description: "API Design",
   },
   {
-    path: ".ai/skills/data-access.md",
+    path: ".ai/kit/skills/data-access.md",
     category: "backend",
     description: "DB layer",
   },
   {
-    path: ".ai/skills/sql-style.md",
+    path: ".ai/kit/skills/sql-style.md",
     category: "backend",
     description: "SQL queries",
   },
   {
-    path: ".ai/skills/ci-cd.md",
+    path: ".ai/kit/skills/ci-cd.md",
     category: "backend",
     description: "Pipelines & deploy",
   },
   {
-    path: ".ai/skills/cloud.md",
+    path: ".ai/kit/skills/cloud.md",
     category: "backend",
     description: "Cloud & Containers",
   },
   {
-    path: ".ai/skills/ui-ux.md",
+    path: ".ai/kit/skills/ui-ux.md",
     category: "frontend",
     description: "UI/UX design system & writing voice",
   },
   {
-    path: ".ai/skills/testing.md",
+    path: ".ai/kit/skills/testing.md",
     category: "surgical",
     description: "test creation or modification",
   },
   {
-    path: ".ai/skills/security.md",
+    path: ".ai/kit/skills/security.md",
     category: "surgical",
     description: "auth, validation, secrets",
   },
   {
-    path: ".ai/skills/observability.md",
+    path: ".ai/kit/skills/observability.md",
     category: "surgical",
     description: "logging, metrics, tracing",
   },
   {
-    path: ".ai/skills/review.md",
+    path: ".ai/kit/skills/review.md",
     category: "surgical",
     description: "PR craft + reviewer checklist",
   },
   {
-    path: ".ai/skills/performance.md",
+    path: ".ai/kit/skills/performance.md",
     category: "surgical",
     description: "Big-O budget, hot paths, profiling",
   },
   {
-    path: ".ai/skills/domain.md",
+    path: ".ai/kit/skills/domain.md",
     category: "surgical",
     description: "DDD-Lite: aggregates, VOs, ubiquitous language",
   },
   {
-    path: ".ai/skills/visual-density.md",
+    path: ".ai/kit/skills/visual-density.md",
     category: "surgical",
     description: "Visual density in depth (core rule always on)",
   },
   {
-    path: ".ai/skills/writing-soul.md",
+    path: ".ai/kit/skills/writing-soul.md",
     category: "surgical",
     description: "voice for UI copy, docs, commits",
   },
@@ -170,7 +172,7 @@ function buildMasterInstructions(selections) {
 
       1. Read \`.ai/backlog/context.md\`: project brief. If missing, generate from \`package.json\` + \`README.md\`.
       2. Read \`.ai/backlog/stack.md\`: developer-curated stack declarations.
-      3. Read \`.ai/backlog/tasks.md\`: \`## Now\` holds the objective; check for \`[IN_PROGRESS]\`. If found: load workflow.md and resume.`;
+      3. Read \`.ai/backlog/session.md\`: \`## Now\` holds the objective; check for \`[IN_PROGRESS]\`. If found: load workflow.md and resume. The queue behind it is \`tasks.md\`.`;
 
     return sessionStartString;
   }
@@ -193,14 +195,14 @@ function buildMasterInstructions(selections) {
       ## Semantic Router
 
       > **Token gate**: load ONLY what's triggered. Never preload skills or protocol files.
-      > All cycle triggers load \`.ai/instructions/templates/workflow.md\` first. It defines all 5 phases (SPEC → PLAN → CODE → TEST → END).
+      > All cycle triggers load \`.ai/kit/instructions/templates/workflow.md\` first. It defines all 5 phases (SPEC → PLAN → CODE → TEST → END).
 
-      - \`feat:\` → \`.ai/commands/sdg-feat.md\` → Execute Phase SPEC → STOP
-      - \`fix:\` → \`.ai/commands/sdg-fix.md\` → Execute Phase SPEC → STOP
-      - \`docs:\` → \`.ai/commands/sdg-docs.md\` → Execute Phase SPEC → STOP
-      - \`audit:\` → \`.ai/commands/sdg-audit.md\` → Execute Phase SPEC → STOP
-      - \`land:\` → \`.ai/commands/sdg-land.md\` → Execute Phase SPEC → STOP
-      - \`end:\` → \`.ai/commands/sdg-end.md\` → Execute Phase END
+      - \`feat:\` → \`.ai/kit/commands/sdg-feat.md\` → Execute Phase SPEC → STOP
+      - \`fix:\` → \`.ai/kit/commands/sdg-fix.md\` → Execute Phase SPEC → STOP
+      - \`docs:\` → \`.ai/kit/commands/sdg-docs.md\` → Execute Phase SPEC → STOP
+      - \`audit:\` → \`.ai/kit/commands/sdg-audit.md\` → Execute Phase SPEC → STOP
+      - \`land:\` → \`.ai/kit/commands/sdg-land.md\` → Execute Phase SPEC → STOP
+      - \`end:\` → \`.ai/kit/commands/sdg-end.md\` → Execute Phase END
       - No prefix → Ask: "feat, fix, docs, audit, or land?"`;
 
     return routerString;
@@ -249,7 +251,7 @@ function buildMasterInstructions(selections) {
     if (flavor && flavor !== "none") {
       sections.push(
         "**Architectural flavor**",
-        `- \`.ai/instructions/flavor/principles.md\`, Flavor: ${displayName(flavor)}`,
+        `- \`.ai/kit/instructions/flavor/principles.md\`, Flavor: ${displayName(flavor)}`,
         "",
       );
     }
@@ -281,7 +283,7 @@ function buildMasterInstructions(selections) {
     const agentRolesString = dedent`
       ## Agent Roles
 
-      Read \`.ai/instructions/templates/agent-roles.md\` for multi-agent handoff protocol.`;
+      Read \`.ai/kit/instructions/templates/agent-roles.md\` for multi-agent handoff protocol.`;
 
     return agentRolesString;
   }
@@ -298,6 +300,7 @@ function writeBacklogFiles(targetDirectory, selections) {
   writeContextFile(backlogDirectory, targetDirectory, selections);
   writeStackFile(backlogDirectory);
   writeTasksFile(backlogDirectory);
+  writeSessionFile(backlogDirectory);
   writeLearnedFile(backlogDirectory);
   writeTroubleshootFile(backlogDirectory);
 
@@ -436,6 +439,22 @@ function writeBacklogFiles(targetDirectory, selections) {
     );
 
     fileSystem.copyFileSync(templatePath, tasksPath);
+  }
+
+  function writeSessionFile(backlogDirectoryPath) {
+    const sessionPath = path.join(backlogDirectoryPath, "session.md");
+    if (fileSystem.existsSync(sessionPath)) {
+      return;
+    }
+
+    const templatePath = path.join(
+      SOURCE_INSTRUCTIONS,
+      "templates",
+      "backlog",
+      "session.md",
+    );
+
+    fileSystem.copyFileSync(templatePath, sessionPath);
   }
 
   function writeLearnedFile(backlogDirectoryPath) {
@@ -604,9 +623,11 @@ const MANAGED_BLOCK_END = "# <<< spec-driven-guide";
 
 /**
  * The block is rewritten whole on every run, which is what lets an entry be
- * retired as easily as added. Backlog is classified by volatility: session
- * state is ignored, while context, stack, learned and troubleshoot stay
- * versioned as team knowledge.
+ * retired as easily as added. `.ai/` is split by ownership: the kit is written
+ * by the CLI and regenerated from the manifest, so it never enters git, while
+ * `.ai/backlog/` is the project's. Inside the backlog only the session pointer
+ * and the blast-radius map are volatile; the task queue, context, stack,
+ * learned and troubleshoot stay versioned as team knowledge.
  */
 const MANAGED_BLOCKS = [
   {
@@ -614,40 +635,49 @@ const MANAGED_BLOCKS = [
     entries: [".env", ".env.*"],
   },
   {
+    header: "# SDG kit: written by the CLI, pinned by the manifest",
+    entries: [".ai/kit/"],
+  },
+  {
     header: "# AI artifacts: session state, not project logic",
     entries: [
-      ".ai/backlog/tasks.md",
+      ".ai/backlog/session.md",
       ".ai/backlog/impact-map.md",
-      ".ai/last-prompt.md",
       "tmp/",
       "temp/",
     ],
   },
-  {
-    header:
-      "# Runtime scratch: the harness writes it, the repository never carries it",
-    entries: [".claude/"],
-  },
 ];
 
 /**
- * why: only a vendor directory carrying nothing prescribed belongs in the block
- * above. `.cursor/` holds the pointer file the README asks the developer to
- * commit, and `.kiro/` holds steering and specs its own documentation calls
- * non-optional in git. Ignoring either repeats, against another tool, the
- * `.ai/backlog/` defect this block exists to fix.
+ * why: no vendor directory belongs in the block above, and `.claude/` was the
+ * exception that proved the rule wrong. It holds `settings.json`, `commands/`
+ * and `agents/`, which the developer writes and the team shares, so the blanket
+ * entry discarded them the way the pre-v6 `.ai/backlog/` line discarded team
+ * knowledge. `.cursor/` and `.kiro/` were spared on the same grounds. SDG
+ * installs `.ai/` and takes no position on any other tool's directory.
  */
 
 /**
  * why: `.ai/backlog/` was emitted before the volatility policy, and left in the
  * body it keeps learned.md and troubleshoot.md out of git in every project
- * installed before v6. The two em dash headers are stored data from before the
- * punctuation sweep, kept for the same reason the legacy sentinels are.
+ * installed before v6. `.ai/backlog/tasks.md` joins it for the opposite reason:
+ * the queue and its record are durable now, and only the session pointer moved
+ * out, so a line this block emitted for eight majors has to be taken back or it
+ * keeps discarding what the split just made worth versioning. The two em dash
+ * headers are stored data from before the punctuation sweep, kept for the same
+ * reason the legacy sentinels are. `.ai/last-prompt.md` joins them because the
+ * feature that wrote it was removed in v3 and the entry outlived it by six
+ * majors, ignoring a file nothing has produced since.
  */
 const LEGACY_GITIGNORE_LINES = [
   "# Environment — never commit secrets",
   "# AI artifacts — session state, not project logic",
   ".ai/backlog/",
+  ".ai/backlog/tasks.md",
+  ".ai/last-prompt.md",
+  "# Runtime scratch: the harness writes it, the repository never carries it",
+  ".claude/",
 ];
 
 const RECLAIMED_LINES = [
@@ -734,15 +764,23 @@ function renderManagedBlock() {
 
 /**
  * Writes the .sdg-manifest.json with content hashes for future diff checks.
+ *
+ * why: the manifest is the one file the consumer keeps in git, so a field that
+ * moves on every run makes the install report a change when nothing changed,
+ * which is the diff a reviewer learns to skip. The stamp is carried forward
+ * whenever version, selections and hashes all match what the file already holds.
  */
 function writeManifest(targetDirectory, selections, packageVersion) {
-  const manifest = {
-    generatedAt: new Date().toISOString(),
+  const substance = {
     sdgAgentVersion: packageVersion,
     selections,
     contentHashes: computeHashes(selections, SOURCE_INSTRUCTIONS),
   };
 
+  const previousManifest = loadManifest(targetDirectory);
+  const generatedAt = resolveGeneratedStamp(previousManifest, substance);
+
+  const manifest = { generatedAt, ...substance };
   const aiDirectory = path.join(targetDirectory, ".ai");
   fileSystem.mkdirSync(aiDirectory, { recursive: true });
 
@@ -753,6 +791,31 @@ function writeManifest(targetDirectory, selections, packageVersion) {
     : null;
 
   writeJsonAtomic(manifestPath, manifest, originalContent);
+}
+
+function resolveGeneratedStamp(previousManifest, substance) {
+  const previousStamp = previousManifest?.generatedAt;
+
+  if (!previousStamp) {
+    const firstStamp = new Date().toISOString();
+    return firstStamp;
+  }
+
+  const previousSubstance = {
+    sdgAgentVersion: previousManifest.sdgAgentVersion,
+    selections: previousManifest.selections,
+    contentHashes: previousManifest.contentHashes,
+  };
+
+  const isUnchanged =
+    JSON.stringify(previousSubstance) === JSON.stringify(substance);
+
+  if (isUnchanged) {
+    return previousStamp;
+  }
+
+  const refreshedStamp = new Date().toISOString();
+  return refreshedStamp;
 }
 
 /**
@@ -848,7 +911,7 @@ function writeToolingAssets(targetDirectory) {
     "tooling",
   );
 
-  const targetToolingDir = path.join(targetDirectory, ".ai", "tooling");
+  const targetToolingDir = resolveKitPath(targetDirectory, "tooling");
 
   const hasSourceAssets = fileSystem.existsSync(sourceToolingDir);
   if (!hasSourceAssets) {
@@ -870,145 +933,6 @@ function writeToolingAssets(targetDirectory) {
   }
 }
 
-/**
- * Removes the generated `.ai/instructions/` tree so the next regen rebuilds it from
- * the current `src/assets/instructions/` SSOT. Prevents stale files (like legacy
- * `idioms/`, `competencies/backend.md`, `competencies/frontend.md`) from surviving.
- * Scoped to `.ai/instructions/`, and never touches `.ai/backlog/` (developer state).
- */
-function removeGeneratedInstructions(targetDirectory) {
-  const generatedInstructionsDir = path.join(
-    targetDirectory,
-    ".ai",
-    "instructions",
-  );
-
-  if (!fileSystem.existsSync(generatedInstructionsDir)) {
-    return;
-  }
-
-  fileSystem.rmSync(generatedInstructionsDir, { recursive: true, force: true });
-}
-
-/**
- * Manifest keys are prefixed by asset family. Only the families the init copies
- * file by file can go stale: `.ai/instructions/` is wiped whole before every
- * regen, so templates, competencies and flavor are rebuilt rather than pruned.
- */
-const PRUNABLE_EMISSION_ROOTS = {
-  skills: [".ai", "skills"],
-  commands: [".ai", "commands"],
-  tooling: [".ai", "tooling"],
-};
-
-/**
- * Deletes what the canon dropped. The previous manifest's `contentHashes` keys
- * inventory what an earlier release emitted, so a key the current canon no
- * longer produces names a file this version would never write. A file the
- * developer added by hand was never in a manifest, which puts it out of reach.
- * Returns the manifest keys removed, for the caller to report.
- */
-function pruneStaleEmissions(targetDirectory, selections) {
-  const previousManifest = loadManifest(targetDirectory);
-  const previousHashes = previousManifest?.contentHashes;
-
-  if (!previousHashes) {
-    const firstInstallResult = [];
-    return firstInstallResult;
-  }
-
-  const currentHashes = computeHashes(selections, SOURCE_INSTRUCTIONS);
-  const staleKeys = Object.keys(previousHashes).filter(
-    (manifestKey) => !(manifestKey in currentHashes),
-  );
-
-  const removedKeys = staleKeys
-    .map((manifestKey) => removeEmittedFile(targetDirectory, manifestKey))
-    .filter(Boolean);
-
-  pruneEmptyDirectories(targetDirectory);
-
-  return removedKeys;
-}
-
-function removeEmittedFile(targetDirectory, manifestKey) {
-  const emittedPath = resolveEmittedPath(targetDirectory, manifestKey);
-
-  if (!emittedPath) {
-    const unmappedResult = null;
-    return unmappedResult;
-  }
-
-  if (!fileSystem.existsSync(emittedPath)) {
-    const alreadyGoneResult = null;
-    return alreadyGoneResult;
-  }
-
-  fileSystem.rmSync(emittedPath);
-
-  const removedResult = manifestKey;
-  return removedResult;
-}
-
-/**
- * why: the manifest is a file on disk and a tampered key would otherwise steer
- * `rmSync` outside the tree the CLI owns. Containment is checked against the
- * resolved root, never against the key's own text.
- */
-function resolveEmittedPath(targetDirectory, manifestKey) {
-  const segments = manifestKey.split(/[\\/]/);
-  const [family] = segments;
-  const rootSegments = PRUNABLE_EMISSION_ROOTS[family];
-
-  if (!rootSegments) {
-    const unprunableResult = null;
-    return unprunableResult;
-  }
-
-  const rootDirectory = path.resolve(targetDirectory, ...rootSegments);
-  const emittedPath = path.resolve(rootDirectory, ...segments.slice(1));
-  const isInsideRoot = emittedPath.startsWith(`${rootDirectory}${path.sep}`);
-
-  if (!isInsideRoot) {
-    const escapingResult = null;
-    return escapingResult;
-  }
-
-  return emittedPath;
-}
-
-/**
- * A family that lost a whole subdirectory, `skills/lexicon` among the shapes
- * this has taken, leaves the directory behind once its files go. The roots
- * themselves always survive: the next injection writes into them.
- */
-function pruneEmptyDirectories(targetDirectory) {
-  for (const rootSegments of Object.values(PRUNABLE_EMISSION_ROOTS)) {
-    const rootDirectory = path.join(targetDirectory, ...rootSegments);
-    removeEmptyChildren(rootDirectory);
-  }
-}
-
-function removeEmptyChildren(directory) {
-  if (!fileSystem.existsSync(directory)) {
-    return;
-  }
-
-  const childDirectories = fileSystem
-    .readdirSync(directory, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory());
-
-  for (const child of childDirectories) {
-    const childPath = path.join(directory, child.name);
-    removeEmptyChildren(childPath);
-
-    const isEmpty = fileSystem.readdirSync(childPath).length === 0;
-    if (isEmpty) {
-      fileSystem.rmdirSync(childPath);
-    }
-  }
-}
-
 export const InstructionAssembler = {
   buildMasterInstructions,
   buildClaudeContent,
@@ -1018,6 +942,4 @@ export const InstructionAssembler = {
   writeManifest,
   writeAutomationScripts,
   writeToolingAssets,
-  removeGeneratedInstructions,
-  pruneStaleEmissions,
 };

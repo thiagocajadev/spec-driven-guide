@@ -5,16 +5,18 @@ import crypto from "node:crypto";
 import { FsUtils } from "../../lib/core/fs-utils.mjs";
 import { ManifestUtils } from "../../lib/domain/manifest-utils.mjs";
 import { ResultUtils } from "../../lib/core/result-utils.mjs";
+import { KitEmission } from "../../lib/domain/kit-emission.mjs";
 
 const { bootstrapIfDirect, isMaintainerMode } = FsUtils;
 const { loadManifest } = ManifestUtils;
 const { success, fail } = ResultUtils;
+const { resolveKitDirectory } = KitEmission;
 
 const PROJECT_ROOT = process.cwd();
 const ASSETS_ROOT = path.join(PROJECT_ROOT, "src", "assets");
-const AI_ROOT = path.join(PROJECT_ROOT, ".ai");
+const KIT_ROOT = resolveKitDirectory(PROJECT_ROOT);
 
-// Live and source layouts diverge: init flattens commands to .ai/ and copies
+// Live and source layouts diverge: init flattens commands to .ai/kit/ and copies
 // only the selected flavor. Pairing them by name silently skipped both.
 const MIRRORED_TREES = [
   { live: "instructions/templates", source: "instructions/templates" },
@@ -23,6 +25,30 @@ const MIRRORED_TREES = [
   { live: "skills", source: "skills" },
   { live: "tooling", source: "tooling" },
 ];
+
+const LEGACY_PATH_PATTERN = /\.ai\/(skills|instructions|commands|tooling)\//;
+
+const REFERENCE_SCAN_ROOTS = [
+  "src/assets",
+  "docs",
+  "README.md",
+  "README.pt-BR.md",
+];
+
+/**
+ * why: these documents have to name the old layout. Four describe what earlier
+ * versions did, and rewriting a record to match the present is how a record
+ * stops being one; the v10 guide has to print the paths a reader is about to
+ * untrack. They are named here so the scan stays a guard instead of a reason to
+ * falsify history or to break the instructions that depend on the old names.
+ */
+const RECORD_FILES = new Set([
+  path.join("docs", "CHANGELOG-archive.md"),
+  path.join("docs", "guides", "MIGRATION-v3.md"),
+  path.join("docs", "guides", "MIGRATION-v8.md"),
+  path.join("docs", "guides", "MIGRATION-v10.md"),
+  path.join("docs", "ROADMAP.md"),
+]);
 
 function checkDrift() {
   const syncCheckOutcome = orchestrateSyncCheck();
@@ -42,7 +68,7 @@ function orchestrateSyncCheck() {
   const driftedFiles = [];
 
   for (const tree of mirroredTrees) {
-    const liveDirectory = path.join(AI_ROOT, tree.live);
+    const liveDirectory = path.join(KIT_ROOT, tree.live);
     const sourceDirectory = path.join(ASSETS_ROOT, tree.source);
 
     const treeDrifts = collectDriftedFiles(
@@ -54,12 +80,78 @@ function orchestrateSyncCheck() {
     driftedFiles.push(...treeDrifts);
   }
 
-  const driftReport = reportResult(driftedFiles);
+  const legacyReferences = collectLegacyReferences();
+
+  const driftReport = reportResult(driftedFiles, legacyReferences);
   return driftReport;
 }
 
 /**
- * Only the flavor chosen at init lands in .ai/, under a singular directory
+ * why: the files that describe the tree are text an agent reads and follows, so
+ * a path the move under `.ai/kit/` left behind resolves to nothing with no error
+ * raised anywhere. Only a scan catches that, and only here: `src/assets` and
+ * `docs` ship with this repository and never with an install.
+ */
+function collectLegacyReferences() {
+  const offenders = [];
+
+  for (const scanRoot of REFERENCE_SCAN_ROOTS) {
+    const absoluteRoot = path.join(PROJECT_ROOT, scanRoot);
+    scanForLegacyReferences(absoluteRoot, scanRoot, offenders);
+  }
+
+  const legacyReferences = offenders;
+  return legacyReferences;
+}
+
+function scanForLegacyReferences(absolutePath, relativePath, offenders) {
+  if (!fileSystem.existsSync(absolutePath)) {
+    return;
+  }
+
+  if (RECORD_FILES.has(relativePath)) {
+    return;
+  }
+
+  const stats = fileSystem.statSync(absolutePath);
+
+  if (stats.isDirectory()) {
+    scanDirectoryForLegacyReferences(absolutePath, relativePath, offenders);
+    return;
+  }
+
+  const isScannableFile = /\.(md|mjs|json)$/.test(relativePath);
+  if (!isScannableFile) {
+    return;
+  }
+
+  const lines = fileSystem.readFileSync(absolutePath, "utf8").split("\n");
+
+  for (const [lineIndex, line] of lines.entries()) {
+    if (LEGACY_PATH_PATTERN.test(line)) {
+      offenders.push(`${relativePath}:${lineIndex + 1}`);
+    }
+  }
+}
+
+function scanDirectoryForLegacyReferences(
+  absolutePath,
+  relativePath,
+  offenders,
+) {
+  const entries = fileSystem.readdirSync(absolutePath);
+
+  for (const entryName of entries) {
+    scanForLegacyReferences(
+      path.join(absolutePath, entryName),
+      path.join(relativePath, entryName),
+      offenders,
+    );
+  }
+}
+
+/**
+ * Only the flavor chosen at init lands in .ai/kit/, under a singular directory
  * name. The manifest is the only record of which one it was.
  */
 function resolveFlavorTree() {
@@ -139,9 +231,35 @@ function hashFile(filePath) {
   return fileHash;
 }
 
-function reportResult(drifts) {
+function reportLegacyReferences(legacyReferences) {
+  console.error(
+    `\n  ❌ ${legacyReferences.length} reference(s) still point outside .ai/kit/:\n`,
+  );
+
+  for (const offender of legacyReferences) {
+    console.error(`     ${offender}`);
+  }
+
+  console.error(
+    "\n  Fix: rewrite them under `.ai/kit/`. An agent follows a stale path into nothing, silently.\n",
+  );
+
+  const legacyFailure = fail({
+    message: "LEGACY_PATH_REFERENCE",
+    count: legacyReferences.length,
+  });
+
+  return legacyFailure;
+}
+
+function reportResult(drifts, legacyReferences) {
+  if (legacyReferences.length > 0) {
+    const legacyFailure = reportLegacyReferences(legacyReferences);
+    return legacyFailure;
+  }
+
   if (drifts.length === 0) {
-    console.log("\n  ✅ .ai/ is in sync with src/assets/\n");
+    console.log("\n  ✅ .ai/kit/ is in sync with src/assets/\n");
 
     const syncOk = success();
     return syncOk;

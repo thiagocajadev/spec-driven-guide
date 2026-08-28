@@ -76,7 +76,7 @@ describe("writing-lint.isScopedPath", () => {
   });
 
   it("rejects the installed lexicon under .ai", () => {
-    const inputPath = ".ai/skills/lexicon/en.md";
+    const inputPath = ".ai/kit/skills/lexicon/en.md";
     const actualIsRejected = !isScopedPath(inputPath);
 
     assert.ok(actualIsRejected);

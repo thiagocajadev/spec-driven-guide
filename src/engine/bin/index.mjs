@@ -150,6 +150,11 @@ async function dispatchSubcommand(args) {
       const reviewResult = await Reviewer.review();
       return reviewResult;
     }
+    case "restore": {
+      const { Restorer } = await import("./lifecycle/restore-bundle.mjs");
+      const restoreResult = await Restorer.restore(args.targetDirectory);
+      return restoreResult;
+    }
     case "clear": {
       const { Cleaner } = await import("./maintenance/clear-bundle.mjs");
       const clearResult = await Cleaner.clear(args.targetDirectory);

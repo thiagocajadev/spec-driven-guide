@@ -46,10 +46,11 @@ O agente propõe a SPEC a partir do contexto que ele já tem do projeto, e você
 | :----------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Ciclo**          | Uma unidade de trabalho, aberta por um prefixo (`feat:`, `fix:`, `docs:`, `audit:`, `land:`) e fechada por `end:`                                                                                                             |
 | **Fase**           | Um dos cinco passos que o ciclo percorre: SPEC, PLAN, CODE, TEST, END                                                                                                                                                         |
-| **Skill**          | Um conjunto de regras sobre um assunto, em `.ai/skills/`, carregado só quando o domínio do ciclo pede                                                                                                                         |
+| **Skill**          | Um conjunto de regras sobre um assunto, em `.ai/kit/skills/`, carregado só quando o domínio do ciclo pede                                                                                                                     |
 | **Flavor**         | O formato arquitetural do projeto, escolhido na instalação: vertical slice, MVC, lite ou legacy                                                                                                                               |
 | **Work Checklist** | A barreira binária em `code-style.md`: itens de Intent recitados ao entrar em CODE, itens de Form conferidos em TEST                                                                                                          |
-| **Backlog**        | `.ai/backlog/`, onde o resumo do projeto, o stack declarado e o estado das tarefas sobrevivem à sessão                                                                                                                        |
+| **Backlog**        | `.ai/backlog/`, o que você e o agente escrevem sobre este projeto: resumo, stack, padrões, falhas e a fila de tarefas. Versionado, para o time ler                                                                            |
+| **Kit**            | `.ai/kit/`, o que o CLI instala: skills, protocolo, comandos e ferramentas. Reescrito a cada instalação e restaurado a partir do manifesto, por isso fica fora do git                                                         |
 | **Harness**        | Tudo em volta do modelo: os guias que o orientam antes de agir, os sensores que o conferem depois, e a memória que ele carrega. O SDG é a camada portátil disso; Claude Code, Cursor ou Codex é o runtime onde ele se instala |
 
 </details>
@@ -71,7 +72,7 @@ O agente propõe a SPEC a partir do contexto que ele já tem do projeto, e você
 
 - **Memória entre sessões**: a pasta `.ai/backlog/` (lista de trabalho e memória do projeto) guarda o resumo, o stack, o estado das tarefas e o conhecimento que o time acumulou. Um **Impact Map** (mapa de impacto) lista os arquivos que o ciclo atual precisa ler.
 
-- **Catálogo de tooling inerte**: um pacote de ferramentas copiado em `.ai/tooling/`, com nada ligado por padrão. Nenhum `package.json` editado, nenhum `.husky/` criado, nenhuma dependência instalada. Você liga o que quiser, quando quiser.
+- **Catálogo de tooling inerte**: um pacote de ferramentas copiado em `.ai/kit/tooling/`, com nada ligado por padrão. Nenhum `package.json` editado, nenhum `.husky/` criado, nenhuma dependência instalada. Você liga o que quiser, quando quiser.
 
 </details>
 
@@ -126,17 +127,20 @@ Ao lado dele, o `CLAUDE.md` é um ponteiro de uma linha que importa o `AGENTS.md
 seu-projeto/
 ├── AGENTS.md                    ← Ponto de entrada + registro de skills (canônico)
 ├── CLAUDE.md                    ← Ponteiro fino, carregado pelo Claude Code
-├── .ai/                         ← Conjuntos de instruções (commitado)
-│   ├── skills/                  ← Skills de engenharia (carregadas por fase do ciclo)
-│   │   ├── code-style.md        ← Estilo + Work Checklist (Intent + Form), núcleo da fase CODE
-│   │   ├── testing.md
-│   │   ├── security.md
-│   │   └── ... (api-design, data-access, observability, ci-cd, cloud, sql-style, ui-ux)
-│   ├── instructions/            ← Flavors, competência de entrega, templates
-│   ├── commands/                ← Comandos de ciclo (feat/fix/docs/audit/land/end)
-│   ├── tooling/                 ← Ferramentas desligadas (scripts + hooks husky, ative sob demanda)
-│   └── backlog/                 ← Memória do projeto: conhecimento versionado, estado volátil ignorado pelo git
-│       └── ...                  ← (Veja docs/reference/PROJECT-STRUCTURE.md para detalhes)
+├── .ai/
+│   ├── .sdg-manifest.json       ← A versão instalada e um hash por arquivo. Commitado
+│   ├── backlog/                 ← Você e o agente escrevem. Commitado
+│   │   ├── context.md           ← Resumo do projeto: visão, decisões, estado atual
+│   │   ├── stack.md             ← Linguagens, runtimes e versões, declarados pelo `land:`
+│   │   ├── learned.md           ← Padrões que deram certo
+│   │   ├── troubleshoot.md      ← Falhas e a causa raiz de cada uma
+│   │   ├── tasks.md             ← A fila, e o registro do que fechou
+│   │   └── session.md           ← Onde este ciclo parou. Fora do git
+│   └── kit/                     ← O CLI escreve, e reescreve a cada instalação. Fora do git
+│       ├── skills/              ← Habilidades de engenharia, carregadas sob demanda por fase
+│       ├── instructions/        ← Protocolo de trabalho, flavor, competência de entrega
+│       ├── commands/            ← Comandos de ciclo (feat/fix/docs/audit/land/end)
+│       └── tooling/             ← Regras de lint, hooks, scripts de release. Nada ligado por padrão
 ```
 
 </details>
@@ -282,6 +286,7 @@ npx spec-driven-guide gate       # Passar o diff em staged pela barreira (serve 
 npx spec-driven-guide review     # Apontar o drift entre as regras locais e a fonte
 npx spec-driven-guide audit      # Rodar a auditoria de governança (drift, narrativa, estilo, higiene)
 npx spec-driven-guide narrative  # Checar só a narrativa do changelog
+npx spec-driven-guide restore    # Reconstruir .ai/kit/ a partir do manifesto commitado
 npx spec-driven-guide clear      # Remover a pasta .ai/
 ```
 

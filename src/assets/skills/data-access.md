@@ -3,7 +3,7 @@
 <ruleset name="Data Access Standards">
 
 > Load in Phase CODE when touching repositories, DB connections, queries, or transactions.
-> For SQL style/indentation, see `.ai/skills/sql-style.md`.
+> For SQL style/indentation, see `.ai/kit/skills/sql-style.md`.
 
 ## Result-Driven Repositories
 
@@ -28,7 +28,7 @@
 
 ## Vertical Density & Storytelling SQL
 
-- Follow the SDG Vertical Style (see `.ai/skills/sql-style.md`)
+- Follow the SDG Vertical Style (see `.ai/kit/skills/sql-style.md`)
 - Mandatory JOINs first, then optional (LEFT JOIN)
 - Always qualify: `Table.Column`
 - Avoid complex nested subqueries; favor temp tables for sequential steps

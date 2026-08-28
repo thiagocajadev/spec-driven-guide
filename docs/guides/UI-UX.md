@@ -2,7 +2,7 @@
 
 This page is a high-level tour of how `spec-driven-guide` handles UI/UX. It is for readers who want to understand **what the system does and where it comes from**, not for agents executing tasks.
 
-The enforceable rules live in a single file, [`.ai/skills/ui-ux.md`](../../src/assets/skills/ui-ux.md). Agents load it on demand in Phase CODE when a task touches a visual surface. Everything below is a narrated map of that file, plus the external research that shaped it.
+The enforceable rules live in a single file, [`.ai/kit/skills/ui-ux.md`](../../src/assets/skills/ui-ux.md). Agents load it on demand in Phase CODE when a task touches a visual surface. Everything below is a narrated map of that file, plus the external research that shaped it.
 
 ---
 

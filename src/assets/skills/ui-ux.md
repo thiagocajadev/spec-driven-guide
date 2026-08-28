@@ -526,6 +526,6 @@ Decompose multi-stage flows via **steps** / **tabs** / **modals**. >3 concerns w
 
 ## Part 5: Writing Soul (UI Copy & Perennial Artifacts)
 
-> Load `.ai/skills/writing-soul.md` (rules) and `.ai/skills/checklist-soul.md` (ritual) for all non-code writing: UI copy, READMEs, changelogs, guides, commit messages.
+> Load `.ai/kit/skills/writing-soul.md` (rules) and `.ai/kit/skills/checklist-soul.md` (ritual) for all non-code writing: UI copy, READMEs, changelogs, guides, commit messages.
 
 </ruleset>

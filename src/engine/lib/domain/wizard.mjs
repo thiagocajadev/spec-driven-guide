@@ -3,11 +3,13 @@ import { DisplayUtils } from "../core/display-utils.mjs";
 import { FsUtils } from "../core/fs-utils.mjs";
 import { ResultUtils } from "../core/result-utils.mjs";
 import { PromptUtils } from "../infra/prompt-utils.mjs";
+import { ManifestUtils } from "./manifest-utils.mjs";
 
 const { displayName } = DisplayUtils;
 const { getDirectories, getDirname } = FsUtils;
 const { success, fail } = ResultUtils;
 const { safeSelect, safeInput } = PromptUtils;
+const { loadManifest } = ManifestUtils;
 
 const __dirname = getDirname(import.meta.url);
 const SOURCE_INSTRUCTIONS = path.join(
@@ -36,9 +38,13 @@ async function gatherUserSelections(targetDirectory = process.cwd()) {
     path.join(SOURCE_INSTRUCTIONS, "flavors"),
   );
 
+  // why: an existing install already answered this, and the kit is no longer in
+  // git to show a different answer taking effect.
+  const recordedFlavor = loadManifest(targetDirectory)?.selections?.flavor;
+
   let selections = {
     mode: "agents",
-    flavor: "vertical-slice",
+    flavor: recordedFlavor ?? "vertical-slice",
   };
 
   let step = WIZARD_STEPS.INITIAL;

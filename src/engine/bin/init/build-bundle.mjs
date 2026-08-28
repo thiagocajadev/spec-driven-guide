@@ -7,6 +7,8 @@ import path from "node:path";
 
 import { WizardUtils } from "../../lib/domain/wizard.mjs";
 import { RulesetInjector } from "../../lib/domain/ruleset-injector.mjs";
+import { KitEmission } from "../../lib/domain/kit-emission.mjs";
+import { ManifestUtils } from "../../lib/domain/manifest-utils.mjs";
 import { InstructionAssembler } from "../../lib/domain/instruction-assembler.mjs";
 import { ResultUtils } from "../../lib/core/result-utils.mjs";
 import { FsUtils } from "../../lib/core/fs-utils.mjs";
@@ -14,6 +16,8 @@ import { BundleUI } from "../../lib/core/ui-utils.mjs";
 
 const { gatherUserSelections, validateSelections } = WizardUtils;
 const { prepareProjectStructure, injectRulesets } = RulesetInjector;
+const { clearKit, migrateLegacyTree } = KitEmission;
+const { loadManifest } = ManifestUtils;
 const {
   buildMasterInstructions,
   writeAgentConfig,
@@ -22,8 +26,6 @@ const {
   writeManifest,
   writeAutomationScripts,
   writeToolingAssets,
-  removeGeneratedInstructions,
-  pruneStaleEmissions,
 } = InstructionAssembler;
 const { success } = ResultUtils;
 const { bootstrapIfDirect } = FsUtils;
@@ -31,6 +33,9 @@ const {
   printWelcome,
   printStep,
   printAborted,
+  printOffCanonRemovals,
+  printLegacyMigration,
+  printVersionNotice,
   printQuickSetupStart,
   printProjectRoot,
   printSuccessAgents,
@@ -68,7 +73,11 @@ async function orchestrateBuild(targetDirectory, options) {
 }
 
 async function buildNonInteractive(targetDirectory, options) {
-  const { isDryRun = false, selections } = options;
+  const { isDryRun = false } = options;
+  const selections = applyRecordedSelections(
+    targetDirectory,
+    options.selections,
+  );
 
   const validationResult = validateSelections(selections);
   if (validationResult.isFailure) {
@@ -183,6 +192,52 @@ async function finalizeExecutionPhase(state, targetDirectory, options = {}) {
   return agentsModeResult;
 }
 
+/**
+ * why: the kit no longer lives in git, so a re-install that asks again is a
+ * re-install that can answer differently with nothing in the diff to show it.
+ * Whatever the caller left unstated is taken from the manifest the last install
+ * wrote, which is what lets a clone rebuild the tree its commit pinned instead
+ * of a fresh default. A stated answer always wins: the developer is changing it
+ * on purpose.
+ */
+function applyRecordedSelections(targetDirectory, selections) {
+  const recordedSelections = loadManifest(targetDirectory)?.selections;
+
+  if (!recordedSelections) {
+    return selections;
+  }
+
+  const mergedSelections = { ...selections };
+
+  if (!mergedSelections.flavor) {
+    mergedSelections.flavor = recordedSelections.flavor;
+  }
+
+  if (!mergedSelections.track) {
+    mergedSelections.track = recordedSelections.track;
+  }
+
+  printVersionDivergence(targetDirectory);
+
+  return mergedSelections;
+}
+
+/**
+ * why: the manifest records which release produced the tree, and a newer CLI
+ * rebuilding it writes a different one under the same commit. Naming the pinned
+ * command turns a silent upgrade into a choice.
+ */
+function printVersionDivergence(targetDirectory) {
+  const pinnedVersion = loadManifest(targetDirectory)?.sdgAgentVersion;
+  const isSameVersion = pinnedVersion === packageJson.version;
+
+  if (!pinnedVersion || isSameVersion) {
+    return;
+  }
+
+  printVersionNotice(pinnedVersion, packageJson.version);
+}
+
 async function buildQuickMode(state, targetDirectory, { isDryRun }) {
   if (isDryRun) {
     const dryRunResult = abortForDryRun(
@@ -249,12 +304,17 @@ function abortExecution(state) {
 
 function applyQuickPipeline(targetDirectory, selections) {
   printStep(1, 5, "Preparing .ai/ structure...");
-  removeGeneratedInstructions(targetDirectory);
+  const migrationReport = migrateLegacyTree(targetDirectory);
+  const removedFiles = clearKit(targetDirectory, selections);
   prepareProjectStructure(targetDirectory);
+  printOffCanonRemovals(removedFiles);
+
+  if (migrationReport) {
+    printLegacyMigration(migrationReport);
+  }
 
   printStep(2, 5, "Injecting rules...");
   injectRulesets(targetDirectory, selections);
-  pruneStaleEmissions(targetDirectory, selections);
 
   printStep(3, 5, "Assembling AGENTS.md...");
   const content = buildMasterInstructions(selections);
@@ -274,12 +334,17 @@ function applyQuickPipeline(targetDirectory, selections) {
 
 function applyAgentsPipeline(targetDirectory, selections) {
   printStep(1, 5, "Preparing .ai/ structure...");
-  removeGeneratedInstructions(targetDirectory);
+  const migrationReport = migrateLegacyTree(targetDirectory);
+  const removedFiles = clearKit(targetDirectory, selections);
   prepareProjectStructure(targetDirectory);
+  printOffCanonRemovals(removedFiles);
+
+  if (migrationReport) {
+    printLegacyMigration(migrationReport);
+  }
 
   printStep(2, 5, "Injecting rules...");
   injectRulesets(targetDirectory, selections);
-  pruneStaleEmissions(targetDirectory, selections);
 
   printStep(3, 5, "Assembling AGENTS.md...");
   const content = buildMasterInstructions(selections);

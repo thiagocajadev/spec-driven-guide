@@ -11,7 +11,7 @@ Every push to a shared branch passes automated quality gates. No exceptions.
 **Stages**: `Lint → Security → Test → Build → Deploy (Staging) → Smoke → Deploy (Prod)`
 
 1. **Lint & Format**: zero warnings policy
-2. **Security**: secrets scan, SAST, SCA (see `.ai/skills/security.md` Part 2)
+2. **Security**: secrets scan, SAST, SCA (see `.ai/kit/skills/security.md` Part 2)
 3. **Unit & Integration Tests**: fail pipeline on any failure; no skipped tests in CI
 4. **Build**: versioned, immutable artifact (Docker image, binary, or bundle)
 5. **Deploy Staging**: automatic

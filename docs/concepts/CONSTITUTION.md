@@ -6,7 +6,7 @@ This document defines the philosophical and technical foundation of `spec-driven
 
 The developer sets direction and approves decisions. The agent handles execution: reading the codebase, proposing a structured plan, writing the code, and running the tests. The agent stops three times: at SPEC and at PLAN for explicit approval before proceeding, and again on the TEST report, where the developer reviews the result and settles the last details before `end:` closes the cycle. The commit itself is a fourth stop, and it never happens without authorization.
 
-This document is the mental model for developers. The operational rules the agent follows live in [`.ai/skills/code-style.md`](../../src/assets/skills/code-style.md) (`WorkChecklist`: Intent + Form sections) and [`.ai/instructions/templates/workflow.md`](../../src/assets/instructions/templates/workflow.md) (5-phase cycle protocol).
+This document is the mental model for developers. The operational rules the agent follows live in [`.ai/kit/skills/code-style.md`](../../src/assets/skills/code-style.md) (`WorkChecklist`: Intent + Form sections) and [`.ai/kit/instructions/templates/workflow.md`](../../src/assets/instructions/templates/workflow.md) (5-phase cycle protocol).
 
 ---
 

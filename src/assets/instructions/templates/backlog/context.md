@@ -19,9 +19,9 @@ release: [`derived` if CI computes the version from the commits, `manual` if a m
 
 ## Tooling (optional)
 
-Pre-made scripts live in `.ai/tooling/`. Not wired by default.
+Pre-made scripts live in `.ai/kit/tooling/`. Not wired by default.
 Ask the agent: "set up husky hooks", "wire the bump script", "enable backlog prune on END".
-See `.ai/tooling/README.md` for inventory.
+See `.ai/kit/tooling/README.md` for inventory.
 
 ## Partner
 

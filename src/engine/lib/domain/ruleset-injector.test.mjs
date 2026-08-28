@@ -22,8 +22,8 @@ describe("RulesetInjector", () => {
     it("creates .ai/instructions and .ai/commands directories", () => {
       const tmpDir = makeTempDir();
       const expectedDirs = [
-        path.join(tmpDir, ".ai", "instructions"),
-        path.join(tmpDir, ".ai", "commands"),
+        path.join(tmpDir, ".ai", "kit", "instructions"),
+        path.join(tmpDir, ".ai", "kit", "commands"),
       ];
 
       try {
@@ -53,13 +53,14 @@ describe("RulesetInjector", () => {
   });
 
   describe("injectRulesets()", () => {
-    it("copies skills/ to .ai/skills/", () => {
+    it("copies skills/ to .ai/kit/skills/", () => {
       const tmpDir = makeTempDir();
       const inputSelections = { flavor: "lite" };
 
       const expectedSkillFile = path.join(
         tmpDir,
         ".ai",
+        "kit",
         "skills",
         "code-style.md",
       );
@@ -75,11 +76,17 @@ describe("RulesetInjector", () => {
       }
     });
 
-    it("copies flavor files to .ai/instructions/flavor/", () => {
+    it("copies flavor files to .ai/kit/instructions/flavor/", () => {
       const tmpDir = makeTempDir();
       const inputSelections = { flavor: "lite" };
 
-      const expectedDir = path.join(tmpDir, ".ai", "instructions", "flavor");
+      const expectedDir = path.join(
+        tmpDir,
+        ".ai",
+        "kit",
+        "instructions",
+        "flavor",
+      );
 
       try {
         prepareProjectStructure(tmpDir);
@@ -92,17 +99,18 @@ describe("RulesetInjector", () => {
       }
     });
 
-    it("copies templates and commands to .ai/", () => {
+    it("copies templates and commands to .ai/kit/", () => {
       const tmpDir = makeTempDir();
       const inputSelections = { flavor: "lite" };
       const expectedTemplates = path.join(
         tmpDir,
         ".ai",
+        "kit",
         "instructions",
         "templates",
       );
 
-      const expectedCommands = path.join(tmpDir, ".ai", "commands");
+      const expectedCommands = path.join(tmpDir, ".ai", "kit", "commands");
 
       try {
         prepareProjectStructure(tmpDir);
@@ -123,6 +131,7 @@ describe("RulesetInjector", () => {
       const deliveryPath = path.join(
         tmpDir,
         ".ai",
+        "kit",
         "instructions",
         "competencies",
         "delivery.md",
@@ -131,6 +140,7 @@ describe("RulesetInjector", () => {
       const backendPath = path.join(
         tmpDir,
         ".ai",
+        "kit",
         "instructions",
         "competencies",
         "backend.md",
@@ -139,6 +149,7 @@ describe("RulesetInjector", () => {
       const frontendPath = path.join(
         tmpDir,
         ".ai",
+        "kit",
         "instructions",
         "competencies",
         "frontend.md",
@@ -176,6 +187,7 @@ describe("RulesetInjector", () => {
       const legacyIdiomsDir = path.join(
         tmpDir,
         ".ai",
+        "kit",
         "instructions",
         "idioms",
       );
@@ -197,11 +209,11 @@ describe("RulesetInjector", () => {
   describe("collectOutputSummary()", () => {
     it("lists the canonical directory set (no idioms)", () => {
       const expectedDirs = [
-        ".ai/skills/",
-        ".ai/instructions/flavor/",
-        ".ai/instructions/competencies/",
-        ".ai/instructions/templates/",
-        ".ai/commands/",
+        ".ai/kit/skills/",
+        ".ai/kit/instructions/flavor/",
+        ".ai/kit/instructions/competencies/",
+        ".ai/kit/instructions/templates/",
+        ".ai/kit/commands/",
       ];
 
       const { directories: actual } = collectOutputSummary();

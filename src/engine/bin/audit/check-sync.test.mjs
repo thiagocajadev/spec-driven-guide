@@ -103,7 +103,7 @@ describe("SyncCheckerMirror", () => {
       writeToolingAssets(temporaryRoot);
 
       const actualEntries = listRelativeEntries(
-        path.join(temporaryRoot, ".ai", "tooling"),
+        path.join(temporaryRoot, ".ai", "kit", "tooling"),
       );
 
       const expectedEntries = listRelativeEntries(SOURCE_TOOLING_DIRECTORY);

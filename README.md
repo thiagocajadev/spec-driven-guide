@@ -46,10 +46,11 @@ The agent proposes the SPEC from the context it already holds about the project,
 | :----------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Cycle**          | One unit of work, opened by a prefix (`feat:`, `fix:`, `docs:`, `audit:`, `land:`) and closed by `end:`                                                                                                                         |
 | **Phase**          | One of the five steps a cycle runs through: SPEC, PLAN, CODE, TEST, END                                                                                                                                                         |
-| **Skill**          | A self-contained ruleset in `.ai/skills/`, loaded only when the cycle's domain calls for it                                                                                                                                     |
+| **Skill**          | A self-contained ruleset in `.ai/kit/skills/`, loaded only when the cycle's domain calls for it                                                                                                                                 |
 | **Flavor**         | The architectural shape of the project, chosen at install: vertical slice, MVC, lite, or legacy                                                                                                                                 |
 | **Work Checklist** | The binary gate in `code-style.md`: Intent items recited at CODE entry, Form items verified at TEST                                                                                                                             |
-| **Backlog**        | `.ai/backlog/`, where the project brief, the declared stack and the task state survive the session                                                                                                                              |
+| **Backlog**        | `.ai/backlog/`, what you and the agent write about this project: brief, stack, patterns, failures and the task queue. Versioned, so the team reads it                                                                           |
+| **Kit**            | `.ai/kit/`, what the CLI installs: skills, protocol, commands and tooling. Rewritten on every install and restored from the manifest, so it stays out of git                                                                    |
 | **Harness**        | Everything around the model: the guides that steer it before it acts, the sensors that check it after, and the memory it carries. SDG is the portable layer of it; Claude Code, Cursor or Codex is the runtime it installs into |
 
 </details>
@@ -71,7 +72,7 @@ The agent proposes the SPEC from the context it already holds about the project,
 
 - **Memory across sessions**: `.ai/backlog/` persists the project brief, stack, task state, and accumulated team knowledge. An Impact Map scoped to the active cycle tells the agent which files to load.
 
-- **Inert tooling catalog**: a bundle copied into `.ai/tooling/` with nothing wired by default. No `package.json` edit, no `.husky/` created, no devDep installed. Activate on demand.
+- **Inert tooling catalog**: a bundle copied into `.ai/kit/tooling/` with nothing wired by default. No `package.json` edit, no `.husky/` created, no devDep installed. Activate on demand.
 
 </details>
 
@@ -126,17 +127,20 @@ After install, open the agent chat and run `land: <vision>`. The agent elicits t
 your-project/
 ├── AGENTS.md                    ← Main entry point + skill registry (canonical)
 ├── CLAUDE.md                    ← Thin pointer, auto-loaded by Claude Code
-├── .ai/                         ← Instruction set (committed)
-│   ├── skills/                  ← Engineering skills (loaded on-demand per cycle phase)
-│   │   ├── code-style.md        ← Code style + Work Checklist (Intent + Form), Phase CODE core
-│   │   ├── testing.md
-│   │   ├── security.md
-│   │   └── ... (api-design, data-access, observability, ci-cd, cloud, sql-style, ui-ux)
-│   ├── instructions/            ← Flavors, fused delivery competency, templates
-│   ├── commands/                ← Cycle commands (feat/fix/docs/audit/land/end)
-│   ├── tooling/                 ← Inert tooling bundle (scripts + husky hooks, activate on demand)
-│   └── backlog/                 ← Memory: versioned knowledge, volatile state gitignored
-│       └── ...                  ← (See docs/reference/PROJECT-STRUCTURE.md for details)
+├── .ai/
+│   ├── .sdg-manifest.json       ← The installed version and one hash per file. Committed
+│   ├── backlog/                 ← You and the agent write it. Committed
+│   │   ├── context.md           ← Project brief: vision, decisions, current state
+│   │   ├── stack.md             ← Languages, runtimes and versions, declared by `land:`
+│   │   ├── learned.md           ← Patterns that worked
+│   │   ├── troubleshoot.md      ← Failures and their root cause
+│   │   ├── tasks.md             ← The queue, and the record of what closed
+│   │   └── session.md           ← Where this cycle stopped. Gitignored
+│   └── kit/                     ← The CLI writes it, and rewrites it on every install. Gitignored
+│       ├── skills/              ← Engineering skills, loaded on demand per cycle phase
+│       ├── instructions/        ← Working protocol, flavor, delivery competency
+│       ├── commands/            ← Cycle commands (feat/fix/docs/audit/land/end)
+│       └── tooling/             ← Lint rules, hooks, release scripts. Nothing wired by default
 ```
 
 </details>
@@ -279,6 +283,7 @@ npx spec-driven-guide gate       # Review the staged diff against the gate (lang
 npx spec-driven-guide review     # Detect drift between local rules and source
 npx spec-driven-guide audit      # Run the governance audit (drift, narrative, code style, hygiene)
 npx spec-driven-guide narrative  # Check the changelog narrative on its own
+npx spec-driven-guide restore    # Rebuild .ai/kit/ from the committed manifest
 npx spec-driven-guide clear      # Remove the .ai/ folder
 ```
 

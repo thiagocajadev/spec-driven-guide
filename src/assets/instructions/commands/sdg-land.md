@@ -2,7 +2,7 @@
 
 Landing on project: $ARGUMENTS. Runs once before the first `feat:`. It turns raw vision into a grounded backlog and declares the project stack.
 
-> **Load now**: `.ai/instructions/templates/workflow.md`, `.ai/skills/writing-soul.md`, `.ai/skills/checklist-soul.md`
+> **Load now**: `.ai/kit/instructions/templates/workflow.md`, `.ai/kit/skills/writing-soul.md`, `.ai/kit/skills/checklist-soul.md`
 
 ## Outputs
 
@@ -117,7 +117,7 @@ Ask once, and write the answer as `release` in `context.md`:
 > "Who cuts releases here: a single maintainer on their own machine, or a team through pull requests?"
 
 - **Single maintainer** → `manual`. The bump runs locally, the release commit carries the version, and `CHANGELOG.md` is maintained by hand under `## [Unreleased]`. Nothing to configure and no CI minutes spent.
-- **Team** → `derived`. Offer to wire `.ai/tooling/github-actions/`, following the recipe in `.ai/tooling/README.md`. From then on the agent writes neither the version nor the changelog, because the commits already carry both.
+- **Team** → `derived`. Offer to wire `.ai/kit/tooling/github-actions/`, following the recipe in `.ai/kit/tooling/README.md`. From then on the agent writes neither the version nor the changelog, because the commits already carry both.
 
 Both modes compute the same bump from the same commit types, and they differ only in where that happens. `versioning.md`, `VersionControl`, holds the table.
 
@@ -156,4 +156,4 @@ Format: `### Epic N: [Name]` with `- [TODO] feat: [atomic task]` items.
 
 Present: vision (3 lines), scope (in/out), **stack.md summary** (role counts), epic list with task counts. Stop completely. No code. Wait for explicit approval.
 
-> Read `.ai/instructions/templates/agent-roles.md` for multi-agent handoff protocol.
+> Read `.ai/kit/instructions/templates/agent-roles.md` for multi-agent handoff protocol.

@@ -2,8 +2,8 @@
 
 Executing documentation for: $ARGUMENTS.
 
-> **Load now**: `.ai/instructions/templates/workflow.md`, `.ai/skills/writing-soul.md`, `.ai/skills/checklist-soul.md`
-> **Load also**, when the cycle touches a README: `.ai/skills/writing-readme.md`. It governs the banner above the first paragraph; the soul governs every line below it.
+> **Load now**: `.ai/kit/instructions/templates/workflow.md`, `.ai/kit/skills/writing-soul.md`, `.ai/kit/skills/checklist-soul.md`
+> **Load also**, when the cycle touches a README: `.ai/kit/skills/writing-readme.md`. It governs the banner above the first paragraph; the soul governs every line below it.
 
 ## Phase: SPEC → MODE: PLANNING
 
@@ -21,13 +21,13 @@ Follow Phase END from Working Protocol. Documentation must mirror code state. Sy
 
 **Promotion (before the backlog sync).** Every voice defect the developer corrected this cycle gets distilled and promoted, or the canon and the project's notes become two sources that drift apart:
 
-| What was learned                                 | Where it goes                                                          |
-| :----------------------------------------------- | :--------------------------------------------------------------------- |
-| A defect class not yet named                     | `.ai/skills/writing-soul.md`, as a class plus the test that detects it |
-| A concrete instance in one language              | `.ai/skills/lexicon/<language>.md`, under that class name              |
-| A one-off preference with no class behind it yet | stays in `learned.md` until it recurs                                  |
+| What was learned                                 | Where it goes                                                              |
+| :----------------------------------------------- | :------------------------------------------------------------------------- |
+| A defect class not yet named                     | `.ai/kit/skills/writing-soul.md`, as a class plus the test that detects it |
+| A concrete instance in one language              | `.ai/kit/skills/lexicon/<language>.md`, under that class name              |
+| A one-off preference with no class behind it yet | stays in `learned.md` until it recurs                                      |
 
 `learned.md` keeps the evidence and the history. It never keeps the canon.
 
 > No CODE phase, so Fast is never invoked. All phases run under Planning role.
-> Read `.ai/instructions/templates/agent-roles.md` for full protocol.
+> Read `.ai/kit/instructions/templates/agent-roles.md` for full protocol.

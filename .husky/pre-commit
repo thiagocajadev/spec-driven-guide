@@ -13,3 +13,18 @@ fi
 npm run lint
 npm test
 npx lint-staged
+
+# why: lint-staged reformats files under src/assets/ after the mirror was built,
+# which leaves .ai/kit/ holding the pre-format text. The kit is not versioned, so
+# nothing here needs staging; without the rebuild the next `audit:` reports a
+# drift the developer did not cause. The guard exists because `init` also owns
+# .gitignore, which this repository does track: a change there mid-commit would
+# land outside the staged set, so the hook stops instead of hiding it.
+GITIGNORE_BEFORE=$(git hash-object .gitignore)
+npm run dev -- init --quick >/dev/null
+GITIGNORE_AFTER=$(git hash-object .gitignore)
+
+if [ "$GITIGNORE_BEFORE" != "$GITIGNORE_AFTER" ]; then
+  echo "❌ init rewrote .gitignore during the commit. Stage it and commit again."
+  exit 1
+fi
