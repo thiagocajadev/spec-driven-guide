@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+## [11.0.1] - 2026-10-18
+
 ### Changed
 
 - **One bump and one prune, the same files this repository runs.** Bump lived in four scripts and prune in two, and they had drifted: the `scripts/bump.mjs` that `init` installs was an older fork of the one this repository released with, and the kit shipped a three-script pipeline beside both. There is now one `.ai/kit/tooling/scripts/bump.mjs`, which `init` installs as `scripts/bump.mjs`. It takes a cycle type or a semver level, derives the level from the commits on `auto`, keeps `package-lock.json` in step, and refuses an empty `[Unreleased]` or an already released version before it writes anything. `bump-version.mjs`, `derive-bump.mjs` and `promote-changelog.mjs` are gone; `release:auto` in the tooling README replaces their recipe. A project that already has `scripts/bump.mjs` keeps its copy, since `init` never overwrites it.
