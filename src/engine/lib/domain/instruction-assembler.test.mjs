@@ -16,6 +16,7 @@ const {
   writeGitignore,
   writeManifest,
   writeToolingAssets,
+  writeAutomationScripts,
   writeBacklogFiles,
 } = InstructionAssembler;
 
@@ -632,12 +633,43 @@ describe("InstructionAssembler", () => {
     });
   });
 
+  describe("writeAutomationScripts()", () => {
+    it("installs the kit's own bump as scripts/bump.mjs", () => {
+      const tmpDir = makeTempDir();
+      const packagePath = path.join(tmpDir, "package.json");
+      const packageData = { name: "consumer", version: "1.0.0" };
+      fileSystem.writeFileSync(packagePath, JSON.stringify(packageData));
+
+      const toolingBumpPath = path.join(
+        currentDirectory,
+        "../../../assets/tooling/scripts/bump.mjs",
+      );
+
+      try {
+        writeAutomationScripts(tmpDir, { bump: true });
+
+        const expectedScript = fileSystem.readFileSync(toolingBumpPath, "utf8");
+        const installedPath = path.join(tmpDir, "scripts", "bump.mjs");
+        const actualScript = fileSystem.readFileSync(installedPath, "utf8");
+        const expectedCommand = "node scripts/bump.mjs";
+        const actualCommand = JSON.parse(
+          fileSystem.readFileSync(packagePath, "utf8"),
+        ).scripts.bump;
+
+        assert.equal(actualScript, expectedScript);
+        assert.equal(actualCommand, expectedCommand);
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+  });
+
   describe("writeToolingAssets()", () => {
     it("copies tooling directory into .ai/kit/tooling/ preserving structure", () => {
       const tmpDir = makeTempDir();
       const expectedFiles = [
         path.join(".ai", "kit", "tooling", "scripts", "prune-backlog.mjs"),
-        path.join(".ai", "kit", "tooling", "scripts", "bump-version.mjs"),
+        path.join(".ai", "kit", "tooling", "scripts", "bump.mjs"),
         path.join(".ai", "kit", "tooling", "husky", "pre-commit"),
         path.join(".ai", "kit", "tooling", "husky", "commit-msg"),
         path.join(".ai", "kit", "tooling", "README.md"),

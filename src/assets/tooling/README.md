@@ -1,8 +1,8 @@
 # Tooling (optional, inert)
 
 Pre-made scripts and hooks. **Nothing is wired by default**. `spec-driven-guide init` copies
-these files into `.ai/kit/tooling/`, but no `package.json`, no `.husky/`, no devDep is
-modified by the CLI. Activate on demand with agent assistance or manually.
+these files into `.ai/kit/tooling/`, but no `.husky/` and no devDep is touched, and
+`package.json` gains only the `bump` script described below. Activate on demand with agent assistance or manually.
 
 ## Inventory
 
@@ -18,72 +18,35 @@ node .ai/kit/tooling/scripts/prune-backlog.mjs [--keep N]
 - Idempotent: running twice with the same `--keep` is a no-op.
 - Intended for Phase END of each cycle.
 
-### `scripts/bump-version.mjs`
+### `scripts/bump.mjs`
 
-Minimal semver bump. Only rewrites `package.json.version`.
-
-```
-node .ai/kit/tooling/scripts/bump-version.mjs <patch|minor|major>
-```
-
-- Does NOT touch `CHANGELOG.md`.
-- Does NOT run `git add`, `git commit`, `git tag`, or `git push`.
-- Use case: dev experimentation, pre-release bumps, or agent-driven version-only changes.
-- For full release bump (version + CHANGELOG promote + stage), use the project's own
-  `scripts/bump.mjs` if installed.
-- To stop choosing the type by hand, pair it with `derive-bump.mjs` below.
-
-### `scripts/derive-bump.mjs`
-
-Reads the commits since the last tag and prints the bump they imply, one word on
-stdout: `patch`, `minor` or `major`. It applies the same table `release-please`
-runs in CI, so a project that starts on a local bump and later wires the action
-keeps producing the same numbers, and the move never renumbers a release.
-
-Pairs with `bump-version.mjs`, which stays a pure writer:
+The release bump of the `manual` mode, in one file: picks the next version,
+writes it to `package.json` (and `package-lock.json` when present), and
+promotes `## [Unreleased]` in `CHANGELOG.md` to that version, dated today.
 
 ```
-node .ai/kit/tooling/scripts/bump-version.mjs $(node .ai/kit/tooling/scripts/derive-bump.mjs)
+node .ai/kit/tooling/scripts/bump.mjs <feat|fix|docs|land|audit|major|patch|minor|auto>
 ```
 
-Two files rather than one, because reading history is a query and writing the
-version is a command. Folding them would also cost `bump-version.mjs` the tested
-guarantee that it never shells out to git.
+- A cycle type maps to a level: `feat` and `audit` to MINOR, `fix`, `docs` and
+  `land` to PATCH, `major` to MAJOR. `patch` and `minor` pass through.
+- `auto` reads the commits since the last tag and applies the table
+  `release-please` runs in CI, so a project that starts on a local bump and
+  later wires the action keeps producing the same numbers.
+- It refuses an `[Unreleased]` block with no narrative, since an empty block
+  promoted on schedule mints a version header with no notes behind it. Section
+  headings with nothing under them do not count as narrative.
+- It refuses a version the changelog already carries, since stacking two
+  headings on one version puts the notes under the wrong number.
+- Every refusal is decided before the first write, names its reason on stderr
+  and exits non-zero, so a refused bump leaves every file as it was.
+- Without a `CHANGELOG.md` it bumps the version alone.
+- Git is only read, never written. Staging, committing and tagging stay where
+  the approval is, which is with the person running it.
 
-Exits non-zero when nothing since the last tag is releasable, and every
-diagnostic goes to stderr so stdout stays usable inline.
-
-### `scripts/promote-changelog.mjs`
-
-Renames `## [Unreleased]` to the version in `package.json`, dated today, and
-seeds a fresh empty Unreleased block above it. Reads `package.json`, writes
-`CHANGELOG.md`, touches nothing else.
-
-It refuses to promote an Unreleased block that carries no narrative, section
-headings with nothing under them not counting. That guard exists because the
-opposite behaviour has already cost a release: an empty block promoted on
-schedule mints a version header with no notes behind it, which is the single
-thing a changelog exists to prevent. A second run for the same version is
-refused too, since stacking two headings on one version puts the notes under
-the wrong number and the symptom appears releases later.
-
-Every refusal names its reason on stderr and exits non-zero. The engine's own
-`auto-bump.mjs` returns in silence on the same conditions, which is right for a
-post-commit hook and wrong for a command somebody typed.
-
-### The three steps of the manual release mode
-
-Each script does one thing, and together they are what `derived` mode gets from
-CI:
-
-```
-derive-bump.mjs        reads the commits    → prints the type
-bump-version.mjs       takes the type       → writes package.json
-promote-changelog.mjs  reads package.json   → writes CHANGELOG.md
-```
-
-None of them touches git. Staging, committing and tagging stay where the
-approval is, which is with the person running them.
+On a Node project `init` installs this same file as `scripts/bump.mjs` and adds
+`"bump": "node scripts/bump.mjs"` to `package.json`, unless `--no-bump` is
+passed or the project already has a `bump`, `release` or `version` script.
 
 ### `husky/pre-commit`
 
@@ -317,17 +280,15 @@ Edit `package.json`:
 {
   "scripts": {
     "prune:backlog": "node .ai/kit/tooling/scripts/prune-backlog.mjs",
-    "bump:version": "node .ai/kit/tooling/scripts/bump-version.mjs",
-    "bump:auto": "node .ai/kit/tooling/scripts/bump-version.mjs $(node .ai/kit/tooling/scripts/derive-bump.mjs)",
-    "release:local": "npm run bump:auto && node .ai/kit/tooling/scripts/promote-changelog.mjs"
+    "release:auto": "node .ai/kit/tooling/scripts/bump.mjs auto"
   }
 }
 ```
 
-`bump:auto` is the `manual` release mode with the guesswork removed: the type
-comes from the commits instead of from whoever is running the command.
-`release:local` adds the changelog promotion, which leaves the working tree
-ready for a commit that nobody has approved yet.
+`release:auto` is the `manual` release mode with the guesswork removed: the type
+comes from the commits instead of from whoever is running the command, and the
+working tree is left ready for a commit that nobody has approved yet. The plain
+`bump` script is the one `init` already adds.
 
 Or ask your agent: "wire the tooling scripts into package.json."
 

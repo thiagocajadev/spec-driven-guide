@@ -251,4 +251,104 @@ describe("prune-backlog.mjs", () => {
       cleanup(projectDir);
     }
   });
+
+  it("leaves a backlog without a Done section untouched", () => {
+    const { projectDir, backlogDir } = makeTempProject();
+    const inputContent =
+      "# Tasks\n\n## Active\n\n- pending\n\n## Backlog\n\n- later\n";
+
+    const tasksPath = writeTasks(backlogDir, inputContent);
+
+    try {
+      const expectedContent = inputContent;
+      runScript(projectDir, []);
+      const actualContent = fileSystem.readFileSync(tasksPath, "utf8");
+
+      assert.equal(actualContent, expectedContent);
+    } finally {
+      cleanup(projectDir);
+    }
+  });
+
+  it("preserves the sections that come after Done", () => {
+    const { projectDir, backlogDir } = makeTempProject();
+    const inputContent = `${buildTasksWithDone(5)}\n## Notes\n\n- keep me intact\n`;
+    const tasksPath = writeTasks(backlogDir, inputContent);
+
+    try {
+      const expectedTail = "\n## Notes\n\n- keep me intact\n";
+      runScript(projectDir, []);
+      const actualContent = fileSystem.readFileSync(tasksPath, "utf8");
+      const actualKeepsTail = actualContent.endsWith(expectedTail);
+      const actualHasNoTripleBreak = !actualContent.includes("\n\n\n");
+
+      assert.ok(actualKeepsTail);
+      assert.ok(actualHasNoTripleBreak);
+    } finally {
+      cleanup(projectDir);
+    }
+  });
+
+  it("keeps the continuation lines of an entry it keeps", () => {
+    const { projectDir, backlogDir } = makeTempProject();
+    const inputContent = [
+      "# Tasks",
+      "",
+      "## Done",
+      "",
+      "- [DONE] newest",
+      "  carried over to a second line",
+      "- [DONE] older",
+      "- [DONE] oldest",
+      "",
+    ].join("\n");
+
+    const tasksPath = writeTasks(backlogDir, inputContent);
+
+    try {
+      const expectedKept = "- [DONE] newest\n  carried over to a second line\n";
+      runScript(projectDir, ["--keep", "1"]);
+      const actualContent = fileSystem.readFileSync(tasksPath, "utf8");
+      const actualKeepsContinuation = actualContent.includes(expectedKept);
+      const actualDropsOlder = !actualContent.includes("- [DONE] older");
+
+      assert.ok(actualKeepsContinuation);
+      assert.ok(actualDropsOlder);
+    } finally {
+      cleanup(projectDir);
+    }
+  });
+
+  it("is idempotent: a second run leaves the pruned file as it is", () => {
+    const { projectDir, backlogDir } = makeTempProject();
+    const tasksPath = writeTasks(backlogDir, buildTasksWithDone(10));
+
+    try {
+      runScript(projectDir, []);
+      const expectedContent = fileSystem.readFileSync(tasksPath, "utf8");
+      runScript(projectDir, []);
+      const actualContent = fileSystem.readFileSync(tasksPath, "utf8");
+
+      assert.equal(actualContent, expectedContent);
+    } finally {
+      cleanup(projectDir);
+    }
+  });
+
+  it("drops every entry on --keep 0 without reporting drift", () => {
+    const { projectDir, backlogDir } = makeTempProject();
+    const tasksPath = writeTasks(backlogDir, buildTasksWithDone(2));
+
+    try {
+      const expectedEntryCount = 0;
+      runScript(projectDir, ["--keep", "0"]);
+      const actualContent = fileSystem.readFileSync(tasksPath, "utf8");
+      const actualEntryCount = (actualContent.match(/^- \[DONE\]/gm) ?? [])
+        .length;
+
+      assert.equal(actualEntryCount, expectedEntryCount);
+    } finally {
+      cleanup(projectDir);
+    }
+  });
 });

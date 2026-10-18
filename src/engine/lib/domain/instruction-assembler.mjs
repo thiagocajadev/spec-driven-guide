@@ -25,6 +25,8 @@ const SOURCE_INSTRUCTIONS = path.join(
   "instructions",
 );
 
+const SOURCE_TOOLING = path.join(__dirname, "../../..", "assets", "tooling");
+
 // Ownership markers: the canonical title line each generated file always
 // carries. Their absence means the developer wrote the file, so we leave it.
 const AGENTS_SENTINEL = "# Staff Engineer: Governance Command Center";
@@ -898,11 +900,9 @@ function writeAutomationScripts(targetDirectory, selections) {
 
   if (!fileSystem.existsSync(bumpScriptPath)) {
     fileSystem.mkdirSync(scriptsDir, { recursive: true });
-    const templatePath = path.join(
-      SOURCE_INSTRUCTIONS,
-      "templates",
-      "bump.mjs",
-    );
+    // why: the same file the kit ships in tooling/scripts/, so a fix to the
+    // bump reaches both the project's scripts/ and the kit at once.
+    const templatePath = path.join(SOURCE_TOOLING, "scripts", "bump.mjs");
 
     const templateContent = fileSystem.readFileSync(templatePath, "utf8");
     fileSystem.writeFileSync(bumpScriptPath, templateContent);
@@ -954,13 +954,7 @@ function writeAutomationScripts(targetDirectory, selections) {
 }
 
 function writeToolingAssets(targetDirectory) {
-  const sourceToolingDir = path.join(
-    __dirname,
-    "../../..",
-    "assets",
-    "tooling",
-  );
-
+  const sourceToolingDir = SOURCE_TOOLING;
   const targetToolingDir = resolveKitPath(targetDirectory, "tooling");
 
   const hasSourceAssets = fileSystem.existsSync(sourceToolingDir);

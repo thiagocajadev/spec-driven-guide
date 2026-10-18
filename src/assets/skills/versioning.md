@@ -44,15 +44,9 @@ The pull happens once per release, at the merge, never once per commit. Between 
 
 The maintainer runs the release locally and the commit carries the version: `<type>: release v<major.minor.patch> - <description>`. Fits a single-maintainer repository, where the human is the pipeline, and costs no CI. It does not survive contact with a team, since two people releasing means two people deciding the number.
 
-Three scripts in `.ai/kit/tooling/scripts/` do locally what CI does in the other mode, one job each:
+`npm run bump <type>` does locally what CI does in the other mode: `scripts/bump.mjs`, which `init` installs from `.ai/kit/tooling/scripts/bump.mjs`, picks the version (`auto` derives it from the commits since the last tag), writes `package.json`, and promotes `[Unreleased]` in `CHANGELOG.md`. It refuses an empty `[Unreleased]` before writing anything.
 
-| Script                  | Reads             | Writes              |
-| :---------------------- | :---------------- | :------------------ |
-| `derive-bump.mjs`       | commits since tag | the type, to stdout |
-| `bump-version.mjs`      | the type          | `package.json`      |
-| `promote-changelog.mjs` | `package.json`    | `CHANGELOG.md`      |
-
-None of them touches git. Staging, committing and tagging stay where the approval is.
+It reads git and never writes to it. Staging, committing and tagging stay where the approval is.
 
 ## Non-negotiables
 
