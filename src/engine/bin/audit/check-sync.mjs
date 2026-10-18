@@ -10,7 +10,7 @@ import { KitEmission } from "../../lib/domain/kit-emission.mjs";
 const { bootstrapIfDirect, isMaintainerMode } = FsUtils;
 const { loadManifest } = ManifestUtils;
 const { success, fail } = ResultUtils;
-const { resolveKitDirectory } = KitEmission;
+const { resolveKitDirectory, verifyAgainstManifest } = KitEmission;
 
 const PROJECT_ROOT = process.cwd();
 const ASSETS_ROOT = path.join(PROJECT_ROOT, "src", "assets");
@@ -57,8 +57,13 @@ function checkDrift() {
 
 function orchestrateSyncCheck() {
   if (!isMaintainerMode()) {
-    const skipResult = success();
-    return skipResult;
+    const installedCheck = checkInstalledKit();
+    return installedCheck;
+  }
+
+  if (!fileSystem.existsSync(KIT_ROOT)) {
+    const missingKit = reportMissingKit("npm run dev -- init --quick");
+    return missingKit;
   }
 
   const mirroredTrees = [...MIRRORED_TREES, resolveFlavorTree()].filter(
@@ -77,13 +82,93 @@ function orchestrateSyncCheck() {
       tree.live,
     );
 
-    driftedFiles.push(...treeDrifts);
+    const treeGaps = collectMissingFiles(
+      sourceDirectory,
+      liveDirectory,
+      tree.live,
+    );
+
+    driftedFiles.push(...treeDrifts, ...treeGaps);
   }
 
   const legacyReferences = collectLegacyReferences();
 
   const driftReport = reportResult(driftedFiles, legacyReferences);
   return driftReport;
+}
+
+/**
+ * why: an install outside this repository has no `src/assets/` to mirror, but it
+ * has the manifest, which pins the hash of every file the kit should hold. A
+ * missing kit is the state of every fresh clone, and reporting it as in sync
+ * would approve the one tree the agent is about to read and cannot find.
+ */
+function checkInstalledKit() {
+  const manifest = loadManifest(PROJECT_ROOT);
+
+  if (!manifest) {
+    const notInstalled = success({ skipped: true, reason: "no manifest" });
+    return notInstalled;
+  }
+
+  if (!fileSystem.existsSync(KIT_ROOT)) {
+    const missingKit = reportMissingKit("npx spec-driven-guide restore");
+    return missingKit;
+  }
+
+  const driftedKeys = verifyAgainstManifest(
+    PROJECT_ROOT,
+    manifest.contentHashes,
+  );
+
+  const drifts = driftedKeys.map((manifestKey) => ({
+    relativePath: manifestKey,
+    reason: "differs from the manifest",
+  }));
+
+  const noLegacyReferences = [];
+  const installedResult = reportResult(drifts, noLegacyReferences);
+  return installedResult;
+}
+
+function reportMissingKit(rebuildCommand) {
+  console.error("\n  ❌ .ai/kit/ is missing, so there is nothing to compare.");
+  console.error(`      Rebuild it with: ${rebuildCommand}\n`);
+
+  const missingKit = fail({ message: "KIT_MISSING" });
+  return missingKit;
+}
+
+/**
+ * why: walking only the live tree reports what changed and never what is
+ * absent, so a file the canon carries and the kit lost passed as in sync.
+ */
+function collectMissingFiles(sourceDirectory, liveDirectory, relativePrefix) {
+  if (!fileSystem.existsSync(sourceDirectory)) {
+    const emptyResult = [];
+    return emptyResult;
+  }
+
+  const entries = fileSystem.readdirSync(sourceDirectory, {
+    withFileTypes: true,
+  });
+
+  const gaps = [];
+
+  for (const entry of entries) {
+    const sourcePath = path.join(sourceDirectory, entry.name);
+    const livePath = path.join(liveDirectory, entry.name);
+    const relativePath = path.join(relativePrefix, entry.name);
+
+    if (entry.isDirectory()) {
+      gaps.push(...collectMissingFiles(sourcePath, livePath, relativePath));
+    } else if (entry.isFile() && !fileSystem.existsSync(livePath)) {
+      gaps.push({ relativePath, reason: "missing in .ai/kit/" });
+    }
+  }
+
+  const missingFiles = gaps;
+  return missingFiles;
 }
 
 /**
@@ -259,15 +344,13 @@ function reportResult(drifts, legacyReferences) {
   }
 
   if (drifts.length === 0) {
-    console.log("\n  ✅ .ai/kit/ is in sync with src/assets/\n");
+    console.log("\n  ✅ .ai/kit/ is in sync with its source\n");
 
     const syncOk = success();
     return syncOk;
   }
 
-  console.error(
-    "\n  ❌ Drift detected: files in .ai/ differ from src/assets/:\n",
-  );
+  console.error("\n  ❌ Drift detected: .ai/kit/ differs from its source:\n");
 
   for (const drift of drifts) {
     console.error(`     ${drift.relativePath} (${drift.reason})`);

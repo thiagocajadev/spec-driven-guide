@@ -32,7 +32,6 @@ pnpm-debug.log*
 # reason to carry its own rendered output.
 .ai/.sdg-manifest.json
 AGENTS.md
-CLAUDE.md
 
 # >>> spec-driven-guide, managed block
 # Rewritten whole on every init. Lines outside the markers are yours.
@@ -40,6 +39,7 @@ CLAUDE.md
 # Environment: never commit secrets
 .env
 .env.*
+!.env.example
 
 # SDG kit: written by the CLI, pinned by the manifest
 .ai/kit/

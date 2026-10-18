@@ -29,5 +29,4 @@ Follow Phase END from Working Protocol. Documentation must mirror code state. Sy
 
 `learned.md` keeps the evidence and the history. It never keeps the canon.
 
-> No CODE phase, so Fast is never invoked. All phases run under Planning role.
-> Read `.ai/kit/instructions/templates/agent-roles.md` for full protocol.
+> No CODE phase, so nothing is delegated. Every phase runs under the Planning mindset.

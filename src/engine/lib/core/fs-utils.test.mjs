@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import fileSystem from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import { FsUtils } from "./fs-utils.mjs";
 
 const { getDirname, getDirectories, copyRecursiveSync } = FsUtils;
@@ -10,8 +11,9 @@ const { getDirname, getDirectories, copyRecursiveSync } = FsUtils;
 describe("FsUtils", () => {
   describe("getDirname()", () => {
     it("returns a valid directory path from a file URL", () => {
-      const input = "file:///home/user/project/src/index.mjs";
-      const expected = "/home/user/project/src";
+      const projectSource = path.join(os.tmpdir(), "project", "src");
+      const input = pathToFileURL(path.join(projectSource, "index.mjs")).href;
+      const expected = projectSource;
 
       const actual = getDirname(input);
 

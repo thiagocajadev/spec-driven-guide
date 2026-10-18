@@ -12,6 +12,7 @@ const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 const {
   buildMasterInstructions,
   writeAgentConfig,
+  findManagedRootFiles,
   writeGitignore,
   writeManifest,
   writeToolingAssets,
@@ -52,7 +53,14 @@ const LEGACY_AGENTS = [
   "",
 ].join("\n");
 
-const LEGACY_CLAUDE = [
+const CURRENT_CLAUDE_POINTER = [
+  "# SDG Agents: Claude Code Governance",
+  "",
+  "@AGENTS.md",
+  "",
+].join("\n");
+
+const LEGACY_CLAUDE_POINTER = [
   "# SDG Agents — Claude Code Governance",
   "",
   "@AGENTS.md",
@@ -62,6 +70,8 @@ const LEGACY_CLAUDE = [
 const FOREIGN_CLAUDE = ["# Team Claude Notes", "", "Hand-maintained.", ""].join(
   "\n",
 );
+
+const IMPORTING_CLAUDE = ["@AGENTS.md", "", "## Claude Code", ""].join("\n");
 
 function makeTempDir() {
   return fileSystem.mkdtempSync(path.join(os.tmpdir(), "sdg-test-"));
@@ -185,18 +195,20 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("points CLAUDE.md at the root AGENTS.md", () => {
+    it("never writes a CLAUDE.md, since Claude Code reads AGENTS.md", () => {
       const tmpDir = makeTempDir();
       const claudePath = path.join(tmpDir, "CLAUDE.md");
 
       try {
-        writeAgentConfig(tmpDir, GENERATED_AGENTS);
+        const configOutcome = writeAgentConfig(tmpDir, GENERATED_AGENTS);
 
-        const claudeContent = fileSystem.readFileSync(claudePath, "utf8");
-        const actualImportsRoot = claudeContent.includes("@AGENTS.md");
-        const expectedImportsRoot = true;
+        const actualExists = fileSystem.existsSync(claudePath);
+        const actualOutcome = configOutcome.claude;
+        const expectedExists = false;
+        const expectedOutcome = "absent";
 
-        assert.equal(actualImportsRoot, expectedImportsRoot);
+        assert.equal(actualExists, expectedExists);
+        assert.equal(actualOutcome, expectedOutcome);
       } finally {
         cleanup(tmpDir);
       }
@@ -209,7 +221,7 @@ describe("InstructionAssembler", () => {
         writeAgentConfig(tmpDir, GENERATED_AGENTS);
 
         const actualOutcome = writeAgentConfig(tmpDir, GENERATED_AGENTS);
-        const expectedOutcome = { agents: "unchanged", claude: "unchanged" };
+        const expectedOutcome = { agents: "unchanged", claude: "absent" };
 
         assert.deepEqual(actualOutcome, expectedOutcome);
       } finally {
@@ -240,26 +252,30 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("rewrites a CLAUDE.md carrying the pre-sweep em dash sentinel", () => {
-      const tmpDir = makeTempDir();
-      const claudePath = path.join(tmpDir, "CLAUDE.md");
-      fileSystem.writeFileSync(claudePath, LEGACY_CLAUDE);
+    for (const [label, pointer] of [
+      ["current", CURRENT_CLAUDE_POINTER],
+      ["pre-sweep em dash", LEGACY_CLAUDE_POINTER],
+    ]) {
+      it(`removes the CLAUDE.md pointer carrying the ${label} title`, () => {
+        const tmpDir = makeTempDir();
+        const claudePath = path.join(tmpDir, "CLAUDE.md");
+        fileSystem.writeFileSync(claudePath, pointer);
 
-      try {
-        const configOutcome = writeAgentConfig(tmpDir, GENERATED_AGENTS);
+        try {
+          const configOutcome = writeAgentConfig(tmpDir, GENERATED_AGENTS);
 
-        const actualContent = fileSystem.readFileSync(claudePath, "utf8");
-        const hasLegacyTitle = actualContent.includes("# SDG Agents —");
-        const actualOutcome = configOutcome.claude;
-        const expectedOutcome = "written";
-        const expectedLegacyTitle = false;
+          const actualExists = fileSystem.existsSync(claudePath);
+          const actualOutcome = configOutcome.claude;
+          const expectedExists = false;
+          const expectedOutcome = "removed";
 
-        assert.equal(hasLegacyTitle, expectedLegacyTitle);
-        assert.equal(actualOutcome, expectedOutcome);
-      } finally {
-        cleanup(tmpDir);
-      }
-    });
+          assert.equal(actualExists, expectedExists);
+          assert.equal(actualOutcome, expectedOutcome);
+        } finally {
+          cleanup(tmpDir);
+        }
+      });
+    }
 
     it("preserves a foreign AGENTS.md and write a sidecar", () => {
       const tmpDir = makeTempDir();
@@ -283,24 +299,73 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("preserves a foreign CLAUDE.md without a sidecar", () => {
+    it("preserves a foreign CLAUDE.md and reports that it hides AGENTS.md", () => {
       const tmpDir = makeTempDir();
       const claudePath = path.join(tmpDir, "CLAUDE.md");
-      const sidecarPath = path.join(tmpDir, "CLAUDE.sdg.md");
       fileSystem.writeFileSync(claudePath, FOREIGN_CLAUDE);
 
       try {
         const configOutcome = writeAgentConfig(tmpDir, GENERATED_AGENTS);
 
         const actualPreserved = fileSystem.readFileSync(claudePath, "utf8");
-        const actualSidecarExists = fileSystem.existsSync(sidecarPath);
         const actualOutcome = configOutcome.claude;
-        const expectedSidecarExists = false;
-        const expectedOutcome = "foreign";
+        const expectedOutcome = "shadowing";
 
         assert.equal(actualPreserved, FOREIGN_CLAUDE);
-        assert.equal(actualSidecarExists, expectedSidecarExists);
         assert.equal(actualOutcome, expectedOutcome);
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+
+    it("preserves a foreign CLAUDE.md that already imports AGENTS.md", () => {
+      const tmpDir = makeTempDir();
+      const claudePath = path.join(tmpDir, "CLAUDE.md");
+      fileSystem.writeFileSync(claudePath, IMPORTING_CLAUDE);
+
+      try {
+        const configOutcome = writeAgentConfig(tmpDir, GENERATED_AGENTS);
+
+        const actualPreserved = fileSystem.readFileSync(claudePath, "utf8");
+        const actualOutcome = configOutcome.claude;
+        const expectedOutcome = "imports";
+
+        assert.equal(actualPreserved, IMPORTING_CLAUDE);
+        assert.equal(actualOutcome, expectedOutcome);
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+  });
+
+  describe("findManagedRootFiles()", () => {
+    it("lists the root files the CLI wrote and never a hand-written one", () => {
+      const tmpDir = makeTempDir();
+      fileSystem.writeFileSync(
+        path.join(tmpDir, "AGENTS.md"),
+        GENERATED_AGENTS,
+      );
+
+      fileSystem.writeFileSync(
+        path.join(tmpDir, "CLAUDE.md"),
+        LEGACY_CLAUDE_POINTER,
+      );
+
+      try {
+        const actualFiles = findManagedRootFiles(tmpDir);
+        const expectedFiles = ["AGENTS.md", "CLAUDE.md"];
+
+        assert.deepEqual(actualFiles, expectedFiles);
+
+        fileSystem.writeFileSync(
+          path.join(tmpDir, "CLAUDE.md"),
+          FOREIGN_CLAUDE,
+        );
+
+        const actualAfterForeign = findManagedRootFiles(tmpDir);
+        const expectedAfterForeign = ["AGENTS.md"];
+
+        assert.deepEqual(actualAfterForeign, expectedAfterForeign);
       } finally {
         cleanup(tmpDir);
       }
@@ -592,36 +657,44 @@ describe("InstructionAssembler", () => {
       }
     });
 
-    it("marks husky hooks as executable", () => {
-      const tmpDir = makeTempDir();
-      const hookNames = ["pre-commit", "commit-msg"];
-      const expectedPermissionMask = 0o100;
+    /**
+     * why: Windows has no execute bit, so `chmod` succeeds and `stat` reports
+     * the hook as plain. Git records the mode from a POSIX checkout.
+     */
+    it(
+      "marks husky hooks as executable",
+      { skip: process.platform === "win32" },
+      () => {
+        const tmpDir = makeTempDir();
+        const hookNames = ["pre-commit", "commit-msg"];
+        const expectedPermissionMask = 0o100;
 
-      try {
-        writeToolingAssets(tmpDir);
+        try {
+          writeToolingAssets(tmpDir);
 
-        for (const hookName of hookNames) {
-          const hookPath = path.join(
-            tmpDir,
-            ".ai",
-            "kit",
-            "tooling",
-            "husky",
-            hookName,
-          );
+          for (const hookName of hookNames) {
+            const hookPath = path.join(
+              tmpDir,
+              ".ai",
+              "kit",
+              "tooling",
+              "husky",
+              hookName,
+            );
 
-          const stats = fileSystem.statSync(hookPath);
+            const stats = fileSystem.statSync(hookPath);
 
-          const actualPermissionBits = stats.mode & 0o111;
-          const isExecutable =
-            (actualPermissionBits & expectedPermissionMask) !== 0;
+            const actualPermissionBits = stats.mode & 0o111;
+            const isExecutable =
+              (actualPermissionBits & expectedPermissionMask) !== 0;
 
-          assert.ok(isExecutable, `Hook not executable: ${hookName}`);
+            assert.ok(isExecutable, `Hook not executable: ${hookName}`);
+          }
+        } finally {
+          cleanup(tmpDir);
         }
-      } finally {
-        cleanup(tmpDir);
-      }
-    });
+      },
+    );
 
     it("is idempotent when invoked twice", () => {
       const tmpDir = makeTempDir();

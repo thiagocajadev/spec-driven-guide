@@ -24,7 +24,7 @@ If too vague → ask one clarifying question.
 
 ## Phase: SURVEY → MODE: PLANNING (legacy only, skip if greenfield)
 
-Read silently: `package.json`, `README.md`, entry points, folder structure, `git log --oneline -10`. Identify stack, architecture pattern, pain points.
+Read silently: the build manifest (`package.json`, `pom.xml`, `*.csproj`, `pyproject.toml`, `go.mod`, `Cargo.toml`, whichever exist), `README.md`, entry points, folder structure, `git log --oneline -10`. Identify stack, architecture pattern, pain points.
 
 ## Phase: SCOPE → MODE: PLANNING
 
@@ -45,7 +45,7 @@ Stack discovery is the SSOT for what Phase CODE will load in future cycles. Repl
 
 Ask the developer once, open-ended:
 
-> "List every language, runtime, and major framework this project uses, with versions. One line per entry. Example: `Node.js 24 LTS`, `TypeScript 5.6`, `Astro 5`, `Postgres 16`."
+> "List every language, runtime, and major framework this project uses, with versions. One line per entry. Example: `Node.js <major> LTS`, `TypeScript <major.minor>`, `Postgres <major>`."
 
 Then classify each entry by role: **Backend**, **Frontend**, **Data**, **Scripts**. Do not add entries the dev did not declare.
 
@@ -92,16 +92,16 @@ Follow the seed shape (roles as headers, one bullet per entry):
 
 ### Backend
 
-- `Node.js@24 LTS`: runtime
-- `TypeScript@5.6`: typed superset
+- `Node.js@<major> LTS`: runtime
+- `TypeScript@<major.minor>`: typed superset
 
 ### Frontend
 
-- `Astro@5`: SSG/SSR framework
+- `Astro@<major>`: SSG/SSR framework
 
 ### Data
 
-- `Postgres@16`: relational DB
+- `Postgres@<major>`: relational DB
 
 ### Scripts
 
@@ -116,7 +116,7 @@ Ask once, and write the answer as `release` in `context.md`:
 
 > "Who cuts releases here: a single maintainer on their own machine, or a team through pull requests?"
 
-- **Single maintainer** → `manual`. The bump runs locally, the release commit carries the version, and `CHANGELOG.md` is maintained by hand under `## [Unreleased]`. Nothing to configure and no CI minutes spent.
+- **Single maintainer** → `manual`. Record the command that bumps the version as `bump` in `context.md`. The bump runs locally, the release commit carries the version, and `CHANGELOG.md` is maintained by hand under `## [Unreleased]`. Nothing to configure and no CI minutes spent.
 - **Team** → `derived`. Offer to wire `.ai/kit/tooling/github-actions/`, following the recipe in `.ai/kit/tooling/README.md`. From then on the agent writes neither the version nor the changelog, because the commits already carry both.
 
 Both modes compute the same bump from the same commit types, and they differ only in where that happens. `versioning.md`, `VersionControl`, holds the table.
@@ -150,10 +150,8 @@ Add `## Vision` section (never overwrite existing content):
 
 Legacy: add diagnosis epic at position 0.
 
-Format: `### Epic N: [Name]` with `- [TODO] feat: [atomic task]` items.
+Format, under `## Backlog`: `### Epic N: [Name]` with `- [TODO] feat: [atomic task]` items.
 
 ## Phase: STOP → MODE: PLANNING
 
 Present: vision (3 lines), scope (in/out), **stack.md summary** (role counts), epic list with task counts. Stop completely. No code. Wait for explicit approval.
-
-> Read `.ai/kit/instructions/templates/agent-roles.md` for multi-agent handoff protocol.

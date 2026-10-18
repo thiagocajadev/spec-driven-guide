@@ -1,0 +1,6 @@
+# why: the hooks, the lint and the manifest hashes all assume LF. Without this,
+# a Windows checkout with core.autocrlf rewrites every file to CRLF and the gate
+# fails on line endings alone.
+* text=auto eol=lf
+
+*.png binary

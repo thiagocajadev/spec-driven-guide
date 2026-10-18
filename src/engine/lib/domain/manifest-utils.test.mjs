@@ -87,6 +87,20 @@ describe("ManifestUtils", () => {
       assert.deepEqual(actualAdded, expectedAdded);
     });
 
+    it("matches a manifest written on Windows with backslash keys", () => {
+      const stored = { "skills\\code-style.md": "abc123" };
+      const current = { "skills/code-style.md": "abc123" };
+
+      const expectedUnchanged = ["skills/code-style.md"];
+      const expectedAdded = [];
+      const actual = compareHashes(stored, current);
+      const actualUnchanged = actual.unchanged;
+      const actualAdded = actual.added;
+
+      assert.deepEqual(actualUnchanged, expectedUnchanged);
+      assert.deepEqual(actualAdded, expectedAdded);
+    });
+
     it("handles empty stored hashes (fresh install scenario)", () => {
       const stored = {};
       const current = { "core/a.md": "hash1", "core/b.md": "hash2" };
@@ -167,6 +181,18 @@ describe("ManifestUtils", () => {
   });
 
   describe("computeHashes()", () => {
+    it("writes POSIX keys on every platform", () => {
+      const hashes = computeHashes({ flavor: "lite" });
+
+      const actualBackslashKeys = Object.keys(hashes).filter((entry) =>
+        entry.includes("\\"),
+      );
+
+      const expectedBackslashKeys = [];
+
+      assert.deepEqual(actualBackslashKeys, expectedBackslashKeys);
+    });
+
     it("hashes the tooling tree so review reports drift there", () => {
       const hashes = computeHashes({ flavor: "lite" });
 

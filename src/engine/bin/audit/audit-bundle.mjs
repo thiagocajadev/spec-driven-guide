@@ -1,32 +1,42 @@
 import fileSystem from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { createRequire } from "node:module";
 import { SyncChecker } from "./check-sync.mjs";
 import { AuditFileScanner } from "./audit-file-scanner.mjs";
+import { AuditHygiene } from "./audit-hygiene.mjs";
 import { NARRATIVE_CHECKLIST } from "../../config/governance.mjs";
 import { FsUtils } from "../../lib/core/fs-utils.mjs";
 import { DisplayUtils } from "../../lib/core/display-utils.mjs";
 
 const { smartTruncate } = DisplayUtils;
 
+const require = createRequire(import.meta.url);
+const packageJson = require("../../../../package.json");
+
 const PROJECT_ROOT = process.cwd();
-const PACKAGE_JSON_PATH = path.join(PROJECT_ROOT, "package.json");
-const PROJECT_VERSION = fileSystem.existsSync(PACKAGE_JSON_PATH)
-  ? (JSON.parse(fileSystem.readFileSync(PACKAGE_JSON_PATH, "utf8")).version ??
-    "unknown")
-  : "unknown";
+const SKIPPED_SCAN_REASON = "skipped: no files to scan";
 const { bootstrapIfDirect, isMaintainerMode } = FsUtils;
 
-async function auditGovernance() {
-  await dispatchGovernanceAudit();
+async function auditGovernance(options = {}) {
+  await dispatchGovernanceAudit(options);
 }
 
-async function dispatchGovernanceAudit() {
-  const auditResults = orchestrateGovernanceAudit();
-  reportSummary(auditResults);
+/**
+ * why: the summary printing "PROJECT DRIFT" while the process exited 0 meant
+ * `npm run gate` and CI passed every audit they ran. The exit code is the only
+ * part of the verdict a script reads.
+ */
+async function dispatchGovernanceAudit(options) {
+  const auditResults = orchestrateGovernanceAudit(options);
+  const totalFailures = reportSummary(auditResults);
+
+  if (totalFailures > 0) {
+    process.exitCode = 1;
+  }
 }
 
-function orchestrateGovernanceAudit() {
+function orchestrateGovernanceAudit(options) {
   printHeader();
 
   const results = {
@@ -35,7 +45,7 @@ function orchestrateGovernanceAudit() {
     codeStyle: checkCodeStyleCompliance(),
     tests: checkTestNamedExpectations(),
     soul: checkSoulPulse(),
-    hygiene: checkHygienePulse(),
+    hygiene: AuditHygiene.check(PROJECT_ROOT, options),
     backlog: checkBacklogHealth(),
   };
 
@@ -45,16 +55,21 @@ function orchestrateGovernanceAudit() {
 
 function printHeader() {
   console.log(`\n${"─".repeat(50)}`);
-  console.log(`  🔍 SDG GOVERNANCE AUDIT: v${PROJECT_VERSION} compliance`);
+  console.log(
+    `  🔍 SDG GOVERNANCE AUDIT: spec-driven-guide v${packageJson.version}`,
+  );
+
   console.log(`${"─".repeat(50)}\n`);
 }
 
 function checkChangelogHealth() {
   const changelogPath = path.join(PROJECT_ROOT, "CHANGELOG.md");
+  // why: a project before its first release, or on `derived` before CI writes
+  // one, has no changelog yet. That is a state, not a narrative violation.
   if (!fileSystem.existsSync(changelogPath)) {
     const missingChangelogResult = {
-      isFailure: true,
-      reason: "CHANGELOG.md missing",
+      isFailure: false,
+      reason: "skipped: no CHANGELOG.md",
     };
 
     return missingChangelogResult;
@@ -120,6 +135,11 @@ function checkCodeStyleCompliance() {
           fileName.endsWith(".mjs") && !fileName.endsWith(".test.mjs"),
       );
 
+  if (files.length === 0) {
+    const nothingScanned = { isFailure: false, isSkipped: true };
+    return nothingScanned;
+  }
+
   const violations = [];
   for (const filePath of files) {
     const content = fileSystem.readFileSync(filePath, "utf8");
@@ -157,6 +177,11 @@ function checkTestNamedExpectations() {
         path.join(PROJECT_ROOT, "src"),
         (fileName) => fileName.endsWith(".test.mjs"),
       );
+
+  if (testFiles.length === 0) {
+    const nothingScanned = { isFailure: false, isSkipped: true };
+    return nothingScanned;
+  }
 
   const violations = [];
 
@@ -231,7 +256,7 @@ function checkBacklogHealth() {
     isFailure,
     largeFiles,
     message: isFailure
-      ? `Detected context bloat in: ${largeFiles.join(", ")}. Run 'context-reset'.`
+      ? `Detected context bloat in: ${largeFiles.join(", ")}. Prune with: node .ai/kit/tooling/scripts/prune-backlog.mjs`
       : "Healthy (no bloat)",
   };
 
@@ -253,61 +278,31 @@ function checkSoulPulse() {
   return soulPulse;
 }
 
-function checkHygienePulse() {
-  const results = { lint: "SKIPPED", test: "SKIPPED", isFailure: false };
-  try {
-    const lint = spawnSync("npm", ["run", "lint", "--silent"], {
-      cwd: PROJECT_ROOT,
-      shell: false,
-      encoding: "utf8",
-    });
-
-    results.lint = lint.status === 0 ? "PASS" : "FAIL";
-  } catch {
-    results.lint = "UNAVAILABLE";
-  }
-
-  try {
-    const test = spawnSync("npm", ["test", "--silent"], {
-      cwd: PROJECT_ROOT,
-      shell: false,
-      encoding: "utf8",
-    });
-
-    results.test = test.status === 0 ? "PASS" : "FAIL";
-  } catch {
-    results.test = "UNAVAILABLE";
-  }
-
-  results.isFailure = results.lint === "FAIL" || results.test === "FAIL";
-
-  const finalHygieneResults = results;
-  return finalHygieneResults;
-}
-
 function reportSummary(results) {
   console.log(`\n${"─".repeat(50)}`);
   console.log("  AUDIT SUMMARY");
   console.log("─".repeat(50));
 
   const isDriftOk = !results.drift.isFailure;
-  printResult("Instruction Sync", isDriftOk);
+  const driftReason = results.drift.value?.skipped
+    ? "skipped: no manifest"
+    : results.drift.error?.message?.message;
+
+  printResult("Instruction Sync", isDriftOk, driftReason);
 
   const isNarrativeOk = !results.narrative.isFailure;
   printResult("Narrative (Changelog)", isNarrativeOk, results.narrative.reason);
 
   const isCodeStyleOk = !results.codeStyle.isFailure;
-
-  const codeStyleReason = isCodeStyleOk
-    ? null
-    : `found ${results.codeStyle.violations.length} violations:\n      - ` +
-      results.codeStyle.violations.join("\n      - ");
-
+  const codeStyleReason = describeCodeStyle(results.codeStyle);
   printResult("Code Style Compliance", isCodeStyleOk, codeStyleReason);
 
   const isTestsOk = !results.tests.isFailure;
-  const firstTestViolation = results.tests.violations[0];
-  printResult("Test Expectations", isTestsOk, firstTestViolation);
+  const testsReason = results.tests.isSkipped
+    ? SKIPPED_SCAN_REASON
+    : results.tests.violations[0];
+
+  printResult("Test Expectations", isTestsOk, testsReason);
 
   const isSoulOk = !results.soul.isFailure;
 
@@ -340,6 +335,23 @@ function reportSummary(results) {
     const driftLine = `\n  ⚠️  PROJECT DRIFT: ${totalFailures} governance gaps found.\n`;
     console.log(driftLine);
   }
+
+  return totalFailures;
+}
+
+function describeCodeStyle(codeStyle) {
+  if (codeStyle.isSkipped) {
+    return SKIPPED_SCAN_REASON;
+  }
+
+  if (!codeStyle.isFailure) {
+    const noReason = null;
+    return noReason;
+  }
+
+  const violationList = codeStyle.violations.join("\n      - ");
+  const violationsReason = `found ${codeStyle.violations.length} violations:\n      - ${violationList}`;
+  return violationsReason;
 }
 
 function printResult(label, isPassed, reason) {

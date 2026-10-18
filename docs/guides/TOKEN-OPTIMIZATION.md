@@ -5,14 +5,14 @@ How the instruction set stays cheap to load, and what it cost to get there. Sect
 ## 1. Token Cost Model
 
 - **Ratio**: ~4 bytes/token (English), ~3 bytes/token (code).
-- **Auto-loaded per session**: `CLAUDE.md` (pointer, ~200B) + `AGENTS.md` (router at the repo root, <2.8KB).
+- **Auto-loaded per session**: `AGENTS.md` (router at the repo root, held under a byte budget by the `Token Budget Guard` test) plus the three backlog files Session Start reads: `context.md`, `stack.md`, `session.md`.
 - **On-demand**: skills and competencies loaded only when triggered by phase or domain.
-- **Per-session formula**: `base (CLAUDE.md + AGENTS.md) + Σ(loaded skills per phase)`.
+- **Per-session formula**: `base (AGENTS.md + Session Start files) + workflow.md once a cycle opens + Σ(loaded skills per phase)`.
 - **Typical session**: 2–4 skills loaded. Worst-case (fullstack feat): ~8 skills.
 
 ## 2. Semantic Router: Load Only What's Triggered
 
-- `AGENTS.md` is a minimal registry (<2.8KB worst-case, 44% reduction from v2).
+- `AGENTS.md` is a minimal registry: paths and triggers, no rules. Its worst-case size is pinned by a test, so growth is a decision rather than drift.
 - **Phase-gated**: Skills only loaded in Phase CODE, not at session start.
 - **Domain matching**: Backend, Frontend, and Surgical groups loaded by task domain. Stack specifics come from `.ai/backlog/stack.md`, already in context.
 - **Token gate**: "load ONLY what's triggered, never preload."

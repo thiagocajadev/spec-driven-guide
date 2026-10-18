@@ -1,6 +1,6 @@
 {
   "name": "spec-driven-guide",
-  "version": "10.0.0",
+  "version": "11.0.0",
   "description": "Spec-driven governance for AI coding agents. A CLI that installs AGENTS.md and on-demand skills so Claude Code, Cursor, Copilot, Codex, Gemini and Windsurf follow one protocol: spec, plan, code, test, end.",
   "type": "module",
   "main": "./src/engine/bin/index.mjs",
@@ -21,7 +21,9 @@
     "test:watch": "node --test --watch \"src/engine/**/*.test.mjs\" \"src/assets/tooling/**/*.test.mjs\" \"scripts/**/*.test.mjs\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "gate": "npm audit --audit-level=moderate && npm run lint && npm test && npm run dev -- audit",
+    "links": "node scripts/check-links.mjs",
+    "links:external": "node scripts/check-links.mjs --external",
+    "gate": "npm audit --audit-level=moderate && npm run lint && npm test && npm run dev -- audit --skip-hygiene",
     "dogfood": "npm run dev -- init --quick && npm run gate",
     "format": "prettier --write .",
     "prepare": "husky"

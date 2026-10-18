@@ -11,6 +11,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [11.0.0] - 2026-10-18
+
+### Added
+
+- **A link checker that runs in the suite.** `scripts/check-links.mjs` reads every tracked markdown file and reports three kinds of reference that lead nowhere: a relative link to a missing file, an anchor no heading produces, and a `.ai/kit/` path an agent is told to load with no source behind it. The repository is its own fixture, so a broken reference fails `npm test` and CI. Its first run found four, all real. `npm run links:external` also probes the web links, and reports a site that refuses an automated request (401, 403, 429) as unverified rather than broken.
+- **`AGENTS.md` tells a fresh clone what to do.** The kit is not in git, and the router routed every cycle into it. The router's header now names `npx spec-driven-guide restore` for the case where `.ai/kit/` is missing, which is every clone.
+- **`audit --skip-hygiene`**, for callers that ran lint and tests as their own steps. `npm run gate` and CI use it, so the suite no longer runs twice.
+- **CI runs on Windows too, and runs the self-audit.** Every defect below that only Windows shows shipped while CI ran on Linux alone.
+
+### Changed
+
+- **One root file: `CLAUDE.md` is no longer written.** Claude Code reads `AGENTS.md` natively, but only while no `CLAUDE.md` exists, so the pointer the CLI wrote had become what stood between them. `init` removes the pointer an earlier release left, keeps a `CLAUDE.md` the developer wrote, and warns when that file does not import `AGENTS.md`. See [Migration to v11](docs/guides/MIGRATION-v11.md).
+- **The protocol stops where the documents said it stops.** The README, the Constitution and the cheatsheet all promised a stop after TEST; `workflow.md` had none, so the agent could roll into END on its own. Phase TEST now ends on a Review Gate.
+- **The plan stays out of the versioned queue.** PLAN wrote its task list into `tasks.md` and every checkpoint wrote there again, so a shared file took one developer's working state on each cycle. The plan and its checkpoints live in `session.md`; END writes one `[DONE]` line for the cycle.
+- **END stages what the cycle changed, not `git add .`**, which swept in whatever else sat in the tree.
+- **The subagent handoff carries what a cold start needs.** `agent-roles.md` named "context refs" and nothing else. The payload now lists the approved SPEC and PLAN verbatim and every path the subagent reads, the subagent never commits or writes the backlog, and a second failed correction stops the cycle. It also stopped loading on every cycle: it loads only when work is delegated.
+- **`land:` and the router assume no stack.** The survey reads whichever build manifest exists instead of `package.json` alone, the examples carry no pinned versions, and `context.md` gains a `bump` command so `manual` release works outside Node.
+- **The documents were pruned of what ages.** The README reads the Node.js minimum from `engines` through a dynamic badge, the duplicated `land:` allow-lists point at the one list the agent reads, the cheatsheet names gates by name instead of by step number, and the IDE table lists only the agents that still need a line of configuration. The repository's own `tasks.md` dropped from 22 KB to 8 KB of closed entries already recorded in git.
+- **The pre-commit hook lints what is staged and nothing more.** It ran the full lint, the full suite and lint-staged, while pre-push ran the suite again.
+
+### Fixed
+
+- **`audit` exited 0 on every gap it reported**, so `npm run gate` and CI passed whatever it found. It exits 1 now.
+- **The sync check approved a kit that did not exist.** A missing `.ai/kit/` produced an empty drift list and a green line; it fails now and names the rebuild command. It also compares both ways, so a file the canon carries and the kit lost is reported. Outside this repository it checks the kit against the manifest hashes instead of skipping.
+- **A check with nothing to inspect reported a pass.** Code style and test expectations on a project with no `.mjs` sources, hygiene on a project with no `package.json` or no `lint` script, and the narrative check before a first `CHANGELOG.md` report skipped now, instead of a pass or a failure the project did not earn.
+- **The audit header printed the audited project's version** as if it were the CLI's. It prints the CLI's.
+- **Manifest keys depended on the platform.** A Windows install wrote `skills\code-style.md`, which a macOS `review` reported as a file it had never seen. Keys are POSIX on every platform, and a manifest already committed with backslashes still compares.
+- **`review`'s "Sync with Core" reopened the wizard.** It handed the recorded selections through an environment variable nothing read; it passes them the way `restore` does.
+- **`--no-bump` was parsed and then ignored**, so every Node install gained `scripts/bump.mjs`. The flag reaches the install now, and `--help` lists it, along with `gate`, `narrative` and their options.
+- **END ran `npm run prune`, which exists only in this repository.** It runs the pruner the kit ships.
+- **`clear` left `AGENTS.md` routing into the tree it had just deleted.** It removes the root files the CLI wrote, recognised by their sentinel, and its warning no longer claims `tasks.md` is outside git.
+- **The managed `.gitignore` ignored `.env.example`.** The block now carries `!.env.example`, since it is written last and overrode any negation above it.
+- **The hygiene check failed on Windows whatever the result**, because `npm` is `npm.cmd` there and a shell-less spawn never started it.
+- **A Windows checkout failed the gate on line endings alone.** `.gitattributes` pins LF, which the hooks, the lint and the manifest hashes all assume.
+- **Stale guidance in the commands**: `sdg-audit` asked for "Engineering Law" violations, a vocabulary removed in v4.1, and `sdg-feat` named `competencies/delivery.md` without its kit prefix. `brace-expansion` was bumped past a high-severity advisory.
+
+### Removed
+
+- **`buildClaudeContent` and the `CLAUDE.md` writer.**
+- **The Context Report and Cost Estimate steps.** Each cost tool calls on every cycle to print an estimate built on constants, and `wc` does not exist in the shell many Windows agents run.
+- **The Intent Routing table in `workflow.md`**, a copy of the router already in context.
+
 ## [10.0.0] - 2026-08-28
 
 ### Added

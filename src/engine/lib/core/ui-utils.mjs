@@ -57,10 +57,6 @@ function printSuccessAgents(targetDir) {
     "  .ai/backlog/             (team knowledge, versioned; session state gitignored)",
   );
 
-  console.log(
-    "  CLAUDE.md                (pointer at repo root, auto-loaded by Claude Code)",
-  );
-
   printActivationGuide();
 }
 
@@ -80,24 +76,25 @@ function printQuickSuccess(targetDir) {
     "  .ai/backlog/             (team knowledge, versioned; session state gitignored)",
   );
 
-  console.log(
-    "  CLAUDE.md                (pointer at repo root, auto-loaded by Claude Code)",
-  );
-
   printActivationGuide();
 }
 
 /**
- * Warns when a pre-existing file blocked a write. Silence means both root files
- * are SDG-owned and current.
+ * Warns when a pre-existing file blocked a write or hides the governance, and
+ * names the retired `CLAUDE.md` pointer when it is removed. Silence means
+ * `AGENTS.md` is SDG-owned, current, and the file Claude Code reads.
  */
 function printAgentConfigWarnings(configOutcome) {
   if (configOutcome?.agents === "foreign") {
     printForeignAgentsWarning();
   }
 
-  if (configOutcome?.claude === "foreign") {
-    printForeignClaudeWarning();
+  if (configOutcome?.claude === "shadowing") {
+    printShadowingClaudeWarning();
+  }
+
+  if (configOutcome?.claude === "removed") {
+    printRemovedClaudePointer();
   }
 }
 
@@ -109,11 +106,16 @@ function printForeignAgentsWarning() {
   );
 }
 
-function printForeignClaudeWarning() {
-  console.log("  ⚠️  Existing CLAUDE.md preserved: it is not SDG-generated.");
-  console.log("      Claude Code reads that exact filename, so no sidecar was");
-  console.log("      written. Add this line to it yourself:\n");
+function printShadowingClaudeWarning() {
+  console.log("  ⚠️  Your CLAUDE.md hides AGENTS.md from Claude Code.");
+  console.log("      Claude Code reads CLAUDE.md instead whenever both exist.");
+  console.log("      Add this line at the top of your CLAUDE.md:\n");
   console.log("        @AGENTS.md\n");
+}
+
+function printRemovedClaudePointer() {
+  console.log("  🧹 Removed the CLAUDE.md pointer an earlier release wrote.");
+  console.log("      Claude Code reads AGENTS.md natively.\n");
 }
 
 /**
@@ -224,10 +226,6 @@ function renderPreviewInstructionSet() {
   console.log(
     `    📄 .ai/backlog/stack.md     (placeholder, populated by \`land:\`)`,
   );
-
-  console.log(
-    `    📄 CLAUDE.md                (root pointer, auto-loaded by Claude Code)`,
-  );
 }
 
 function renderPreviewManifest(mode) {
@@ -300,6 +298,8 @@ function printHelp(version) {
     clear        Remove the .ai/ folder
     audit        Detect drift and law violations
     review       Compare local rules vs source
+    gate         Review a staged diff with an LLM (used by the pre-commit hook)
+    narrative    Check the changelog narrative on its own
 
   Global Options:
     -h, --help       Show this help
@@ -309,6 +309,15 @@ function printHelp(version) {
     --quick              Install with defaults (lite flavor, stack.md placeholder), no prompts
     --flavor <name>      Architecture (vertical-slice, mvc, lite, legacy)
     --dry-run            Preview without writing files
+    --no-bump            Skip adding scripts/bump.mjs and the bump script to package.json
+
+  Audit Options:
+    --skip-hygiene       Skip lint and tests (when the caller already ran them)
+
+  Gate Options:
+    --prompt             Read a diff on stdin, print the review prompt
+    --check              Read the LLM reply on stdin, exit 1 on BLOCK
+    --strict             Exit 1 when the reply cannot be verified
 
   Examples:
     npx spec-driven-guide

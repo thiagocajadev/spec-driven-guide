@@ -12,7 +12,7 @@
   <a href="https://www.npmjs.com/package/spec-driven-guide"><img src="https://img.shields.io/npm/v/spec-driven-guide?style=flat-square&logo=npm&color=cb3837" alt="npm version" /></a>
   <a href="https://www.npmjs.com/package/spec-driven-guide"><img src="https://img.shields.io/npm/dm/spec-driven-guide?style=flat-square&logo=npm&color=cb3837" alt="npm downloads" /></a>
   <a href="https://github.com/thiagocajadev/spec-driven-guide/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/thiagocajadev/spec-driven-guide/ci.yml?style=flat-square&logo=githubactions&logoColor=white&label=CI" alt="CI status" /></a>
-  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-24%20LTS-brightgreen?style=flat-square&logo=nodedotjs" alt="Node 24 LTS" /></a>
+  <a href="https://nodejs.org"><img src="https://img.shields.io/node/v/spec-driven-guide?style=flat-square&logo=nodedotjs&color=brightgreen" alt="Node.js version" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-ISC-blue?style=flat-square&logo=opensourceinitiative&logoColor=white" alt="License: ISC" /></a>
   <a href="https://agents.md"><img src="https://img.shields.io/badge/AGENTS.md-compatible-6e56cf?style=flat-square&logo=markdown&logoColor=white" alt="AGENTS.md compatible" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-keep%20a%20changelog-f5a623?style=flat-square&logo=keepachangelog&logoColor=white" alt="Changelog" /></a>
@@ -58,21 +58,21 @@ The agent proposes the SPEC from the context it already holds about the project,
 <details>
 <summary><strong>What the instruction set covers</strong></summary>
 
-- **Working protocol**: a 5-phase cycle (SPEC → PLAN → CODE → TEST → END) with a unified Work Checklist and a 3-strike Circuit Breaker that stops regression loops. The agent waits for your approval at SPEC and PLAN.
+- **Working protocol**: a 5-phase cycle (SPEC → PLAN → CODE → TEST → END) with a unified Work Checklist and a 3-strike Circuit Breaker that stops regression loops. The agent stops for you at SPEC, at PLAN and after TEST.
 
 - **Code style and quality gates**: one `WorkChecklist` in `code-style.md`, split into Intent items (recited at CODE entry) and Form items (verified at TEST), wired to the narrative heuristics in `governance.mjs`.
 
 - **Skills, on-demand**: self-contained skill units loaded only when the cycle needs them, covering code style, testing, security, API design, data access, observability, CI/CD, cloud, SQL style, UI/UX, review, performance, domain modeling, versioning, and README writing.
 
-- **Versioning, as a skill**: `versioning.md` owns the commit shape and the table that derives the version from the commit types, so the number is computed from the commits instead of picked by hand. It also declares the two release modes: `derived`, where CI computes the version and generates the changelog from the commit bodies, and `manual`, where `npm run bump` runs locally and the release commit carries the number. Phase END loads it on every cycle.
+- **Versioning, as a skill**: `versioning.md` owns the commit shape and the table that derives the version from the commit types, so the number is computed from the commits instead of picked by hand. It also declares the two release modes: `derived`, where CI computes the version and generates the changelog from the commit bodies, and `manual`, where the bump runs locally and the release commit carries the number. Phase END loads it on every cycle.
 
 - **Dynamic stack context**: the `land:` cycle elicits your languages and versions and writes `.ai/backlog/stack.md`, which Phase CODE reads as the single source of truth. No static idiom catalog to maintain.
 
-- **Any-agent compatible**: one canonical `AGENTS.md` at the repo root, where Codex, Cursor and the rest already look. A file you wrote yourself is never overwritten.
+- **Any-agent compatible**: one canonical `AGENTS.md` at the repo root, which Claude Code, Codex, Cursor, Copilot, Windsurf and most other agents read natively. A file you wrote yourself is never overwritten.
 
 - **Memory across sessions**: `.ai/backlog/` persists the project brief, stack, task state, and accumulated team knowledge. An Impact Map scoped to the active cycle tells the agent which files to load.
 
-- **Inert tooling catalog**: a bundle copied into `.ai/kit/tooling/` with nothing wired by default. No `package.json` edit, no `.husky/` created, no devDep installed. Activate on demand.
+- **Inert tooling catalog**: a bundle copied into `.ai/kit/tooling/` with nothing wired by default. No `.husky/` created, no devDep installed. Activate on demand. The one write outside `.ai/`: on a Node project, `init` adds `scripts/bump.mjs` and a `bump` script to `package.json`, which `--no-bump` skips.
 
 </details>
 
@@ -80,7 +80,7 @@ The agent proposes the SPEC from the context it already holds about the project,
 
 ## Quick Start
 
-Requires **Node.js 24 LTS** or newer, the line the CLI is built and tested on.
+Requires a current **Node.js LTS**. The minimum is `engines.node` in `package.json`, the line the CLI is built and tested on.
 
 ```bash
 npx spec-driven-guide
@@ -114,19 +114,18 @@ After install, open the agent chat and run `land: <vision>`. The agent elicits t
 
 ## What Gets Installed
 
-`AGENTS.md` is a minimal router: it lists all available skills and loads them on demand. Only `workflow.md` (the 5-phase protocol) is always in context. Everything else activates only when the current cycle needs it.
+`AGENTS.md` is a minimal router and the one file always in context: it names every skill and loads each on demand. `workflow.md` (the 5-phase protocol) loads when a cycle starts, and everything else only when the cycle needs it.
 
-`CLAUDE.md` sits beside it as a thin pointer that `@`-imports `AGENTS.md`, so Claude Code auto-loads the governance on every session. Other IDEs are wired up by pointing their native config file at the same canonical file (see "Using with other IDEs" below).
+Claude Code, Codex, Cursor, Copilot and most other agents read the root `AGENTS.md` natively, so nothing else is written beside it. The few that need one line of configuration are listed in "Using with other agents" below.
 
-> **Note:** If your agent does not pick up the rules automatically, reference `AGENTS.md` at the start of the session.
+> **Cloning a project that already uses SDG?** `.ai/kit/` is not in git. Run `npx spec-driven-guide restore` once after the clone: it rebuilds the kit from the committed manifest, at the pinned version. `AGENTS.md` tells the agent the same when the kit is missing.
 
 <details>
 <summary><strong>Full tree written by <code>init</code></strong></summary>
 
 ```
 your-project/
-├── AGENTS.md                    ← Main entry point + skill registry (canonical)
-├── CLAUDE.md                    ← Thin pointer, auto-loaded by Claude Code
+├── AGENTS.md                    ← Main entry point + skill registry, read natively by the agents
 ├── .ai/
 │   ├── .sdg-manifest.json       ← The installed version and one hash per file. Committed
 │   ├── backlog/                 ← You and the agent write it. Committed
@@ -240,30 +239,27 @@ The agent asks for your languages and versions, classifies them by role, and wri
 
 1. Asks you to list every language and version (free-form).
 2. Classifies each entry by role (Backend / Frontend / Data / Scripts).
-3. Offers **optional** enrichment via an allow-list of canonical doc sources (`nodejs.org/api`, `react.dev`, `typescriptlang.org`, `tc39.es`, `docs.astro.build`, `docs.python.org`, `go.dev/doc`, `doc.rust-lang.org`, `kotlinlang.org/docs`, `dart.dev`, `learn.microsoft.com/dotnet`, `developer.apple.com/documentation/swift`).
+3. Offers **optional** enrichment from an allow-list of official documentation sources, kept in `.ai/kit/commands/sdg-land.md`.
 4. Writes `.ai/backlog/stack.md`, the single source of truth for stack-specific idioms. Edit it directly when versions change; no regen needed.
 
 </details>
 
 ---
 
-## Using with other IDEs
+## Using with other agents
 
-`spec-driven-guide` generates a single canonical governance file at `AGENTS.md` in the repo root, plus a `CLAUDE.md` pointer beside it. Codex, Kiro and Claude Code pick theirs up with no extra step. For other tools, add a one-line pointer in your IDE's native rules file: `Read AGENTS.md before any task.`
+`spec-driven-guide` writes one governance file, `AGENTS.md`, at the repo root. Most agents read it with no extra step, and the [AGENTS.md site](https://agents.md) keeps the current list.
 
 <details>
-<summary><strong>Native config file, per agent</strong></summary>
+<summary><strong>The agents that need one line</strong></summary>
 
-| Agent            | Native config file                    | How to wire it                                                        |
-| :--------------- | :------------------------------------ | :-------------------------------------------------------------------- |
-| Claude Code      | `CLAUDE.md` (root, auto-generated)    | Auto-loaded. No action required.                                      |
-| Cursor           | `.cursor/rules/spec-driven-guide.mdc` | Create the file with a single line: `Read AGENTS.md before any task.` |
-| Windsurf         | `.windsurfrules`                      | Same pointer line.                                                    |
-| GitHub Copilot   | `.github/copilot-instructions.md`     | Same pointer line.                                                    |
-| Codex CLI        | `AGENTS.md` (root)                    | Auto-loaded. No action required.                                      |
-| Kiro             | `AGENTS.md` (root)                    | Auto-loaded. No action required.                                      |
-| Gemini CLI       | `GEMINI.md`                           | Same pointer line.                                                    |
-| Cline / Roo Code | `.clinerules`                         | Same pointer line.                                                    |
+| Agent       | Where                          | What to add                                                          |
+| :---------- | :----------------------------- | :------------------------------------------------------------------- |
+| Claude Code | a `CLAUDE.md` you already keep | `@AGENTS.md` as its first line. Without a `CLAUDE.md`, nothing to do |
+| Gemini CLI  | `.gemini/settings.json`        | `{ "context": { "fileName": "AGENTS.md" } }`                         |
+| Aider       | `.aider.conf.yml`              | `read: AGENTS.md`                                                    |
+
+Claude Code reads `AGENTS.md` only while no `CLAUDE.md` exists on the path, which is why a `CLAUDE.md` of your own needs the import. `init` warns when it finds one without it.
 
 </details>
 
@@ -281,10 +277,10 @@ The agent asks for your languages and versions, classifies them by role, and wri
 ```bash
 npx spec-driven-guide gate       # Review the staged diff against the gate (language-agnostic pre-commit)
 npx spec-driven-guide review     # Detect drift between local rules and source
-npx spec-driven-guide audit      # Run the governance audit (drift, narrative, code style, hygiene)
+npx spec-driven-guide audit      # Run the governance audit; exits non-zero on any gap
 npx spec-driven-guide narrative  # Check the changelog narrative on its own
 npx spec-driven-guide restore    # Rebuild .ai/kit/ from the committed manifest
-npx spec-driven-guide clear      # Remove the .ai/ folder
+npx spec-driven-guide clear      # Remove .ai/ and the root files the CLI wrote
 ```
 
 </details>
@@ -316,7 +312,7 @@ Start with the [Quick Reference (CHEATSHEET)](docs/reference/CHEATSHEET.md) for 
 
 - [Token Optimization](docs/guides/TOKEN-OPTIMIZATION.md): cost model, compaction process, and routing efficiency
 
-- [Migration guide](docs/guides/MIGRATION-v3.md): breaking changes and step-by-step migration, v2 through v6
+- [Migration guides](docs/guides/): one per breaking release, each with its steps
 
 - [Credits and Philosophies](docs/reference/REFERENCES.md): project influences and research credits
 

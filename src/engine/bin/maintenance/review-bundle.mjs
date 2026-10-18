@@ -118,14 +118,14 @@ async function syncWithCore(manifest) {
 
   console.log("\n  Syncing with core instructions...\n");
 
+  // why: the selections go in as an option, the path `restore` takes. They used
+  // to travel in an environment variable nothing read, so the sync reopened the
+  // wizard and asked again for what the manifest already recorded.
   try {
-    process.env.SPEC_CONTEXT_SELECTIONS = JSON.stringify(selections);
-    await SDG.run(PROJECT_ROOT);
+    await SDG.run(PROJECT_ROOT, { selections });
   } catch (error) {
     const syncFailedLine = `\n  Sync failed: ${error.message}\n`;
     console.log(syncFailedLine);
-  } finally {
-    delete process.env.SPEC_CONTEXT_SELECTIONS;
   }
 }
 

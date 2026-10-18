@@ -30,19 +30,9 @@ For example: `SDG · fix: · Phase CODE · task 2/5`.
 
 It reads its state from `.ai/backlog/session.md`, not from the conversation, which is what lets it survive a new session. One line is the whole cost, and it is what makes a skipped phase visible while it is happening instead of at the review.
 
-## Intent Routing
+## Mid-cycle Messages
 
-| Signal    | Action                                         |
-| :-------- | :--------------------------------------------- |
-| `land:`   | `.ai/kit/commands/sdg-land.md` → Land Cycle    |
-| `feat:`   | `.ai/kit/commands/sdg-feat.md` → Feature Cycle |
-| `fix:`    | `.ai/kit/commands/sdg-fix.md` → Fix Cycle      |
-| `docs:`   | `.ai/kit/commands/sdg-docs.md` → Docs Cycle    |
-| `end:`    | `.ai/kit/commands/sdg-end.md` → END Phase      |
-| `audit:`  | `.ai/kit/commands/sdg-audit.md` → Audit Cycle  |
-| No prefix | Ask: "land, feat, fix, docs, or audit?"        |
-
-**Mid-cycle messages**: Q&A (answer+resume), adjustment (update plan+continue), pivot (re-spec), or out-of-scope (defer). Never interpret as new cycle while one is active.
+Prefixes route through `AGENTS.md`. Inside an active cycle, a message is Q&A (answer+resume), adjustment (update plan+continue), pivot (re-spec), or out-of-scope (defer). Never interpret it as a new cycle while one is active.
 
 ---
 
@@ -55,8 +45,7 @@ It reads its state from `.ai/backlog/session.md`, not from the conversation, whi
 3. **Domain & Contracts**: Backend/Frontend/Fullstack. Inputs and outputs.
 4. **Verification Checklist**: Up to 5 yes/no checkpoints.
 5. **Assumptions**: every reading the request left open, stated as a decision taken. `none` is a valid answer; an unstated assumption is not. Where two readings would produce materially different work, ask instead of assuming.
-6. **Context Report**: `wc -c` on command + backlog files. Sum bytes / 4 + 4K base. Show: `~N tokens loaded`.
-7. **Approval Gate**: Stop. Wait for approval.
+6. **Approval Gate**: Stop. Wait for approval.
 
 </rule>
 
@@ -68,10 +57,9 @@ It reads its state from `.ai/backlog/session.md`, not from the conversation, whi
 2. **Logical Sequencing**: Order by dependency.
 3. **Effort Tagging**: `[S]` small, `[M]` medium, `[L]` large (must split).
 4. **Sub-task Split**: Every `[L]` → numbered steps (1.1, 1.2...).
-5. **Backlog Sync**: Save the task list to `.ai/backlog/tasks.md`. Write the objective and the first task to `.ai/backlog/session.md`, marked in-progress.
-6. **Impact Map**: Write `.ai/backlog/impact-map.md`. `git diff --name-only HEAD` for changed files. Trace imports for dependents. Sections: `## Changed`, `## Blast Radius`, `## Tests at Risk`, `## Safe`.
-7. **Cost Estimate**: `wc -c` on Changed + Blast Radius files. Sum / 4 + context + 8K overhead. Show: `Task estimate: ~N tokens`.
-8. **Approval Gate**: Stop. Wait for approval.
+5. **Session Sync**: Write the objective to `## Now` and the task list to `## Active` in `.ai/backlog/session.md`, first task `[IN_PROGRESS]` with its phase. The plan is this developer's working state, so it stays out of the versioned `tasks.md` until END records the outcome.
+6. **Impact Map**: Write `.ai/backlog/impact-map.md`. `## Changed` lists the files the tasks will touch; trace their imports for `## Blast Radius`, then `## Tests at Risk` and `## Safe`.
+7. **Approval Gate**: Stop. Wait for approval.
 
 </rule>
 
@@ -79,10 +67,11 @@ It reads its state from `.ai/backlog/session.md`, not from the conversation, whi
 
 <rule name="PhaseCODE">
 
-1. **Work Checklist (BLOCKING)**: Recite `WorkChecklist` from `code-style.md` BEFORE the first `Edit` / `Write` / `NotebookEdit` call. Both sections cited at CODE entry. No write tool fires without it. **Intent** items (binary): Mental Reset, Target Files, Naming, Narrative, Comments, Tests planned, Security, Blockers. **Form** items (binary, verified at TEST): Pure entry point, Narrative Siblings, Explaining Returns, Revealing Module Pattern, Vertical Density, Boolean prefix, No framework abbreviations, No section banners.
+1. **Work Checklist (BLOCKING)**: Recite `WorkChecklist` from `code-style.md` BEFORE the first file write (`Edit` / `Write` / `NotebookEdit`, or the harness equivalent). Both sections cited at CODE entry. No write tool fires without it. **Intent** items (binary): Mental Reset, Target Files, Naming, Narrative, Comments, Tests planned, Security, Blockers. **Form** items (binary, verified at TEST): Pure entry point, Narrative Siblings, Explaining Returns, Revealing Module Pattern, Vertical Density, Boolean prefix, No framework abbreviations, No section banners.
 2. **Context Load**: Read `code-style.md` + domain skills relevant to the task.
 3. **Plan Adherence**: Follow plan. No extras.
 4. **Blocker Surface**: Raise blockers immediately. Never work around silently.
+5. **Delegation**: handing CODE and TEST to a subagent? Load `.ai/kit/instructions/templates/agent-roles.md` first. Otherwise skip it.
 
 > **Circuit Breaker**: Any write tool call without a preceding `Work Checklist` recitation auto-fails Phase TEST; remediation is re-entry into Phase CODE with the checklist emitted.
 
@@ -98,6 +87,7 @@ It reads its state from `.ai/backlog/session.md`, not from the conversation, whi
 4. **Lint Fix**: Run the `lint` command declared in `context.md`, fix what's possible.
 5. **Circuit Breaker**: Fail → Phase CODE → re-TEST. Max 3 attempts. 3rd failure → stop + Failure Report.
 6. **Report**: Result per checklist item + lint + audit status.
+7. **Review Gate**: Stop. The developer reviews the result and settles the last details. END runs only on `end:` or an explicit go-ahead.
 
 </rule>
 
@@ -110,12 +100,11 @@ It reads its state from `.ai/backlog/session.md`, not from the conversation, whi
    - `derived`: **do not touch `CHANGELOG.md`.** The release tooling generates it from the commit subjects and bodies, so the commit body **is** the changelog entry. Writing both creates two sources that drift by the second release. Spend the care on the body.
    - `manual`: ONE entry per completed task under `## [Unreleased]`, which the bump promotes on release.
    - Section mapping, used by both modes: `feat:` → `### Added` | `land:` → `### Added` | `fix:` → `### Fixed` | `docs:` → `### Fixed` | `audit:` → `### Changed`
-3. **Backlog Sync**: Finished tasks → `## Done` in `tasks.md`, each as `- [DONE] ...`. Then run `npm run prune`, which keeps the last 3 entries in `## Done` (SSOT for history = CHANGELOG + git log). A lesson worth keeping goes to `learned.md`, a failure with its cause to `troubleshoot.md`, and neither goes to the harness memory store: `AGENTS.md`, Persistence Policy.
-4. **Objective Update**: Update `## Now` in `session.md` with next objective or clear it.
+3. **Backlog Sync**: The cycle → one `- [DONE] ...` entry under `## Done` in `tasks.md`; remove its `## Backlog` item if it came from the queue. Then run `node .ai/kit/tooling/scripts/prune-backlog.mjs`, which keeps the last 3 entries in `## Done` (history lives in CHANGELOG + git log). A lesson worth keeping goes to `learned.md`, a failure with its cause to `troubleshoot.md`, and neither goes to the harness memory store: `AGENTS.md`, Persistence Policy.
+4. **Session Reset**: Clear `## Active` in `session.md`. Set `## Now` to the next objective, or leave it empty.
 5. **Map Reset**: Overwrite `impact-map.md` with idle state. Missing → skip.
-6. **Lint**: Run linter, block commit if errors remain.
-7. **Commit [LOCKED]**: Read `release` in `context.md`. On `derived` (default), skip the bump, since CI computes the version, and propose `<type>: <description>`. On `manual`, run `npm run bump <type>` first, then propose `<type>: release v<version> - <description>`. Either way `git add .` comes before the proposal and `versioning.md`, `VersionControl`, owns the shape. **STOP: await explicit approval before `git commit`.**
-8. **Session Gate [HARD STOP]**: Write next objective to `session.md`. Stop: _"Cycle complete. Context exhausted. **Open a new session**. Next: [objective]."_
+6. **Commit [LOCKED]**: Read `release` in `context.md`. On `derived`, skip the bump, since CI computes the version, and propose `<type>: <description>`. On `manual`, run the `bump` command from `context.md` first (absent: `npm run bump <type>`), then propose `<type>: release v<version> - <description>`. Stage only the files this cycle changed (impact map `## Changed`, plus CHANGELOG and backlog), never `git add .`, which sweeps in whatever else sits in the tree. `versioning.md`, `VersionControl`, owns the shape. **STOP: await explicit approval before `git commit`.**
+7. **Session Gate [HARD STOP]**: Stop: _"Cycle complete. **Open a new session**. Next: [objective]."_
 
 > **SOVEREIGN GATE**: Never bypass human verification for commits.
 
@@ -152,7 +141,7 @@ What the protocol takes off the agent's hands, so the developer is not the one c
 
 `.ai/backlog/session.md` is the SSOT for where the cycle stopped, and `.ai/backlog/tasks.md` for the queue behind it. Any agent, any session can continue.
 
-**Checkpoint** (after each atomic task): Mark `- [DONE]` → `## Done`, bullet included, since `prune` only recognizes entries with it. Next task → `## Active` in `session.md` as `- [IN_PROGRESS]` with context note.
+**Checkpoint** (after each atomic task): In `## Active` of `session.md`, mark the finished task done and the next one `- [IN_PROGRESS]` with a context note. `tasks.md` is written once, at END.
 
 The `## Active` entry carries the current phase, which is what the Phase Banner reads. A cycle whose phase lives only in the conversation does not survive a new session, and recovering it costs more than writing it did.
 
@@ -175,7 +164,7 @@ The `## Active` entry carries the current phase, which is what the Phase Banner 
 5. **Technical integrity preserved**: Never compress paths, code blocks, identifiers.
 6. **Pedagogical opt-in**: only when dev asks "why" or "explain".
 
-**Operational:** After END, suggest new session. Use `file:line` refs. Circuit Breaker: stop if same error 3x or no progress in 3 turns.
+**Operational:** After END, suggest new session. Use `file:line` refs.
 
 </rule>
 

@@ -7,7 +7,6 @@ This document describes every directory and file installed by `spec-driven-guide
 ```text
 your-project/
 ├── AGENTS.md                    ← Main entry point + skill registry (canonical, committed)
-├── CLAUDE.md                    ← Thin pointer, auto-loaded by Claude Code (committed)
 ├── .ai/
 │   ├── .sdg-manifest.json       ← The pin: version, selections, one hash per file (committed)
 │   ├── kit/                     ← The CLI writes it, and rewrites it on every install. Gitignored
@@ -45,9 +44,11 @@ your-project/
 │       └── impact-map.md        ← Blast-radius map: created at PLAN, cleared at END (gitignored)
 ```
 
-Only those two root files are written. Harnesses that read `AGENTS.md` natively (Codex among them) need nothing further; the rest are wired with a one-line pointer in their own config file, documented in the README.
+`AGENTS.md` is the only root file written. Claude Code, Codex, Cursor, Copilot and most other harnesses read it natively; the few that need one line of configuration are listed in the README.
 
-Neither root file is overwritten blindly. Ownership is recognised by the canonical title line the CLI always emits: without it, the file is yours. A foreign `AGENTS.md` is left alone and the governance is written to `AGENTS.sdg.md` for you to merge; a foreign `CLAUDE.md` is left alone with no sidecar, since Claude Code reads that exact filename or nothing. Either case prints a warning at the end of `init`.
+It is never overwritten blindly. Ownership is recognised by the canonical title line the CLI always emits: without it, the file is yours, it is left alone, and the governance is written to `AGENTS.sdg.md` for you to merge.
+
+`CLAUDE.md` is never written. A pointer an earlier release left behind is removed, since Claude Code reads `AGENTS.md` only while no `CLAUDE.md` exists. A `CLAUDE.md` you wrote stays, and `init` warns when it lacks an `@AGENTS.md` import, because without one it hides the governance from Claude Code.
 
 ---
 

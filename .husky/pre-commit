@@ -10,8 +10,9 @@ if ! command -v node >/dev/null 2>&1; then
   exit 1
 fi
 
-npm run lint
-npm test
+# why: lint-staged lints and formats what is being committed, and pre-push runs
+# the suite. Running the whole lint and the whole suite here as well doubled the
+# cost of every commit without catching anything the other two miss.
 npx lint-staged
 
 # why: lint-staged reformats files under src/assets/ after the mirror was built,

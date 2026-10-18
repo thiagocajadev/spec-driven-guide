@@ -15,6 +15,9 @@ This document traces the evolution of **spec-driven-guide** from foundation to a
 | **v5.0**  | **Dynamic Stack Context**: Static idiom catalog (15 dirs, ~50KB) removed. Stack is now developer-declared during `land:` in `.ai/backlog/stack.md`, optionally enriched via an allow-listed doc-fetch. `competencies/{backend,frontend}.md` fused into single `delivery.md`. Major bump due to removed CLI surface (`--idiom`, `update`, `sync`). | ✅ Shipped |
 | **v5.x**  | **Lint Enforcement**: Governance heuristics that could be mechanized moved into four local ESLint rules shipped with the CLI. Gate pre-filter, `checklist-soul.md`, the `ok`-discriminated response envelope.                                                                                                                                     | ✅ Shipped |
 | **v6.0**  | **Harness Alignment**: `AGENTS.md` at the repo root where harnesses already look. Backlog reclassified by volatility, so team knowledge is versioned instead of discarded. Biome repositioned as a baseline. Fifth local ESLint rule.                                                                                                             | ✅ Shipped |
+| **v7.0**  | **Wiring and Release Modes**: the parts connected end to end, and two release modes, `derived` (CI computes the version) and `manual` (a local bump).                                                                                                                                                                                             | ✅ Shipped |
+| **v8.0**  | **Rename**: the package, binary and repository became `spec-driven-guide`. `SDG` stays as the internal acronym.                                                                                                                                                                                                                                   | ✅ Shipped |
+| **v9.0**  | **Convergent Install**: an update deletes what the previous release emitted, the `.gitignore` became a managed block, and the router gained a Persistence Policy and named guardrails.                                                                                                                                                            | ✅ Shipped |
 | **v10.0** | **Ownership Split**: `.ai/kit/` holds what the CLI installs and leaves version control; `.ai/backlog/` holds what the project writes. The kit is cleared whole on every install and restored from the committed manifest. `tasks.md` splits into a versioned queue and a local session pointer.                                                   | ✅ Shipped |
 
 > **Core is closed.** Further growth happens via **separate extension packages**, not core bloat. The CLI, the 5-phase protocol, the narrative heuristics, the gate and audit suite, and the `land:`-driven stack context together are the finished product. See [Extensions](#extensions) below for companion projects.
@@ -55,7 +58,7 @@ A governance rule that only a prompt enforces is a rule the agent can talk itsel
 
 Around them: a regex pre-filter that feeds the gate hints before it spends tokens, `checklist-soul.md` as the operational companion to `writing-soul.md`, and the response envelope in `delivery.md` migrated to an `ok`-discriminated union with RFC 9457 Problem Details for the error branch.
 
-### v6.0: Harness Alignment (Current)
+### v6.0: Harness Alignment
 
 Governance was living where the CLI put it rather than where tools look for it. Four changes, one epic.
 
@@ -66,7 +69,7 @@ Governance was living where the CLI put it rather than where tools look for it. 
 
 The vendor-neutral constraint held throughout: no `.claude/` directory, no per-harness folders, and enforcement in git and lint rather than in a harness hook.
 
-### v10.0: Ownership Split (Current)
+### v10.0: Ownership Split
 
 `.ai/` held two things belonging to different owners, and only the `.gitignore` knew where the line
 was. v10 draws it in the tree instead.

@@ -56,6 +56,12 @@ function computeHashes(
   return resultHashes;
 }
 
+/**
+ * why: the manifest is committed and read on every machine of the team, so its
+ * keys use `/` whatever the platform that wrote them. `path.join` here gave a
+ * Windows install `skills\code-style.md`, which a macOS `review` then reported
+ * as a file it had never seen.
+ */
 function scanDir(directory, relativePrefix, hashes) {
   if (!fileSystem.existsSync(directory)) {
     return;
@@ -64,7 +70,7 @@ function scanDir(directory, relativePrefix, hashes) {
   const entries = fileSystem.readdirSync(directory, { withFileTypes: true });
   for (const entry of entries) {
     const fullPath = path.join(directory, entry.name);
-    const relativeFilePath = path.join(relativePrefix, entry.name);
+    const relativeFilePath = path.posix.join(relativePrefix, entry.name);
 
     if (entry.isDirectory()) {
       scanDir(fullPath, relativeFilePath, hashes);
@@ -78,11 +84,12 @@ function compareHashes(stored, current) {
   const changed = [];
   const unchanged = [];
   const added = [];
+  const storedHashes = normalizeManifestKeys(stored);
 
   for (const [relativeFilePath, currentHash] of Object.entries(current)) {
-    if (!(relativeFilePath in stored)) {
+    if (!(relativeFilePath in storedHashes)) {
       added.push(relativeFilePath);
-    } else if (stored[relativeFilePath] !== currentHash) {
+    } else if (storedHashes[relativeFilePath] !== currentHash) {
       changed.push(relativeFilePath);
     } else {
       unchanged.push(relativeFilePath);
@@ -91,6 +98,20 @@ function compareHashes(stored, current) {
 
   const comparisonResult = { changed, unchanged, added };
   return comparisonResult;
+}
+
+/**
+ * why: a manifest written on Windows before the keys became POSIX still carries
+ * backslashes, and it stays committed until the next install rewrites it.
+ */
+function normalizeManifestKeys(contentHashes) {
+  const entries = Object.entries(contentHashes).map(([manifestKey, hash]) => [
+    manifestKey.replaceAll("\\", "/"),
+    hash,
+  ]);
+
+  const normalizedHashes = Object.fromEntries(entries);
+  return normalizedHashes;
 }
 
 function daysAgo(isoDate) {

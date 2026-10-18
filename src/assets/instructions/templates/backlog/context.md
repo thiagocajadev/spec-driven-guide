@@ -12,6 +12,7 @@ test: [command that runs the full suite]
 lint: [command that lints and auto-fixes]
 build: [command that produces the artifact, or `none`]
 release: [`derived` if CI computes the version from the commits, `manual` if a maintainer runs the bump locally. See `versioning.md`, `VersionControl`.]
+bump: [on `manual`, the command that bumps the version, such as `npm run bump <type>`; otherwise `none`]
 
 ## Decisions
 
@@ -20,7 +21,7 @@ release: [`derived` if CI computes the version from the commits, `manual` if a m
 ## Tooling (optional)
 
 Pre-made scripts live in `.ai/kit/tooling/`. Not wired by default.
-Ask the agent: "set up husky hooks", "wire the bump script", "enable backlog prune on END".
+Ask the agent: "set up husky hooks", "wire the bump script".
 See `.ai/kit/tooling/README.md` for inventory.
 
 ## Partner

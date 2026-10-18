@@ -17,6 +17,7 @@ function parseCliArgs(argv) {
     prompt: argv.includes("--prompt"),
     check: argv.includes("--check"),
     isStrict: argv.includes("--strict"),
+    isHygieneSkipped: argv.includes("--skip-hygiene"),
   };
 
   const finalArgs = parsedArgs;

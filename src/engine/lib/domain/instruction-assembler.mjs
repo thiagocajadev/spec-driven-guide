@@ -28,7 +28,6 @@ const SOURCE_INSTRUCTIONS = path.join(
 // Ownership markers: the canonical title line each generated file always
 // carries. Their absence means the developer wrote the file, so we leave it.
 const AGENTS_SENTINEL = "# Staff Engineer: Governance Command Center";
-const CLAUDE_SENTINEL = "# SDG Agents: Claude Code Governance";
 
 /**
  * why: both titles carried an em dash until the punctuation sweep replaced it.
@@ -37,10 +36,19 @@ const CLAUDE_SENTINEL = "# SDG Agents: Claude Code Governance";
  * wrote, emitting a sidecar instead of the update the developer asked for.
  * The em dash below is stored data, not prose, and stays for that reason.
  */
-const LEGACY_SENTINELS = [
-  "# Staff Engineer — Governance Command Center",
+const LEGACY_SENTINELS = ["# Staff Engineer — Governance Command Center"];
+
+/**
+ * why: earlier releases wrote a `CLAUDE.md` whose only job was `@AGENTS.md`.
+ * Claude Code now reads `AGENTS.md` itself, but only while no `CLAUDE.md`
+ * exists, so the pointer the CLI left behind is what would stand between them.
+ * These titles identify that pointer for removal; nothing writes them anymore.
+ */
+const CLAUDE_POINTER_SENTINELS = [
+  "# SDG Agents: Claude Code Governance",
   "# SDG Agents — Claude Code Governance",
 ];
+const AGENTS_IMPORT_LINE = "@AGENTS.md";
 const AGENTS_SIDECAR_NAME = "AGENTS.sdg.md";
 
 /**
@@ -160,8 +168,7 @@ function buildMasterInstructions(selections) {
     const headerString = dedent`
       # Staff Engineer: Governance Command Center
 
-      > Code style and quality gates live in code-style.md.
-      > Cycle phases live in workflow.md.`;
+      > \`.ai/kit/\` is not versioned. Missing (fresh clone)? Run \`npx spec-driven-guide restore\` before any task.`;
 
     return headerString;
   }
@@ -170,7 +177,7 @@ function buildMasterInstructions(selections) {
     const sessionStartString = dedent`
       ## Session Start
 
-      1. Read \`.ai/backlog/context.md\`: project brief. If missing, generate from \`package.json\` + \`README.md\`.
+      1. Read \`.ai/backlog/context.md\`: project brief. If missing, generate from the build manifest + \`README.md\`.
       2. Read \`.ai/backlog/stack.md\`: developer-curated stack declarations.
       3. Read \`.ai/backlog/session.md\`: \`## Now\` holds the objective; check for \`[IN_PROGRESS]\`. If found: load workflow.md and resume. The queue behind it is \`tasks.md\`.`;
 
@@ -283,7 +290,7 @@ function buildMasterInstructions(selections) {
     const agentRolesString = dedent`
       ## Agent Roles
 
-      Read \`.ai/kit/instructions/templates/agent-roles.md\` for multi-agent handoff protocol.`;
+      Delegating to a subagent: load \`.ai/kit/instructions/templates/agent-roles.md\` first. Single agent: skip it.`;
 
     return agentRolesString;
   }
@@ -491,37 +498,11 @@ function writeBacklogFiles(targetDirectory, selections) {
 }
 
 /**
- * Builds the Claude Code-specific CLAUDE.md content.
- * Uses @-import syntax so Claude Code loads governance files natively on session start.
- * Distinct from AGENTS.md: references rather than duplicates content.
- */
-function buildClaudeContent() {
-  const claudeContent = dedent`
-    # SDG Agents: Claude Code Governance
-
-    > [!IMPORTANT]
-    > This file is read automatically by Claude Code on every session start.
-    > Do not edit manually. Regenerate with \`npx spec-driven-guide init\`.
-
-    ## Auto-Load: Governance Context
-
-    @AGENTS.md
-  `;
-
-  const instructionSet = claudeContent;
-  return instructionSet;
-}
-
-/**
- * Writes the universal agent config, both at the repo root where harnesses
- * discover them natively:
- *   - \`AGENTS.md\`: canonical governance (consumed by any AI agent).
- *   - \`CLAUDE.md\`: thin pointer auto-loaded by Claude Code.
+ * Writes the one agent config, `AGENTS.md` at the repo root, where Claude Code,
+ * Codex, Cursor, Copilot and the rest discover it natively.
  *
  * Returns the outcome per file so the caller can warn the developer about a
- * sidecar. Other IDEs (Cursor, Windsurf, Copilot, Gemini, Cline/Roo) should be
- * configured to read the root \`AGENTS.md\` directly. See README "Using with
- * other IDEs" for native pointers per tool.
+ * sidecar or a `CLAUDE.md` that hides the governance from Claude Code.
  */
 function writeAgentConfig(targetDirectory, content) {
   const agentsOutcome = writeManagedFile(
@@ -530,23 +511,87 @@ function writeAgentConfig(targetDirectory, content) {
     AGENTS_SENTINEL,
   );
 
-  const claudeOutcome = writeManagedFile(
-    path.join(targetDirectory, "CLAUDE.md"),
-    buildClaudeContent(),
-    CLAUDE_SENTINEL,
-  );
-
   // A foreign AGENTS.md still gets the governance, just under another name.
-  // CLAUDE.md gets no sidecar: Claude Code reads that exact filename or nothing.
   if (agentsOutcome === "foreign") {
     const sidecarPath = path.join(targetDirectory, AGENTS_SIDECAR_NAME);
     fileSystem.writeFileSync(sidecarPath, content);
   }
 
   removeLegacyAgentsFile(targetDirectory);
+  const claudeOutcome = reconcileClaudeFile(targetDirectory);
 
   const configOutcome = { agents: agentsOutcome, claude: claudeOutcome };
   return configOutcome;
+}
+
+/**
+ * Removes the pointer an earlier release wrote, and classifies a `CLAUDE.md`
+ * the developer wrote: one that imports `AGENTS.md` already carries the
+ * governance, one that does not hides it, because Claude Code reads a
+ * `CLAUDE.md` instead of `AGENTS.md` whenever both exist.
+ *
+ * Returns `absent`, `removed`, `imports`, or `shadowing`.
+ */
+function reconcileClaudeFile(targetDirectory) {
+  const claudePath = path.join(targetDirectory, "CLAUDE.md");
+
+  if (!fileSystem.existsSync(claudePath)) {
+    const absentOutcome = "absent";
+    return absentOutcome;
+  }
+
+  const claudeContent = fileSystem.readFileSync(claudePath, "utf8");
+  const isPointer = CLAUDE_POINTER_SENTINELS.some((sentinel) =>
+    claudeContent.includes(sentinel),
+  );
+
+  if (isPointer) {
+    fileSystem.rmSync(claudePath);
+
+    const removedOutcome = "removed";
+    return removedOutcome;
+  }
+
+  const hasImport = claudeContent
+    .split("\n")
+    .some((line) => line.trim() === AGENTS_IMPORT_LINE);
+
+  const foreignOutcome = hasImport ? "imports" : "shadowing";
+  return foreignOutcome;
+}
+
+/**
+ * Names the root files this CLI wrote, recognised by their sentinel, so `clear`
+ * can remove them with `.ai/` instead of leaving an `AGENTS.md` routing every
+ * cycle into a tree that no longer exists. A hand-written file is never listed.
+ */
+function findManagedRootFiles(targetDirectory) {
+  const candidates = [
+    { name: "AGENTS.md", sentinels: [AGENTS_SENTINEL, ...LEGACY_SENTINELS] },
+    {
+      name: AGENTS_SIDECAR_NAME,
+      sentinels: [AGENTS_SENTINEL, ...LEGACY_SENTINELS],
+    },
+    { name: "CLAUDE.md", sentinels: CLAUDE_POINTER_SENTINELS },
+  ];
+
+  const managedFiles = candidates
+    .filter(({ name, sentinels }) => {
+      const filePath = path.join(targetDirectory, name);
+      if (!fileSystem.existsSync(filePath)) {
+        return false;
+      }
+
+      const content = fileSystem.readFileSync(filePath, "utf8");
+      const isManaged = sentinels.some((sentinel) =>
+        content.includes(sentinel),
+      );
+
+      return isManaged;
+    })
+    .map(({ name }) => name);
+
+  return managedFiles;
 }
 
 /**
@@ -629,10 +674,15 @@ const MANAGED_BLOCK_END = "# <<< spec-driven-guide";
  * and the blast-radius map are volatile; the task queue, context, stack,
  * learned and troubleshoot stay versioned as team knowledge.
  */
+/**
+ * why: `.env.*` alone also ignores `.env.example`, the one env file a project
+ * commits on purpose, and since the block is written last it overrides any
+ * negation the developer put above it. The negation ships inside the block.
+ */
 const MANAGED_BLOCKS = [
   {
     header: "# Environment: never commit secrets",
-    entries: [".env", ".env.*"],
+    entries: [".env", ".env.*", "!.env.example"],
   },
   {
     header: "# SDG kit: written by the CLI, pinned by the manifest",
@@ -935,8 +985,8 @@ function writeToolingAssets(targetDirectory) {
 
 export const InstructionAssembler = {
   buildMasterInstructions,
-  buildClaudeContent,
   writeAgentConfig,
+  findManagedRootFiles,
   writeBacklogFiles,
   writeGitignore,
   writeManifest,

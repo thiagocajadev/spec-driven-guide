@@ -6,144 +6,14 @@
 
 ## Backlog
 
-### Soul: rules in English that hold in any delivery language, closed
+- [TODO] refactor: **one implementation per script.** Four bump scripts (`scripts/bump.mjs`, `templates/bump.mjs`, `tooling/scripts/bump-version.mjs`, `lifecycle/auto-bump.mjs`) and two backlog pruners (`lifecycle/prune-backlog.mjs`, `tooling/scripts/prune-backlog.mjs`) differ from each other. Each fix lands in one copy and the others drift. Decide which copy ships to consumers and make this repository run that same file.
 
-- ~~[BACKLOG] the seven Soul items~~ ✅ 2026-08-02 (all shipped in v6.1.0: rule/lexicon split, `writing-lint` reading the lexicon, form classes named in Part 2, sweep order and the one-explanation ceiling, the non-English delivery section, the formatting rules, and the promotion step. See `## Done`.)
+### Decided against
 
-### Skill: `writing-readme.md`, closed
+> Kept so the next reader does not propose them again. The full reasoning is in git history.
 
-> Requested by the developer. The shape below is **derived from his own repositories**, not proposed from a generic template: `specdrivenguide-website` (README touched 2026-08-02), `sdg-agents-cli` (2026-07-22) and `code-style` (2026-07-25) already converge on it. `simula-impostos-mvp` is the same skeleton in an earlier form, with the badge row above the title instead of below it.
-
-- ~~[BACKLOG] **feat: new skill `src/assets/skills/writing-readme.md`,**~~ ✅ 2026-08-02 (v6.2.0, all four open decisions settled, see `## Done`. The consequence of decision 1, moving this repository's own `README.pt-BR.md` to the root, moved to `## Now`.)
-
-  <details>
-  <summary>Original entry, kept for the derivation it records</summary>
-
-  **feat: new skill `src/assets/skills/writing-readme.md`,** loaded on a `docs:` cycle that touches a README, alongside `writing-soul.md`. It governs the banner, which the soul says nothing about, and defers to the soul for every line of prose below it.
-
-  **Part 1, the banner.** One centered block, in this order:
-
-  ```html
-  <div align="center">
-    <img src="<logo>" alt="<Project>" width="360" height="360" />
-    <h1 align="center">Project Name</h1>
-    <p align="center">
-      One sentence saying what this is and who it serves.<br />
-      <a href="README.pt-BR.md">Versão em Português (Brasil)</a>
-    </p>
-    <p align="center">Live at <a href="https://…">domain</a></p>
-    <!-- badge row -->
-  </div>
-
-  <br />
-  ```
-
-  Rules the skill states, each one observed in at least two of the repositories:
-
-  | Element     | Rule                                                                                                                                                                                                  |
-  | :---------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-  | Logo        | Square, 360 to 640 px, `width` **and** `height` both set so the page does not reflow while it loads                                                                                                   |
-  | Title       | Inside the banner as `<h1 align="center">`, never a markdown `#` above it                                                                                                                             |
-  | Tagline     | One sentence, then `<br>`, then the link to the translated README                                                                                                                                     |
-  | Live link   | Its own `<p align="center">`, only when the project is published somewhere                                                                                                                            |
-  | Badges      | `shields.io` with `style=flat-square`, `logo=` set, and every badge wrapped in an `<a>` that goes to the thing it reports                                                                             |
-  | Badge order | Identity and status first (release, downloads, CI), then stack (runtime, framework, language), then meta (license, changelog). Observed identically in `sdg-agents-cli` and `specdrivenguide-website` |
-  | Closing     | `</div>` then a bare `<br>`, so the first paragraph does not sit flush against the badges                                                                                                             |
-
-  **Part 2, the content**, which is the soul applied with no exceptions: an intro paragraph immediately after the banner with no heading between them, a `## Fundamental concepts` table once three or more technical terms appear, and body sections shaped by the project. `specdrivenguide-website` also names its two readers in the intro ("A developer meeting the framework for the first time… A contributor changing the site…"), which is the soul's two-reader rule made explicit and is worth prescribing.
-
-  **Open decisions for the SPEC of that cycle:**
-
-  1. **Where the translated README lives.** `specdrivenguide-website` keeps `README.pt-BR.md` at the root; `sdg-agents-cli` keeps `docs/i18n/README.pt-BR.md`. Two conventions in two repositories of the same author, and the skill has to pick one.
-  2. **Badge row above or below the title.** `simula-impostos-mvp` puts it above, the two recent ones put it below. Below is the newer form and the one to canonise.
-  3. **Whether the skill ships a fenced skeleton to copy.** It reads faster than prose, and the concepts-table convention plus the badge order are hard to convey any other way.
-  4. **A stack table as banner alternative.** `code-style` replaces per-technology badges with a `| Area | Stack |` table of grouped badges, which scales where a flat row would wrap over several lines. Worth documenting as the variant for documentation repositories with many technologies.
-
-  **Ordering note:** this skill should land after the lexicon split, because a README written in pt-BR is exactly the case that the language rules above have to cover, and writing the skill first would bake the English-only assumption into one more file.
-
-  </details>
-
-### Generated-file overwrite, closed
-
-- ~~[BACKLOG] feat: **warn before overwriting an edited generated file**~~ ✅ 2026-07-22 (won't-do: consumer projects track `.ai/instructions/`, `.ai/skills/` and `.ai/tooling/` in git, the emitted `.gitignore` only ignores `tasks.md`, `impact-map.md` and `last-prompt.md`, since the negation ladder is this repo's alone. An overwrite therefore shows up in `git status` and reverts with `git checkout --`. A second `emittedHashes` field plus `.orig` copies would reimplement, worse, what git already does. 3-way merge stays rejected on its own terms: conflict markers inside markdown an LLM reads as instruction fail silently.)
-
-- ~~[BACKLOG] feat: **a legitimate home for customization** (`.ai/local/`)~~ ✅ 2026-07-22 (won't-do: an override layer that wins over the canon is a sanctioned fork, five projects, five code-styles, none of them visible to `audit` or `check-sync`, which only know the canon. That is the v6.0.2 disease again: tooling that approves what it cannot verify. Legitimate per-project customization already has a home the init preserves, `writeStackFile` and its siblings early-return when the file exists, and `stack.md` documents itself as edit-directly-no-regen. Real divergence from the canon is answered by pinning the version (`npm i -D sdg-agents@X`) or moving the canon upstream, never by shadowing it locally.)
-
-### Dogfooding, Fix Queue (next rodada)
-
-- ~~[BACKLOG] audit: **flavor principles rebalance**~~ ✅ 2026-04-24 (bundled into the braced-guards `audit:` cycle, see Done).
-
-- ~~[BACKLOG] fix: **test source-string style**, inline `\n`-stuffed strings pervasive in `governance.test.mjs`~~ ✅ 2026-04-24 (bundled into fix: v5.3.1 cycle, all fixtures converted to per-line array-join; no-inline-assert now enforces semantic-assert naming).
-
-- ~~[BACKLOG] audit: **AAA + semantic-assert reinforcement in testing.md**~~ ✅ 2026-04-24 (bundled into fix: v5.3.1 cycle, `NamedExpectations` rewritten with correct actual+expected grouping + derivation carve-out; `no-inline-assert` ESLint rule enforces it).
-
-- ~~[BACKLOG] fix: **no-inline-assert full sweep**~~ ✅ 2026-04-24 (v5.3.2, 129 violations swept, rule global).
-
-- ~~[BACKLOG] audit: **function line-limit clarification in code-style.md**~~ ✅ 2026-04-24 (doc-only; `Small functions` bullet rewritten with logical-statement semantics + 3 exclusion categories; `.ai/skills/code-style.md` synced).
-
-- ~~[BACKLOG] fix: **visual-density, const-touching-function pattern still uncaught**~~ ✅ 2026-04-24 (see Done).
-
-- ~~[BACKLOG] fix: `ceremonial-void-return` detector + `explaining-returns` refinement~~ ✅ 2026-04-18 (scope expanded to include `named-const-before-call` tightening, see Done).
-- ~~[BACKLOG] fix: **regression**, `ceremonial-void-return` survivor at [gate-bundle.mjs:21-22](src/engine/bin/maintenance/gate-bundle.mjs#L21-L22)~~ ✅ 2026-04-18
-- ~~[BACKLOG] fix: **real hit**, `named-const-before-call` violation at [wizard.mjs:373](src/engine/lib/domain/wizard.mjs#L373)~~ ✅ 2026-04-18
-- ~~[BACKLOG] audit: **rule refinement**, `named-const-before-call` FP carve-out for pure data-access composition.~~ ✅ 2026-04-24 (resolved: `JSON.parse(readFileSync(...))` is RHS-assignment-exempt by rule; `path.basename(x)` as arg extracted to `const projectName` at [instruction-assembler.mjs:266](src/engine/lib/domain/instruction-assembler.mjs#L266); `fs.existsSync` already in exempt list. No remaining FPs.)
-- ~~[BACKLOG] audit: **rule refinement**, `explaining-returns` trivial-literal carve-out.~~ ✅ 2026-04-24 (won't-do: vacuous sites cleaned, `injectedResult = undefined` and `wizard.mjs:414-420` gone; remaining `const emptyBlock = null;` etc. are semantically named, not ceremony).
-- ~~[BACKLOG] fix: tighten `boolean-prefix` detector, scan RHS for boolean-producing calls (`.match()`, `.test()`, `.includes()`, `length > N`) used in boolean context.~~ ✅ 2026-04-24 (won't-do: `named-const-before-call` forms (f)+(g) + `boolean-prefix` extraction requirement in that rule cover this indirectly; live sites were fixed manually; no standalone detector needed).
-- ~~[BACKLOG] fix: duplicate `console.log` at [clear-bundle.mjs:88-89](src/engine/bin/maintenance/clear-bundle.mjs#L88-L89)~~ ✅ 2026-04-18. Detector shipped 2026-07-22 in v6.0.0 as the `local/duplicate-consecutive-statement` ESLint rule, not a `governance.mjs` heuristic, see Done.
-- ~~[BACKLOG] fix: rename `dryRun` → `isDryRun`, `strictMagicMatch` → `hasStrictMagicMatch`~~ ✅ 2026-04-18 (full cascade).
-- ~~[BACKLOG] feat: **regex pre-filter layer for gate detection**~~ ✅ 2026-04-24 (v5.4.0, `gate-preflight.mjs` form (a) hint-mode; `## Pre-filter Signals` injected into prompt when matches found; 225/225 green).
-- ~~[BACKLOG] audit(optional): expand `inline-assertion-literals` → `inline-anonymous-object-argument` [WARN]~~ ✅ 2026-04-24 (won't-do: 1 hit at [check-sync.mjs:102](src/engine/bin/audit/check-sync.mjs#L102), `inline-assertion-literals` BLOCK already covers the substance; FP analysis cost > benefit).
-- ~~[BACKLOG] audit: **rule gap**, `named-const-before-call` detector silent on binary-comparisons and unary-negations~~ ✅ 2026-04-18 (expanded enumerated forms, see Done).
-
-### Milestone M1, Foundation (new SSOT + skill structure)
-
-- ~~[M1.2][M] Convert `core/*` rules into skill units under `src/assets/skill/<name>.md`~~ ✅ 2026-04-15
-  - ~~code-style (merge code-style + naming + engineering-standards)~~ ✅ 2026-04-15
-  - ~~testing~~ ✅ 2026-04-15
-  - ~~sql-style~~ ✅ 2026-04-15
-  - ~~security (merge security + security-pipeline)~~ ✅ 2026-04-15
-  - ~~api-design~~ ✅ 2026-04-15
-  - ~~data-access~~ ✅ 2026-04-15
-  - ~~observability~~ ✅ 2026-04-15
-  - ~~ci-cd~~ ✅ 2026-04-15
-  - ~~cloud (merge cloud + containers)~~ ✅ 2026-04-15
-  - ~~ui-ux (merge ui/* 4 files + writing-soul)~~ ✅ 2026-04-15
-  - ~~staff-dna (preserve, load only in Phase CODE)~~ ✅ 2026-04-15
-- ~~[M1.3][S] Define skill loading convention, how cycle commands and `AGENTS.md` reference skills on-demand. **SSOT rule**: `src/assets/skills/*` is canonical; `src/assets/instructions/core/*` is deprecated-pending-M3.6 (preserved only for round-trip validation, must NOT be edited).~~ ✅ 2026-04-15
-- ~~[M1.4][S] Delete `src/assets/instructions/workflows/governance.md` (not a duplicate of `workflow.md`; 01–08 roadmap unused operationally, 7 Laws already in `skills/staff-dna.md`).~~ ✅ 2026-04-15
-- ~~[M1.5][M] SSOT audit, eliminate redundancy in `src/assets/instructions/**`. Decisions: `caveman.md` DELETE (6 rules migrated to `workflow.md` TokenDiscipline as "Terse Mode (Default)"; `ui-ux.md` + `writing-soul.md` rewired with default-flip: Terse is default, Pedagogical opt-in). `agent-roles.md` PENDING-M3.6 (meta-protocol, not a skill). `competencies/*`, `flavors/*`, `idioms/*`, `commands/*`, `templates/*` all KEEP as legitimate non-skill rulesets.~~ ✅ 2026-04-15
-
-### Milestone M2, Engine (manifest-driven, multi-agent, idiom injection)
-
-- ~~[M2.1][L] Multi-agent stubs (cli-parser, wizard, assembler, manifest)~~ ✅ 2026-04-15
-- ~~[M2.2][M] Idiom injection catalog-only (validated, already wired via `--idioms` + wizard backend/frontend prompts + dynamic render)~~ ✅ 2026-04-15
-- ~~[M2.3][M] Assembler rewrite, SKILL_CATALOG single source of truth + ruleset-injector skills copy gap fix~~ ✅ 2026-04-15
-- ~~[M2.4][S] Cycle commands skill path updates~~ ✅ 2026-04-15
-
-### Milestone M3, Cleanup (delete out-of-scope + mirror src→.ai)
-
-- ~~[M3.1][M] Delete `src/assets/dev-guides/prompt-tracks/` + mirror `.ai/dev-guides/prompt-tracks/`~~ ✅ 2026-04-15
-- ~~[M3.2][M] Delete creative content~~ ✅ 2026-04-15
-- ~~[M3.3][S] Delete `src/engine/bin/init/creatives-bundle.mjs`~~ ✅ 2026-04-15
-- ~~[M3.4][S] Remove `.ai/last-prompt.md`~~ ✅ 2026-04-15
-- ~~[M3.5][M] Audit `src/engine/bin/audit/`, `lifecycle/`, `maintenance/` for orphaned code post-cleanup~~ ✅ 2026-04-15
-- ~~[M3.6][M] Round-trip regen `.ai/` + SSOT cleanup (deleted `src/assets/instructions/core/`, 16 files; moved `agent-roles.md` → `templates/`; updated `governance.mjs`, `sync-rulesets.mjs`, `audit-bundle.mjs` to new paths)~~ ✅ 2026-04-15
-
-### Milestone M4, Release ✅
-
-- ~~[M4.1][M] Affected tests validated, 107/107 green, no test updates required post-regen~~ ✅ 2026-04-15
-- ~~[M4.2][S] `package.json` bumped via `npm run bump major` (2.16.0 → 3.0.0); description rewritten for v3 router model~~ ✅ 2026-04-15
-- ~~[M4.3][M] `docs/MIGRATION-v3.md` written, breaking changes table, step-by-step migration, v2→v3 file mapping~~ ✅ 2026-04-15
-- ~~[M4.4][S] `README.md` + `docs/README.pt-BR.md` updated with v3 features (multi-agent, skills on-demand, multi-idiom); broken links fixed (`src/assets/dev-guides/` → `docs/`; `.ai/skill/` → `.ai/skills/`)~~ ✅ 2026-04-15
-- ~~[M4.5][M] `CHANGELOG.md` 3.0.0 entry written, Added/Changed/Removed/BREAKING CHANGES; promoted via `bump.mjs`~~ ✅ 2026-04-15
-- ~~[M4.6][S] `npm run lint` + `sdg-agents audit` + `npm test`, all green (audit 100%)~~ ✅ 2026-04-15
-- ~~[M4.7][S] Release commit proposed, `feat: release v3.0.0 - Reformulation & Multi-Agent Support`~~ ✅ 2026-04-15
-
-### Sub-cycle: Engineering Laws renumbering + audit header fix
-
-- ~~[LAW.1][S] Renumber Laws 0–7 → 1–8 in `staff-dna.md` + all cross-refs (`api-design.md`, `cloud.md`, `workflow.md`, `governance.mjs`, `display-utils.mjs`, `check-narrative.mjs`, `audit-bundle.mjs`, `instruction-assembler.mjs`)~~ ✅ 2026-04-15
-- ~~[LAW.2][S] Fix hardcoded `v2.0.0 compliance` in audit header, now reads dynamically from `package.json`~~ ✅ 2026-04-15
-- ~~[LAW.3][S] Purge stale `instructions/core/` refs in `docs/CONSTITUTION.md`, `docs/UI-UX.md`, `docs/PROJECT-STRUCTURE.md`~~ ✅ 2026-04-15
+- **Warn before overwriting an edited generated file** (won't-do): the kit is out of git and cleared whole on every install, and the off-canon report names what left. A hash ledger plus `.orig` copies would reimplement, worse, what git already does; a 3-way merge leaves conflict markers inside markdown an agent reads as instruction.
+- **A `.ai/local/` override layer** (won't-do): an override that wins over the canon is a sanctioned fork that `audit` and `check-sync` cannot see. Per-project customization already lives in `.ai/backlog/`, which the install never overwrites; real divergence is answered by pinning the version or moving the change upstream.
 
 ## Done
 

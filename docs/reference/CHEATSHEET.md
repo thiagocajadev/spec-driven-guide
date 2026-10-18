@@ -20,6 +20,12 @@ npx spec-driven-guide init --flavor vertical-slice
 
 # Preview what would be written without touching the filesystem
 npx spec-driven-guide init --flavor mvc --dry-run
+
+# Skip scripts/bump.mjs and the bump script in package.json
+npx spec-driven-guide init --quick --no-bump
+
+# After cloning a project that already uses SDG (.ai/kit/ is not in git)
+npx spec-driven-guide restore
 ```
 
 After install, open the agent chat and run `land: <one-line vision>`. The agent elicits the stack, writes `.ai/backlog/stack.md`, and seeds the backlog.
@@ -58,22 +64,7 @@ The agent elicits every language/runtime/framework with its version, classifies 
 
 ### WebFetch allow-list
 
-The agent may only fetch enrichment from these canonical sources:
-
-| Language / Framework    | Source                                     |
-| :---------------------- | :----------------------------------------- |
-| JavaScript / ECMAScript | `tc39.es/ecma262/`                         |
-| TypeScript              | `typescriptlang.org/docs/`                 |
-| Node.js                 | `nodejs.org/api/`                          |
-| React                   | `react.dev/reference/`                     |
-| Astro                   | `docs.astro.build/`                        |
-| Python                  | `docs.python.org/3/`                       |
-| Go                      | `go.dev/doc/`                              |
-| Rust                    | `doc.rust-lang.org/stable/`                |
-| Kotlin                  | `kotlinlang.org/docs/`                     |
-| Dart / Flutter          | `dart.dev/guides`, `docs.flutter.dev/`     |
-| .NET / C#               | `learn.microsoft.com/dotnet/`              |
-| Swift                   | `developer.apple.com/documentation/swift/` |
+The agent may only fetch enrichment from the official sources listed in `.ai/kit/commands/sdg-land.md`, one per language plus the security references `audit:` checks. The list lives there alone, so it cannot drift from what the agent reads.
 
 ---
 
@@ -83,9 +74,10 @@ The agent may only fetch enrichment from these canonical sources:
 npx spec-driven-guide gate       # Review the staged diff against the gate (language-agnostic pre-commit)
 npx spec-driven-guide review     # Detect drift between local rules and source engine
 npx spec-driven-guide restore    # Rebuild .ai/kit/ from the committed manifest
-npx spec-driven-guide audit      # Run the governance audit (drift, narrative, code style, hygiene)
+npx spec-driven-guide audit      # Run the governance audit; exits non-zero on any gap
+npx spec-driven-guide audit --skip-hygiene  # Same, without lint and tests (when the caller already ran them)
 npx spec-driven-guide narrative  # Check the changelog narrative on its own
-npx spec-driven-guide clear      # Remove the entire .ai/ governance layer
+npx spec-driven-guide clear      # Remove .ai/ and the root files the CLI wrote
 ```
 
 ---
@@ -114,15 +106,15 @@ Ten constraints the protocol enforces on every cycle. Full text in `.ai/kit/inst
 
 | Guardrail                | Enforced at                                          |
 | :----------------------- | :--------------------------------------------------- |
-| Prefix required          | Intent Routing, no prefix means the agent asks       |
-| Mid-cycle classification | Intent Routing, mid-cycle messages                   |
-| Assumptions stated       | Phase SPEC, step 5                                   |
-| SPEC and PLAN gates      | Phase SPEC step 7, Phase PLAN step 8                 |
-| Work Checklist           | Phase CODE step 1, blocking every write tool         |
-| Scope lock               | Phase CODE step 3                                    |
-| Blocker surface          | Phase CODE step 4                                    |
-| Circuit Breaker          | Phase TEST step 5, Token Discipline operational      |
-| Commit gate              | Phase END step 7, SOVEREIGN GATE                     |
+| Prefix required          | `AGENTS.md` router, no prefix means the agent asks   |
+| Mid-cycle classification | `workflow.md`, Mid-cycle Messages                    |
+| Assumptions stated       | Phase SPEC, Assumptions                              |
+| SPEC and PLAN gates      | Phase SPEC and Phase PLAN, Approval Gate             |
+| Work Checklist           | Phase CODE, Work Checklist, blocking every write     |
+| Scope lock               | Phase CODE, Plan Adherence                           |
+| Blocker surface          | Phase CODE, Blocker Surface                          |
+| Circuit Breaker          | Phase TEST, Circuit Breaker                          |
+| Commit gate              | Phase END, Commit, SOVEREIGN GATE                    |
 | Evidence                 | Rule Guardrails, binding SPEC research, TEST and END |
 
 ---
@@ -184,7 +176,7 @@ Phase SPEC, and it stops there. Nothing is repaired inside the audit:
 ```
   SCOPE      full codebase, one layer, or doc alignment
    │
-  FINDINGS   drift against .ai/, law violations, canon coverage
+  FINDINGS   drift against .ai/kit/, checklist violations, canon coverage
    │
   PLAN       every gap as an actionable correction task             ⏸  you approve
 ```

@@ -3,13 +3,16 @@ import path from "node:path";
 import { confirm } from "@inquirer/prompts";
 import { ResultUtils } from "../../lib/core/result-utils.mjs";
 import { FsUtils } from "../../lib/core/fs-utils.mjs";
+import { InstructionAssembler } from "../../lib/domain/instruction-assembler.mjs";
 
 const { success } = ResultUtils;
 const { bootstrapIfDirect } = FsUtils;
+const { findManagedRootFiles } = InstructionAssembler;
 
 /**
  * Spec Driven Guide: Reset/Clear Utility
- * Deletes all generated SDG files and the .ia directory.
+ * Deletes `.ai/` and the root files the CLI wrote, recognised by their sentinel.
+ * An `AGENTS.md` left behind would route every cycle into a tree that is gone.
  */
 async function clearProject(targetDirectory = process.cwd(), options = {}) {
   await orchestrateCleanup(targetDirectory, options);
@@ -30,6 +33,11 @@ async function orchestrateCleanup(targetDirectory, options = {}) {
     if (fileSystem.existsSync(fullPath)) {
       existingItems.push({ name: itemName, fullPath });
     }
+  }
+
+  for (const rootFileName of findManagedRootFiles(targetDirectory)) {
+    const fullPath = path.join(targetDirectory, rootFileName);
+    existingItems.push({ name: rootFileName, fullPath });
   }
 
   // Check packages/* if we are in a monorepo
@@ -123,9 +131,9 @@ async function confirmBacklogDeletion(items) {
   }
 
   console.log("\n  ┌──────────────────────────────────────────────────────┐ ");
-  console.log("  │  ⚠️  LOCAL BACKLOG CONTAINS WORKING STATE             │ ");
-  console.log("  │  tasks.md and impact-map.md are NOT in git            │ ");
-  console.log("  │  Deletion is permanent. No recovery from remote.      │ ");
+  console.log("  │  ⚠️  BACKLOG CONTAINS PROJECT KNOWLEDGE               │ ");
+  console.log("  │  session.md and impact-map.md are NOT in git: lost.  │ ");
+  console.log("  │  The rest is versioned: git checkout -- .ai/backlog  │ ");
   console.log("  └──────────────────────────────────────────────────────┘ ");
   for (const backlogPath of backlogsWithContent) {
     console.log(`  - ${backlogPath}`);

@@ -162,7 +162,10 @@ async function dispatchSubcommand(args) {
     }
     case "audit": {
       const { AuditRunner } = await import("./audit/audit-bundle.mjs");
-      const auditResult = await AuditRunner.audit();
+      const auditResult = await AuditRunner.audit({
+        isHygieneSkipped: args.isHygieneSkipped,
+      });
+
       return auditResult;
     }
     case "narrative": {
@@ -201,6 +204,7 @@ async function processInitSubcommand(args) {
         mode: isQuickMode ? "quick" : args.mode || "agents",
         flavor: args.flavor,
         track: args.track,
+        bump: args.bump,
       }
     : null;
 

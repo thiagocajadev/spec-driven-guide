@@ -12,7 +12,7 @@
 - **Integration**: Use cases, repositories, API endpoints. Hit real DB/service. Catches the bugs that matter most.
 - **E2E**: Critical user flows only (login, checkout, onboarding). Golden path + 2-3 failure scenarios max.
 - **Contract**: API boundaries between services. Verify producer/consumer shape agreement.
-- **Security**: DAST, fuzzing, exploit simulation, part of pipeline, not optional. See [Security skill](.ai/kit/skills/security.md).
+- **Security**: DAST, fuzzing, exploit simulation, part of pipeline, not optional. See [Security skill](security.md).
 
 Prioritize integration over unit for orchestration layers. Unit test domain logic exhaustively.
 </rule>

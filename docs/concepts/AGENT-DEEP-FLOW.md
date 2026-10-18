@@ -61,8 +61,7 @@ graph TD
         E1[Task Summary] --> E2[CHANGELOG or release mode]
         E2 --> E3[Backlog Sync]
         E3 --> E4[Context & Insights]
-        E4 --> E5[Final Lint]
-        E5 --> E6[Version Bump]
+        E4 --> E6[Version Bump]
         E6 --> E7[Commit Proposal]
         E7 --> E8{Commit Gate}
     end
@@ -113,7 +112,8 @@ The agent sequences the spec into atomic, estimable tasks.
 
 High-density execution following strict architectural standards.
 
-- **Narrative Gate**: Self-check for **Stepdown Rule**, **SLA**, and **Narrative Siblings**.
+- **Work Checklist**: recited before the first file write, Intent items at entry and Form items verified at TEST.
+- **Delegation**: a subagent taking CODE and TEST gets the approved SPEC and PLAN verbatim plus the paths it needs, never commits and never writes the backlog. `agent-roles.md` holds the payload.
 - **Plan Adherence**: No "bonus" features or refactors (YAGNI).
 - **Blocker Surface**: The agent flags issues immediately rather than working around them.
 - **Circuit Breaker**: If the same error repeats 3 times, or no physical progress (file writes, commands) is made in 3 consecutive turns, the agent **stops and reports** rather than looping indefinitely.
@@ -139,11 +139,11 @@ The third stop, and the one the other two make possible. The developer reads the
 
 Closing the loop and ensuring project observability. END opens by confirming the TEST report came back green, then delivers.
 
-- **Artifact Sync**: Finished tasks move to `## Done` in `tasks.md`, and the `## Now` objective in the same file is rewritten or cleared. The objective lived in `context.md` until v5.10.0, one file away from the task list it describes.
+- **Artifact Sync**: The cycle gets one `- [DONE]` entry in `tasks.md`, the prune keeps the last three, and `session.md` is reset to the next objective. The plan and its checkpoints live in `session.md` while the cycle runs, so the versioned queue only ever records outcomes.
 - **Knowledge Capture**: Patterns worth reusing go to `.ai/backlog/learned.md`; failures and their resolutions go to `.ai/backlog/troubleshoot.md`. Both are versioned, so the knowledge survives the session that produced it.
 - **Changelog**: it depends on the `release` mode declared in `context.md`. On `manual`, one entry per task under `## [Unreleased]`, following the [Keep a Changelog](https://keepachangelog.com/) standard. On `derived`, `CHANGELOG.md` is left alone, because CI generates it from the commit bodies, and writing both produces two sources that drift.
-- **Version**: on `manual`, `npm run bump <type>` runs before the commit and the subject carries the number. On `derived`, the commit type is what CI reads to compute the bump. `versioning.md` holds the table.
-- **Semantic Commit**: proposing a message that reflects the actual intent and scope, then stopping. The commit itself is **locked** behind explicit developer authorization, and no phase bypasses it.
+- **Version**: on `manual`, the `bump` command from `context.md` runs before the commit and the subject carries the number. On `derived`, the commit type is what CI reads to compute the bump. `versioning.md` holds the table.
+- **Semantic Commit**: staging only the files the cycle changed, proposing a message that reflects the actual intent and scope, then stopping. The commit itself is **locked** behind explicit developer authorization, and no phase bypasses it.
 
 ---
 

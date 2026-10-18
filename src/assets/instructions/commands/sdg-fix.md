@@ -21,5 +21,3 @@ Follow Phase SPEC. Context charges:
 Follow Phase PLAN with mandatory addition:
 
 - **Regression Test**: Task for Characterization Test that reproduces the bug. Use patterns from `testing.md`.
-
-> Read `.ai/kit/instructions/templates/agent-roles.md` for multi-agent handoff protocol.

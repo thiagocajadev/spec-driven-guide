@@ -13,8 +13,6 @@ Follow Phase SPEC. Context charges:
   - **Domain Modeling**: Define domain (Backend/Frontend/Fullstack) and primary entities.
   - **Configuration Contract**: Define environment variables (abstract keys).
   - **Contract-First**: Define inputs/outputs (API or Props) before implementation.
-  - **Backend SPEC**: Response contract (method, path, I/O types, error codes). Load `competencies/delivery.md` (Backend section).
-  - **Frontend SPEC**: Section structure, layout skeleton, states (Loading/Empty/Error). Load `competencies/delivery.md` (Frontend section).
+  - **Backend SPEC**: Response contract (method, path, I/O types, error codes). Load `.ai/kit/instructions/competencies/delivery.md` (Backend section).
+  - **Frontend SPEC**: Section structure, layout skeleton, states (Loading/Empty/Error). Load `.ai/kit/instructions/competencies/delivery.md` (Frontend section).
 - **Verification**: Min 3 checks: Happy Path, Edge Case, Expected Failure.
-
-> Read `.ai/kit/instructions/templates/agent-roles.md` for multi-agent handoff protocol.
