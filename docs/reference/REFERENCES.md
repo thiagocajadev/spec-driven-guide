@@ -1,6 +1,6 @@
 # Credits and Philosophies
 
-spec-driven-guide is built on the shoulders of giants. It adapts ideas from the open-source community and from the people who build the models, and each entry below says what was taken and where it landed, so the credit and the reason travel together.
+spec-driven-guide adapts ideas from the open-source community and from the people who build the models. Each entry below says what was taken and where it landed, so the credit and the reason travel together.
 
 ## Core Philosophies
 
@@ -12,18 +12,23 @@ Caveman philosophy (by Julius Brussee) advocates for a high-density, low-token i
 ### [Context-mode](https://github.com/mksglu/context-mode)
 
 **Treat the context window as a finite resource.**
-The context-mode philosophy focuses on just-in-time loading and externalized memory. We implement this through our `.ai/backlog/` and `impact-map.md` mechanics, ensuring the agent only loads what is strictly necessary for the active cycle.
+Under context-mode, instructions load at the moment a task needs them, and memory lives outside the context window. SDG applies it through `.ai/backlog/`, which holds what the project learned across sessions, and `impact-map.md`, which names the files a plan touches and what imports them.
 
 ### [Writing Soul](https://github.com/hardikpandya/stop-slop)
 
 **Keep a human pulse in technical artifacts.**
 Inspired by [stop-slop](https://github.com/hardikpandya/stop-slop) (by Hardik Pandya), this philosophy bans "AI-isms" (e.g., "Certainly!", "Crucial first step") in favor of direct, inviting, and pedagogical engineering prose.
 
+### [code-review-graph](https://github.com/tirth8205/code-review-graph)
+
+**Give the agent the blast radius, not the repository.**
+The tool builds a knowledge graph from Tree-sitter syntax trees and serves it over MCP, so an agent reads only the code a change can reach. `impact-map.md` takes the idea without the tooling: at Phase PLAN the agent lists the files the tasks will touch and traces their imports by hand, with no parser and no server.
+
 ---
 
 ## Agent practice, 2026
 
-The v7 alignment cycle checked SDG against what practitioners were publishing during 2026. Most of it was already here, which is the useful half of the result, so the credits below are scoped to what was actually taken.
+The v7 alignment cycle checked SDG against what practitioners were publishing during 2026. Most of it was already here, which is the useful half of the result, so the credits below are scoped to what was taken.
 
 ### [Clean Code for AI Agents](https://akitaonrails.com/2026/04/20/clean-code-para-agentes-de-ia/)
 
@@ -103,9 +108,29 @@ A standard cited without its edition goes stale in silence. These carry the vers
 
 ---
 
-## UI Research and Aesthetics
+## UI research
 
-Our design standards and visual protocols are inspired by the following research and projects:
+The rules in [`ui-ux.md`](../../src/assets/skills/ui-ux.md) draw on the sources below: the design contract the agent fills before any UI code, the elevation stack, the presets and the UX quality standards.
 
-- **[TypeUI](https://typeui.sh)**: A CLI-first approach to managing design systems for AI agents, influencing how we structure visual skills.
-- **[tweakcn](https://tweakcn.com)** & **[Shadcn/UI](https://github.com/shadcn-ui/ui)**: Foundational research on component architecture, concentric radius rules, and perceptual color scaling.
+### Design systems and tokens
+
+- **[Shadcn/UI](https://ui.shadcn.com)**: component architecture, token naming, and the split between design tokens and component styles.
+- **[Tailwind CSS v4](https://tailwindcss.com)**: the `@theme` directive, which expresses tokens in plain CSS without a JavaScript config layer.
+- **[Radix UI](https://www.radix-ui.com)**: primitive component patterns, accessibility baselines and compound component APIs.
+- **[tweakcn](https://tweakcn.com)**: perceptual color scaling, OKLCH progression and concentric radius rules for shadcn-based interfaces.
+- **[TypeUI](https://typeui.sh)**: a CLI-first approach to managing design systems for AI agents, which shaped how the visual skill is structured.
+
+### Color and perception
+
+- **[OKLCH](https://oklch.com)**: perceptually uniform color. The palette and the contrast checks use OKLCH lightness instead of HSL, because equal numeric steps there produce equal perceived steps.
+- **[Refactoring UI](https://www.refactoringui.com)** by Adam Wathan and Steve Schoger: the 60-30-10 distribution, the elevation logic and the advice against pure black.
+
+### Layout and typography
+
+- **[Bento Grid patterns](https://bentogrids.com)**: the modular dashboard layouts behind the BENTO preset.
+- **[Modern Font Stacks](https://modernfontstacks.com)** and Google Fonts: the tested pairings in the typography table, with **[Inter](https://rsms.me/inter/)**, **[Geist](https://vercel.com/font)**, **[Bricolage Grotesque](https://fonts.google.com/specimen/Bricolage+Grotesque)** and **[JetBrains Mono](https://www.jetbrains.com/lp/mono/)** among the families in the pairing table.
+
+### Accessibility
+
+- **[WCAG 2.2](https://www.w3.org/TR/WCAG22/)**: the AA baseline for contrast, keyboard navigation and focus states.
+- **[WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/)**: the tool for verifying contrast ratios outside OKLCH.

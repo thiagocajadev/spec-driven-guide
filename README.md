@@ -59,9 +59,11 @@ The agent proposes the SPEC from the context it already holds about the project,
 <details>
 <summary><strong>What the instruction set covers</strong></summary>
 
-- **Working protocol**: a 5-phase cycle (SPEC → PLAN → CODE → TEST → END) with Form items verified at TEST and a 3-strike Circuit Breaker that stops regression loops. The agent stops for you at SPEC, at PLAN and after TEST.
+- **Working protocol**: a 5-phase cycle (SPEC → PLAN → CODE → TEST → END) with Form items verified at TEST and a 3-strike Circuit Breaker that stops regression loops. The agent stops for you at SPEC, at PLAN and after TEST. A broad request is planned in waves, groups of tasks that share files, each closed with the tests green.
 
-- **Code style and quality gates**: one `WorkChecklist` in `code-style.md`, whose Form items are verified at TEST and wired to the narrative heuristics in `governance.mjs`.
+- **Fresh-context review**: before the TEST stop, an `[M]` or `[L]` change is read by a second reader that gets the SPEC and the diff but not the conversation, and reports fidelity to the SPEC and code quality apart.
+
+- **Code style and quality gates**: one `WorkChecklist` in `code-style.md`, whose Form items are verified at TEST and wired to the narrative heuristics in `governance.mjs`. Before writing, the YAGNI ladder asks whether the code needs to exist, whether the codebase, the standard library or an installed dependency already has it, and whether a one-liner does it. Validation at trust boundaries, data-loss handling, security controls and accessibility are never cut.
 
 - **Skills, on-demand**: self-contained skill units loaded only when the cycle needs them, covering code style, testing, security, API design, data access, observability, CI/CD, cloud, SQL style, UI/UX, review, performance, domain modeling, versioning, and README writing.
 
@@ -71,9 +73,9 @@ The agent proposes the SPEC from the context it already holds about the project,
 
 - **Any-agent compatible**: one canonical `AGENTS.md` at the repo root, which Claude Code, Codex, Cursor, Copilot, Windsurf and most other agents read natively. A file you wrote yourself is never overwritten.
 
-- **Memory across sessions**: `.ai/backlog/` persists the project brief, stack, task state, and accumulated team knowledge. An Impact Map scoped to the active cycle tells the agent which files to load.
+- **Memory across sessions**: `.ai/backlog/` persists the project brief, stack, task state, and accumulated team knowledge. An Impact Map lists the files the active cycle touches, what imports them and the tests at risk.
 
-- **Inert tooling catalog**: a bundle copied into `.ai/kit/tooling/` with nothing wired by default. No `.husky/` created, no devDep installed. Activate on demand. The one write outside `.ai/`: on a Node project, `init` adds `scripts/bump.mjs` and a `bump` script to `package.json`, which `--no-bump` skips.
+- **Inert tooling catalog**: a bundle copied into `.ai/kit/tooling/` with nothing wired by default. No `.husky/` created, no devDep installed. Activate on demand. It carries `git-guard`, a hook that refuses `git push` and `git reset --hard` from the agent, and a `.gitattributes` and `.editorconfig` pair that agree on line endings. The one write outside `.ai/`: on a Node project, `init` adds `scripts/bump.mjs` and a `bump` script to `package.json`, which `--no-bump` skips.
 
 </details>
 
@@ -177,30 +179,31 @@ The agent **stops and waits for you** three times: at SPEC and at PLAN before wr
   END     the delivery        changelog, backlog, commit    ▸  you type end:
 ```
 
-For a detailed walkthrough of each phase and its rules, see [Spec-Driven Guide](docs/concepts/SPEC-DRIVEN-GUIDE.md).
-For a visual breakdown of the internal decision gates and loops, see [Agent Deep-Flow](docs/concepts/AGENT-DEEP-FLOW.md).
+For each phase, its rules and a diagram of the gates and loops, see [Spec-Driven Guide](docs/concepts/SPEC-DRIVEN-GUIDE.md).
 
 ---
 
 ## Guardrails
 
-The protocol holds the reins in ten places, so you are not the one catching these in review:
+The protocol guards ten points of the cycle, so you are not the one catching these in review. Most of them are advisory: text the model reads and follows. The rest have a check outside the model that refuses, named in the last column.
 
 <details>
 <summary><strong>The ten guardrails</strong></summary>
 
-| Guardrail                    | What it prevents                                                                     |
-| :--------------------------- | :----------------------------------------------------------------------------------- |
-| **Prefix required**          | A cycle guessed from a loose ask. No prefix, the agent asks which one                |
-| **Mid-cycle classification** | A follow-up message silently reopening the cycle as a new one                        |
-| **Assumptions stated**       | An unstated reading shipped as the request. Where two readings diverge, it asks      |
-| **SPEC and PLAN gates**      | Code written before you agreed to the contract                                       |
-| **Form check**               | Code that drifts from the standards reaching review                                  |
-| **Scope lock**               | The refactor nobody asked for, riding along with the fix                             |
-| **Blocker surface**          | A workaround invented in silence instead of a question asked out loud                |
-| **Circuit Breaker**          | The loop: 3 failed TESTs, 3 identical errors, or 3 turns without progress, then stop |
-| **Commit gate**              | A commit you never approved                                                          |
-| **Evidence**                 | A claim about your codebase asserted from memory instead of from a file it read      |
+| Guardrail                    | What it prevents                                                                     | Enforced by                                      |
+| :--------------------------- | :----------------------------------------------------------------------------------- | :----------------------------------------------- |
+| **Prefix required**          | A cycle guessed from a loose ask. No prefix, the agent asks which one                | advisory                                         |
+| **Mid-cycle classification** | A follow-up message silently reopening the cycle as a new one                        | advisory                                         |
+| **Assumptions stated**       | An unstated reading shipped as the request. Where two readings diverge, it asks      | advisory                                         |
+| **SPEC and PLAN gates**      | Code written before you agreed to the contract                                       | advisory                                         |
+| **Form check**               | Code that drifts from the standards reaching review                                  | `audit` Code Style check and the ESLint rules    |
+| **Scope lock**               | The refactor nobody asked for, riding along with the fix                             | advisory                                         |
+| **Blocker surface**          | A workaround invented in silence instead of a question asked out loud                | advisory                                         |
+| **Circuit Breaker**          | The loop: 3 failed TESTs, 3 identical errors, or 3 turns without progress, then stop | advisory; a Stop hook can cap continuations      |
+| **Commit gate**              | A commit you never approved, or a push nobody reviewed                               | `git-guard` hook and an `ask` permission, if set |
+| **Evidence**                 | A claim about your codebase asserted from memory instead of from a file it read      | advisory                                         |
+
+`git-guard` and the permission are not wired by `init`. The recipe is in [`tooling/README.md`](src/assets/tooling/README.md), installed as `.ai/kit/tooling/README.md`.
 
 </details>
 
@@ -221,7 +224,7 @@ Select the flavor that matches your project's structure:
 | `lite`           | Minimal scaffold                        | Scripts, CLIs, utilities     |
 | `legacy`         | Refactor-safe bridge patterns           | Migrating existing codebases |
 
-For the data flow diagram of each flavor, see [Architectural Pipelines](docs/reference/PIPELINES.md).
+For the pipeline each flavor gives a request, see the [Quick Reference](docs/reference/CHEATSHEET.md#architecture-flavors---flavor).
 
 ---
 
@@ -264,7 +267,7 @@ Claude Code reads `AGENTS.md` only while no `CLAUDE.md` exists on the path, whic
 
 </details>
 
-> **Prefer a custom preset, voice, or skill?** Paste the skill content into your agent as a prompt, the same way `docs/reference/REFERENCES.md` documents external influences. Custom skills do not require a CLI subcommand.
+> **Need a rule the kit does not carry?** Write it under `## Decisions` in `.ai/backlog/context.md`, which the agent reads at every session start and no install overwrites. An edit inside `.ai/kit/` is lost on the next install; a change that belongs to every project goes upstream.
 
 ---
 
@@ -295,25 +298,15 @@ Start with the [Quick Reference (CHEATSHEET)](docs/reference/CHEATSHEET.md) for 
 <details>
 <summary><strong>Full documentation index</strong></summary>
 
-- [Project Structure](docs/reference/PROJECT-STRUCTURE.md): detailed breakdown of every generated file
+- [Project Structure](docs/reference/PROJECT-STRUCTURE.md): every generated file, when the agent reads it, and what loading it costs
 
-- [Architectural Pipelines](docs/reference/PIPELINES.md): data flow diagrams for each flavor
+- [Spec-Driven Guide](docs/concepts/SPEC-DRIVEN-GUIDE.md): each phase, its rules, and the diagram of its gates and loops
 
-- [Engineering Constitution](docs/concepts/CONSTITUTION.md): the philosophical principles behind the rules (reference only; runtime rules live in `code-style.md`)
+- [Roadmap](docs/ROADMAP.md): the milestones shipped, one major at a time
 
-- [Spec-Driven Guide](docs/concepts/SPEC-DRIVEN-GUIDE.md): a walkthrough of each phase and its rules
+- [Changelog](CHANGELOG.md): the releases of the current major, with [the archive](docs/CHANGELOG-archive.md) holding every earlier one back to v0.x
 
-- [Agent Deep-Flow](docs/concepts/AGENT-DEEP-FLOW.md): the internal decision gates and loops
-
-- [UI/UX System](docs/guides/UI-UX.md): design philosophy, hierarchy, surface tonal scale, presets, and external research references
-
-- [Roadmap](docs/ROADMAP.md): shipped milestones and planned extensions
-
-- [Changelog](CHANGELOG.md): current release, with [the archive](docs/CHANGELOG-archive.md) holding every version back to v0.x
-
-- [Token Optimization](docs/guides/TOKEN-OPTIMIZATION.md): cost model, compaction process, and routing efficiency
-
-- [Migration guides](docs/guides/): one per breaking release, each with its steps
+- [Migration guides](docs/guides/): one per breaking release that needs manual steps
 
 - [Credits and Philosophies](docs/reference/REFERENCES.md): project influences and research credits
 

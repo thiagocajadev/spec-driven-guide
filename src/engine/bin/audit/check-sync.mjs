@@ -36,7 +36,7 @@ const REFERENCE_SCAN_ROOTS = [
 ];
 
 /**
- * why: these documents have to name the old layout. Four describe what earlier
+ * why: these documents have to name the old layout. Three describe what earlier
  * versions did, and rewriting a record to match the present is how a record
  * stops being one; the v10 guide has to print the paths a reader is about to
  * untrack. They are named here so the scan stays a guard instead of a reason to
@@ -44,7 +44,6 @@ const REFERENCE_SCAN_ROOTS = [
  */
 const RECORD_FILES = new Set([
   path.join("docs", "CHANGELOG-archive.md"),
-  path.join("docs", "guides", "MIGRATION-v3.md"),
   path.join("docs", "guides", "MIGRATION-v8.md"),
   path.join("docs", "guides", "MIGRATION-v10.md"),
   path.join("docs", "ROADMAP.md"),

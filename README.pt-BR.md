@@ -59,9 +59,11 @@ O agente propõe a SPEC a partir do contexto que ele já tem do projeto, e você
 <details>
 <summary><strong>O que o conjunto de instruções cobre</strong></summary>
 
-- **Protocolo de trabalho**: um ciclo de 5 fases (SPEC → PLAN → CODE → TEST → END). Ele traz um **Work Checklist** (itens de forma que o código cumpre, conferidos na fase TEST) e um **Circuit Breaker** (disjuntor · para o agente após 3 tentativas na mesma falha). Você aprova SPEC e PLAN antes de qualquer linha ser escrita, e revisa o resultado depois do TEST.
+- **Protocolo de trabalho**: um ciclo de 5 fases (SPEC → PLAN → CODE → TEST → END). Ele traz um **Work Checklist** (itens de forma que o código cumpre, conferidos na fase TEST) e um **Circuit Breaker** (disjuntor · para o agente após 3 tentativas na mesma falha). Você aprova SPEC e PLAN antes de qualquer linha ser escrita, e revisa o resultado depois do TEST. Um pedido amplo é planejado em **waves** (ondas · grupos de tarefas que mexem nos mesmos arquivos), cada uma fechada com os testes verdes.
 
-- **Estilo de código e quality gates** (barreiras de qualidade): uma regra só, o `WorkChecklist` em `code-style.md`. Seus itens de Form (forma) são verificados na fase TEST pelas heurísticas de `governance.mjs`.
+- **Fresh-context review** (revisão com contexto limpo): antes da parada do TEST, uma mudança `[M]` ou `[L]` passa por um segundo leitor que recebe a SPEC e o diff, mas não a conversa, e reporta separadamente a fidelidade à SPEC e a qualidade do código.
+
+- **Estilo de código e quality gates** (barreiras de qualidade): uma regra só, o `WorkChecklist` em `code-style.md`. Seus itens de Form (forma) são verificados na fase TEST pelas heurísticas de `governance.mjs`. Antes de escrever, a **escada YAGNI** (You Aren't Gonna Need It · você não vai precisar disso) pergunta se o código precisa existir, se o projeto, a biblioteca padrão ou uma dependência já instalada já resolve, e se uma linha basta. Validação nas fronteiras de confiança, tratamento de perda de dados, controles de segurança e acessibilidade nunca são cortados.
 
 - **Skills sob demanda**: cada skill (habilidade · um arquivo de regras sobre um assunto) carrega somente quando o ciclo precisa dela. Há skills para code style, testes, segurança, API, acesso a dados, observabilidade, CI/CD, cloud, SQL, UI/UX, revisão, performance, modelagem de domínio, versionamento e escrita de README.
 
@@ -71,9 +73,9 @@ O agente propõe a SPEC a partir do contexto que ele já tem do projeto, e você
 
 - **Compatível com qualquer agente**: um `AGENTS.md` na raiz do repositório, que Claude Code, Codex, Cursor, Copilot, Windsurf e a maioria dos agentes leem nativamente. Um arquivo escrito por você nunca é sobrescrito.
 
-- **Memória entre sessões**: a pasta `.ai/backlog/` (lista de trabalho e memória do projeto) guarda o resumo, o stack, o estado das tarefas e o conhecimento que o time acumulou. Um **Impact Map** (mapa de impacto) lista os arquivos que o ciclo atual precisa ler.
+- **Memória entre sessões**: a pasta `.ai/backlog/` (lista de trabalho e memória do projeto) guarda o resumo, o stack, o estado das tarefas e o conhecimento que o time acumulou. Um **Impact Map** (mapa de impacto) lista os arquivos que o ciclo atual altera, o que os importa e os testes em risco.
 
-- **Catálogo de tooling inerte**: um pacote de ferramentas copiado em `.ai/kit/tooling/`, com nada ligado por padrão. Nenhum `.husky/` criado, nenhuma dependência instalada. Você liga o que quiser, quando quiser. A única escrita fora de `.ai/`: num projeto Node, o `init` adiciona `scripts/bump.mjs` e um script `bump` ao `package.json`, o que `--no-bump` evita.
+- **Catálogo de tooling inerte**: um pacote de ferramentas copiado em `.ai/kit/tooling/`, com nada ligado por padrão. Nenhum `.husky/` criado, nenhuma dependência instalada. Você liga o que quiser, quando quiser. Nele vêm o `git-guard`, um hook que recusa `git push` e `git reset --hard` vindos do agente, e um par `.gitattributes` e `.editorconfig` que concordam no fim de linha. A única escrita fora de `.ai/`: num projeto Node, o `init` adiciona `scripts/bump.mjs` e um script `bump` ao `package.json`, o que `--no-bump` evita.
 
 </details>
 
@@ -177,30 +179,31 @@ O agente **para e espera por você** três vezes: em SPEC e em PLAN antes de esc
   END     a entrega        changelog, backlog, commit     ▸  você escreve end:
 ```
 
-Para o detalhe de cada fase, veja o [Spec-Driven Guide](docs/concepts/SPEC-DRIVEN-GUIDE.md).
-Para o diagrama dos pontos de parada e dos loops internos, veja o [Agent Deep-Flow](docs/concepts/AGENT-DEEP-FLOW.md).
+Para cada fase, suas regras e o diagrama dos pontos de parada e dos loops, veja o [Spec-Driven Guide](docs/concepts/SPEC-DRIVEN-GUIDE.md).
 
 ---
 
 ## Guardrails
 
-O protocolo assume as rédeas em dez pontos, para que você não seja quem pega isso na revisão:
+O protocolo protege dez pontos do ciclo, para que você não seja quem pega isso na revisão. A maioria é orientação: texto que o modelo lê e segue. Os demais têm uma checagem fora do modelo que recusa, nomeada na última coluna.
 
 <details>
 <summary><strong>Os dez guardrails</strong></summary>
 
-| Guardrail                  | O que evita                                                                                     |
-| :------------------------- | :---------------------------------------------------------------------------------------------- |
-| **Prefixo obrigatório**    | Um ciclo adivinhado a partir de um pedido solto. Sem prefixo, o agente pergunta qual é          |
-| **Mensagem classificada**  | Um recado no meio do ciclo reabrindo ele em silêncio como um ciclo novo                         |
-| **Assumptions declaradas** | Uma leitura não dita entregue como se fosse o pedido. Onde duas leituras divergem, ele pergunta |
-| **Gates de SPEC e PLAN**   | Código escrito antes de você concordar com o contrato                                           |
-| **Form check**             | Código fora dos padrões chegando à revisão                                                      |
-| **Trava de escopo**        | A refatoração que ninguém pediu, pegando carona no fix                                          |
-| **Blocker à vista**        | Um contorno inventado em silêncio no lugar de uma pergunta feita em voz alta                    |
-| **Circuit Breaker**        | O loop: 3 TESTs falhos, 3 erros iguais, ou 3 turnos sem progresso, e então para                 |
-| **Gate de commit**         | Um commit que você nunca aprovou                                                                |
-| **Evidência**              | Uma afirmação sobre o seu código feita de memória, não de um arquivo que ele leu                |
+| Guardrail                  | O que evita                                                                                     | Garantido por                                           |
+| :------------------------- | :---------------------------------------------------------------------------------------------- | :------------------------------------------------------ |
+| **Prefixo obrigatório**    | Um ciclo adivinhado a partir de um pedido solto. Sem prefixo, o agente pergunta qual é          | orientação                                              |
+| **Mensagem classificada**  | Um recado no meio do ciclo reabrindo ele em silêncio como um ciclo novo                         | orientação                                              |
+| **Assumptions declaradas** | Uma leitura não dita entregue como se fosse o pedido. Onde duas leituras divergem, ele pergunta | orientação                                              |
+| **Gates de SPEC e PLAN**   | Código escrito antes de você concordar com o contrato                                           | orientação                                              |
+| **Form check**             | Código fora dos padrões chegando à revisão                                                      | check de Code Style do `audit` e as regras do ESLint    |
+| **Trava de escopo**        | A refatoração que ninguém pediu, pegando carona no fix                                          | orientação                                              |
+| **Blocker à vista**        | Um contorno inventado em silêncio no lugar de uma pergunta feita em voz alta                    | orientação                                              |
+| **Circuit Breaker**        | O loop: 3 TESTs falhos, 3 erros iguais, ou 3 turnos sem progresso, e então para                 | orientação; um Stop hook pode limitar continuações      |
+| **Gate de commit**         | Um commit que você nunca aprovou, ou um push que ninguém revisou                                | hook `git-guard` e uma permissão `ask`, se configurados |
+| **Evidência**              | Uma afirmação sobre o seu código feita de memória, não de um arquivo que ele leu                | orientação                                              |
+
+O `init` não liga o `git-guard` nem a permissão. A receita está em [`tooling/README.md`](src/assets/tooling/README.md), instalado como `.ai/kit/tooling/README.md`.
 
 </details>
 
@@ -221,7 +224,7 @@ Escolha o flavor que corresponde à estrutura do seu projeto. Ele diz ao agente 
 | `lite`           | Estrutura mínima, sem camadas             | Scripts, CLIs, utilitários          |
 | `legacy`         | Ponte segura para refatorar aos poucos    | Migrando bases de código existentes |
 
-Para o diagrama de fluxo de dados de cada flavor, veja [Pipelines Arquiteturais](docs/reference/PIPELINES.md).
+Para o pipeline que cada flavor dá a uma requisição, veja a [Referência Rápida](docs/reference/CHEATSHEET.md#architecture-flavors---flavor).
 
 ---
 
@@ -267,7 +270,7 @@ O Claude Code só lê o `AGENTS.md` enquanto não existe um `CLAUDE.md` no camin
 
 </details>
 
-> **Quer um preset, uma voz ou uma skill própria?** Cole o conteúdo dela no seu agente como prompt. Não existe subcomando no CLI para isso, e não precisa existir.
+> **Precisa de uma regra que o kit não traz?** Escreva em `## Decisions` no `.ai/backlog/context.md`, que o agente lê no início de toda sessão e nenhuma instalação sobrescreve. Uma edição dentro de `.ai/kit/` se perde na próxima instalação; uma mudança que vale para todo projeto vai para o repositório do kit.
 
 ---
 
@@ -298,25 +301,15 @@ Comece pela [Referência Rápida (CHEATSHEET)](docs/reference/CHEATSHEET.md), co
 <details>
 <summary><strong>Índice completo da documentação</strong></summary>
 
-- [Estrutura do Projeto](docs/reference/PROJECT-STRUCTURE.md): o papel de cada arquivo gerado
+- [Estrutura do Projeto](docs/reference/PROJECT-STRUCTURE.md): cada arquivo gerado, quando o agente o lê e quanto custa carregá-lo
 
-- [Pipelines Arquiteturais](docs/reference/PIPELINES.md): o caminho dos dados em cada flavor
+- [Spec-Driven Guide](docs/concepts/SPEC-DRIVEN-GUIDE.md): cada fase, suas regras e o diagrama dos pontos de parada e dos loops
 
-- [Spec-Driven Guide](docs/concepts/SPEC-DRIVEN-GUIDE.md): o detalhe de cada fase e suas regras
+- [Roadmap](docs/ROADMAP.md): os marcos entregues, uma major por vez
 
-- [Agent Deep-Flow](docs/concepts/AGENT-DEEP-FLOW.md): os pontos de parada e os loops internos
+- [Guias de migração](docs/guides/): um por release com breaking change que pede passos manuais
 
-- [Constituição de Engenharia (CONSTITUTION)](docs/concepts/CONSTITUTION.md): os princípios por trás das regras. É material de leitura; as regras que valem em execução ficam no `code-style.md`
-
-- [Sistema UI/UX](docs/guides/UI-UX.md): design, hierarquia visual, escala tonal de superfície e as pesquisas que embasam tudo isso
-
-- [Roadmap](docs/ROADMAP.md): o que já foi entregue e o que está planejado
-
-- [Otimização de Tokens](docs/guides/TOKEN-OPTIMIZATION.md): quanto custa carregar as instruções e como esse custo foi reduzido
-
-- [Guias de migração](docs/guides/): um por release com breaking change, cada um com seus passos
-
-- [Changelog](CHANGELOG.md): release atual, com [o arquivo histórico](docs/CHANGELOG-archive.md) guardando todas as versões desde a v0.x
+- [Changelog](CHANGELOG.md): as releases da major atual, com [o arquivo histórico](docs/CHANGELOG-archive.md) guardando todas as anteriores desde a v0.x
 
 - [Créditos e Filosofias](docs/reference/REFERENCES.md): influências do projeto e créditos de pesquisa
 

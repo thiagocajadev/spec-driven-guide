@@ -34,14 +34,14 @@ After install, open the agent chat and run `land: <one-line vision>`. The agent 
 
 ## Architecture Flavors (`--flavor`)
 
-Select the flavor that matches your project's data flow and structure:
+Select the flavor that matches your project's data flow and structure. The pipeline column is the backend path a request takes through the code, as each flavor file states it in [`src/assets/instructions/flavors/`](../../src/assets/instructions/flavors/):
 
-| Flavor           | Pattern                                 | Use When                       |
-| :--------------- | :-------------------------------------- | :----------------------------- |
-| `vertical-slice` | Feature-driven vertical cuts            | Monorepo or domain-heavy API   |
-| `mvc`            | Classic layered (Model-View-Controller) | Standard REST service          |
-| `lite`           | Minimal governance scaffold             | Small scripts, CLIs, utilities |
-| `legacy`         | Refactor-safe bridge patterns           | Migrating existing codebases   |
+| Flavor           | Pattern                                 | Pipeline                                                                                  | Use when                       |
+| :--------------- | :-------------------------------------- | :---------------------------------------------------------------------------------------- | :----------------------------- |
+| `vertical-slice` | Feature-driven vertical cuts            | `Endpoint/Handler → UseCase → Validator → Domain → Repository → Presenter → Response DTO` | Monorepo or domain-heavy API   |
+| `mvc`            | Classic layered (Model-View-Controller) | `Request → Controller → Service → Repository → Response`                                  | Standard REST service          |
+| `lite`           | Minimal governance scaffold             | Logic at the point of interaction, in a flat module                                       | Small scripts, CLIs, utilities |
+| `legacy`         | Refactor-safe bridge patterns           | `Request → UI (Event) → Service → Repository → UI (Response)`                             | Migrating existing codebases   |
 
 ```bash
 npx spec-driven-guide init --flavor vertical-slice
@@ -137,6 +137,11 @@ Every `feat:`, `fix:`, and `docs:` task follows this sequence. For `land:` and `
 
 The Agent **stops and waits for the Developer** three times: at SPEC and at PLAN before proceeding, and again after TEST, where it reports the verification and the Developer settles the last details before `end:` runs.
 
+- **Broad requests**: PLAN groups the tasks into waves by the files they share, lettered A, B, C, each closed with the tests green.
+- **`[M]` and `[L]` changes**: before the TEST stop, a fresh-context review reads the SPEC and the diff, without the conversation, and reports fidelity to the SPEC and code quality apart.
+
+The phases in full: [Spec-Driven Guide](../concepts/SPEC-DRIVEN-GUIDE.md).
+
 ---
 
 ## Governance Cycles
@@ -198,7 +203,3 @@ What you get back: each finding as a task you can run as its own `fix:` or `feat
 | Update CHANGELOG and backlog             |     -     |    ✅    |
 | Propose commit message                   |     -     |    ✅    |
 | Authorize commit and push                |    ✅     |    -     |
-
----
-
-> Developers approve decisions. Agents execute them.

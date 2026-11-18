@@ -1,6 +1,6 @@
 # Roadmap
 
-This document traces the evolution of **spec-driven-guide** from foundation to a closed core, and lists the companion **extensions** planned to grow around it rather than inside it.
+This document traces the evolution of **spec-driven-guide** from its foundation to a closed core, one major release at a time.
 
 ## Milestones
 
@@ -19,8 +19,10 @@ This document traces the evolution of **spec-driven-guide** from foundation to a
 | **v8.0**  | **Rename**: the package, binary and repository became `spec-driven-guide`. `SDG` stays as the internal acronym.                                                                                                                                                                                                                                   | ✅ Shipped |
 | **v9.0**  | **Convergent Install**: an update deletes what the previous release emitted, the `.gitignore` became a managed block, and the router gained a Persistence Policy and named guardrails.                                                                                                                                                            | ✅ Shipped |
 | **v10.0** | **Ownership Split**: `.ai/kit/` holds what the CLI installs and leaves version control; `.ai/backlog/` holds what the project writes. The kit is cleared whole on every install and restored from the committed manifest. `tasks.md` splits into a versioned queue and a local session pointer.                                                   | ✅ Shipped |
+| **v11.0** | **One Root File**: `AGENTS.md` is the only root file, `audit` and the kit check fail on any gap, and Phase TEST ends on a Review Gate.                                                                                                                                                                                                            | ✅ Shipped |
+| **v11.1** | **Subtraction and Enforcement**: less recited text, `git-guard` on the commit gate, canon agreement tests, waves, the fresh-context review and the YAGNI ladder.                                                                                                                                                                                  | ✅ Shipped |
 
-> **Core is closed.** Further growth happens via **separate extension packages**, not core bloat. The CLI, the 5-phase protocol, the narrative heuristics, the gate and audit suite, and the `land:`-driven stack context together are the finished product. See [Extensions](#extensions) below for companion projects.
+> **Core is closed.** The CLI, the 5-phase protocol, the narrative heuristics, the gate and audit suite, and the `land:`-driven stack context together are the finished product.
 
 ---
 
@@ -36,7 +38,7 @@ A major leap in technical maturity. Introduced the `audit:` command to detect "g
 
 ### v3.0: Reformulation & Multi-Agent
 
-Complete architectural reformulation. `AGENTS.md` became a **semantic router** (~2.8KB) instead of a knowledge dump: skills load on-demand per cycle phase, not at session start. Multi-agent support (Claude Code, Cursor, Windsurf, Copilot, Codex, Gemini, Roo Code) with agent stubs under `.ai/<agent>/`. Multi-idiom install (`--idiom typescript,python,go`). Engineering Laws renumbered 1–8. Token compaction across 39 files saved ~25K tokens (~118KB, 50% reduction). See [Token Optimization](guides/TOKEN-OPTIMIZATION.md) and [Migration v2 → v3](guides/MIGRATION-v3.md).
+Complete architectural reformulation. `AGENTS.md` became a **semantic router** (~2.8KB) instead of a knowledge dump: skills load on-demand per cycle phase, not at session start. Multi-agent support (Claude Code, Cursor, Windsurf, Copilot, Codex, Gemini, Roo Code) with agent stubs under `.ai/<agent>/`. Multi-idiom install (`--idiom typescript,python,go`). Engineering Laws renumbered 1–8. Token compaction across 39 files saved ~25K tokens (~118KB, 50% reduction).
 
 ### v4.0: Narrative Heuristics Maturity
 
@@ -50,7 +52,7 @@ Shed the last of the ceremonial governance layer. `staff-dna.md` was deleted ent
 
 The static idiom catalog (fifteen language subdirectories under `src/assets/instructions/idioms/`, ~50KB, plus its `stack-versions.mjs` registry and the `update` maintenance command) was removed. Stack specificity is no longer installed. It is **declared**, once, during the `land:` cycle. The agent elicits languages/runtimes/frameworks in free-form, classifies entries by role (Backend/Frontend/Data/Scripts), optionally enriches via an allow-listed doc fetch (12 canonical sources), and persists the result in `.ai/backlog/stack.md`. Phase CODE reads that file on every session. The twin `competencies/{backend,frontend}.md` files were fused into a single `competencies/delivery.md` with internal discriminators (`## Backend (load if server-side)` / `## Frontend (load if UI)`). The `--idiom` CLI flag, the `codeStyle` selection, the `update-versions` command, and the `sync-rulesets` command are all retired. Migration is silent: a stale `.ai/instructions/` tree is wiped on the next `init`. Released as v5.0 (major) due to the removed CLI surface.
 
-With this release the **core is considered closed**. The CLI ships a 5-phase protocol, narrative heuristics, a gate and audit suite, and a `land:`-driven stack declaration, which is enough to govern any project. Further ambitions live as extensions, not as creep into the core.
+With this release the **core is considered closed**. The CLI ships a 5-phase protocol, narrative heuristics, a gate and audit suite, and a `land:`-driven stack declaration, which is enough to govern any project.
 
 ### v5.x: Lint Enforcement
 
@@ -91,27 +93,24 @@ was. v10 draws it in the tree instead.
 
 See [Migration v9 → v10](guides/MIGRATION-v10.md).
 
----
+### v11.0: One Root File
 
-## Extensions
+`AGENTS.md` became the only file the CLI writes at the repository root.
 
-Companion projects that sit on top of the core CLI. Each is a separate package with its own release cycle, and the core does not take a dependency on any of them.
+- **`CLAUDE.md` is no longer written.** Claude Code reads `AGENTS.md` natively, but only while no `CLAUDE.md` exists, so the pointer the CLI wrote kept Claude Code from reading `AGENTS.md` directly. `init` removes the pointer an earlier release left and warns about a hand-written `CLAUDE.md` that does not import `AGENTS.md`.
+- **Checks report what they inspected.** `audit` exits non-zero on any gap, a missing kit fails instead of reporting in sync, and a link checker in the suite fails on any reference that leads nowhere.
+- **A stop after TEST.** Phase TEST ends on a Review Gate, as the documents already described, and the plan lives in `session.md` instead of the versioned queue.
 
-### `sdg-registry`: Remote Instruction Imports
+See [Migration to v11](guides/MIGRATION-v11.md).
 
-Ecosystem expansion. With `sdg-registry use <owner/repo>`, teams can import remote instruction sets, e.g. `security/owasp` or `airbnb/javascript`, instantly injecting community-validated competencies and patterns into a local project. Lives as a plug-in, not as a core feature, so registries can evolve without forcing CLI releases.
+### v11.1: Subtraction and Enforcement
 
-### `sdg-mcp`: Deep Context Intelligence
+The release came out of the 2026-11-18 `audit:` of the agent-skills ecosystem and current vendor guidance. Most of its changes remove text; the rest add enforcement.
 
-Token optimization via **MCP (Model Context Protocol)**. Instead of loading entire competency files, the companion indexes the skill tree and serves semantic lookups to the agent per file being edited. Keeps the core CLI free of vector-store concerns and lets the retrieval layer evolve independently.
-
-### `sdg-visual`: Visual Governance
-
-Auto-generation of diagrams (Mermaid/SVG) that reflect the true state of a project's rules and dependencies. Reads `AGENTS.md` + `stack.md` + skill catalog and emits dependency maps and decision flows. Separate toolchain (Mermaid-CLI, browser render) kept out of the core install.
-
-### `sdg-pedagogy`: Documentation Detectors
-
-The documentation-oriented narrative detectors that were considered for v4.0 (three-form first-occurrence, glossary table enforcement, intro-paragraph rule) but deliberately deferred from the core gate. Belongs in a separate linting companion aimed at `/docs` folders, not at source code.
+- **Less recited text.** The Work Checklist stopped being recited before a write, Terse Mode covers working notes only, and absolute rules carry a scope and a reason instead of capital letters.
+- **Gates that say what holds them.** The Guardrails table names a hook, a test or nothing for each gate, and `git-guard` is the enforced half of the commit gate.
+- **Canon agreement tests.** Every rule restated outside its source is read from both sides by a test, run by `npm run ssot`, and a byte budget measures what Phase CODE loads.
+- **New practice for broad and risky work.** Waves group a broad request by the files it touches, an `[M]` or `[L]` change gets a fresh-context review, and the YAGNI ladder decides what code gets written.
 
 ---
 

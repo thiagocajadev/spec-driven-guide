@@ -1,194 +1,147 @@
 # Project Structure
 
-This document describes every directory and file installed by `spec-driven-guide init`.
+This page names every directory and file that `spec-driven-guide init` writes into a project, what each one is for, and when the agent reads it. It is for the developer deciding what to commit and for the contributor changing the instruction set, who finds here where each installed file comes from under `src/assets/`.
 
-## Installed Tree
+## Fundamental concepts
+
+| Concept      | What it is                                                                                                       |
+| :----------- | :--------------------------------------------------------------------------------------------------------------- |
+| **Kit**      | `.ai/kit/`, what the CLI installs. Cleared and rewritten on every install, gitignored                            |
+| **Backlog**  | `.ai/backlog/`, what the developer and the agent write about the project. Versioned, except two files            |
+| **Manifest** | `.ai/.sdg-manifest.json`, the installed version, the selections and one hash per file. Committed                 |
+| **Skill**    | One file in `.ai/kit/skills/` with a ruleset for one domain, loaded only when a cycle needs it                   |
+| **Router**   | `AGENTS.md`, the root file that names every skill and the trigger that loads it; skill bodies stay in the skills |
+
+## Installed tree
 
 ```text
 your-project/
-├── AGENTS.md                    ← Main entry point + skill registry (canonical, committed)
+├── AGENTS.md                    ← The router: session start, cycle prefixes, skill registry (committed)
 ├── .ai/
 │   ├── .sdg-manifest.json       ← The pin: version, selections, one hash per file (committed)
-│   ├── kit/                     ← The CLI writes it, and rewrites it on every install. Gitignored
-│   │   ├── skills/              ← Engineering skills (loaded on-demand per cycle phase)
-│   │   │   ├── code-style.md    ← Code style + Work Checklist (Form), Phase CODE core
-│   │   │   ├── testing.md       ← Test principles (loaded in Phase CODE/TEST)
-│   │   │   ├── security.md      ← Security boundaries + pipeline rules
+│   ├── kit/                     ← The CLI writes it, and rewrites it on every install (gitignored)
+│   │   ├── skills/              ← Engineering skills, loaded on demand
+│   │   │   ├── code-style.md    ← Code style, the YAGNI ladder and the Work Checklist (Form)
+│   │   │   ├── testing.md       ← Test structure, regression tests, unit and integration boundaries
+│   │   │   ├── security.md      ← Configuration isolation, secrets, the security pipeline
 │   │   │   ├── api-design.md    ← API contracts and envelopes
 │   │   │   ├── data-access.md   ← Repository layer and persistence boundaries
+│   │   │   ├── sql-style.md     ← SQL query rules
 │   │   │   ├── observability.md ← Logging, metrics, tracing
 │   │   │   ├── ci-cd.md         ← Pipelines and deployment
-│   │   │   ├── cloud.md         ← Cloud & containers
-│   │   │   ├── sql-style.md     ← SQL query rules
-│   │   │   ├── ui-ux.md         ← Design thinking, presets, standards, architecture
-│   │   │   ├── review.md        ← PR craft + reviewer checklist
+│   │   │   ├── cloud.md         ← Cloud and containers
+│   │   │   ├── ui-ux.md         ← Design contract, presets, UX standards
+│   │   │   ├── visual-density.md ← Visual density in depth
+│   │   │   ├── review.md        ← PR craft, reviewer checklist, fresh-context review
 │   │   │   ├── performance.md   ← Big-O budget, hot paths, profiling
-│   │   │   ├── domain.md        ← DDD-Lite: aggregates, VOs, ubiquitous language
-│   │   │   ├── visual-density.md ← Visual-density readability, in depth
-│   │   │   ├── writing-soul.md  ← Voice rules for prose, stated as tests, English
-│   │   │   ├── checklist-soul.md ← The writing passes: settle before, sweep after
+│   │   │   ├── domain.md        ← DDD-Lite: aggregates, value objects, ubiquitous language
+│   │   │   ├── versioning.md    ← Commit shape, the bump table, the two release modes
+│   │   │   ├── writing-soul.md  ← Voice rules for prose, stated as tests
+│   │   │   ├── checklist-soul.md ← The passes that check a draft against the soul
+│   │   │   ├── writing-readme.md ← The banner above a README's first paragraph
 │   │   │   └── lexicon/         ← Defect instances, one file per language
 │   │   ├── instructions/
-│   │   │   ├── templates/       ← Working protocol (workflow.md), agent roles, backlog seeds
-│   │   │   ├── flavor/          ← The architectural pattern chosen at init
-│   │   │   └── competencies/    ← Delivery contract: BFF envelope + UI contract execution
-│   │   ├── commands/            ← Cycle command files (feat/fix/docs/audit/land/end)
-│   │   └── tooling/             ← Inert bundle: lint rules, hooks, release scripts, gitignore sample
-│   └── backlog/                 ← You and the agent write it, classified by volatility
-│       ├── context.md           ← Project brief: vision, decisions, current state (committed)
-│       ├── stack.md             ← Developer-declared languages/runtimes (populated by land:, committed)
-│       ├── learned.md           ← Lessons learned: success patterns and research findings (committed)
-│       ├── troubleshoot.md      ← Troubleshooting: RCA logs and critical failure records (committed)
-│       ├── tasks.md             ← The queue and its record: ## Backlog + ## Done (committed)
-│       ├── session.md           ← Where this cycle stopped: ## Now + ## Active (gitignored)
-│       └── impact-map.md        ← Blast-radius map: created at PLAN, cleared at END (gitignored)
+│   │   │   ├── templates/       ← workflow.md, agent-roles.md, backlog seeds
+│   │   │   ├── flavor/          ← principles.md for the flavor chosen at init
+│   │   │   └── competencies/    ← delivery.md: BFF envelope and UI contract
+│   │   ├── commands/            ← One file per cycle: feat, fix, docs, audit, land, end
+│   │   └── tooling/             ← Hooks, lint rules, release scripts, samples. Nothing wired by default
+│   └── backlog/                 ← The developer and the agent write it, classified by volatility
+│       ├── context.md           ← Project brief: vision, commands, decisions (committed)
+│       ├── stack.md             ← Languages, runtimes and versions, written by land: (committed)
+│       ├── learned.md           ← Patterns and research findings worth keeping (committed)
+│       ├── troubleshoot.md      ← Failures, their root cause and the test that pins each (committed)
+│       ├── tasks.md             ← The queue and its record: ## Backlog and ## Done (committed)
+│       ├── session.md           ← Where this cycle stopped: ## Now and ## Active (gitignored)
+│       └── impact-map.md        ← The files the current plan touches (gitignored)
 ```
 
 `AGENTS.md` is the only root file written. Claude Code, Codex, Cursor, Copilot and most other harnesses read it natively; the few that need one line of configuration are listed in the README.
 
-It is never overwritten blindly. Ownership is recognised by the canonical title line the CLI always emits: without it, the file is yours, it is left alone, and the governance is written to `AGENTS.sdg.md` for you to merge.
+The CLI never overwrites it blindly. It recognises its own file by the canonical title line it always emits: without that line the file belongs to the developer, stays untouched, and the governance goes to `AGENTS.sdg.md` for the developer to merge.
 
-`CLAUDE.md` is never written. A pointer an earlier release left behind is removed, since Claude Code reads `AGENTS.md` only while no `CLAUDE.md` exists. A `CLAUDE.md` you wrote stays, and `init` warns when it lacks an `@AGENTS.md` import, because without one it hides the governance from Claude Code.
+`CLAUDE.md` is never written. A pointer an earlier release left behind is removed, because Claude Code reads `AGENTS.md` only while no `CLAUDE.md` exists. A `CLAUDE.md` the developer wrote stays, and `init` warns when it lacks an `@AGENTS.md` import.
 
----
-
-## AGENTS.md: the entry point
-
-The main entry point, at the repo root. Assembled at `init` from the skill catalog, so it has no counterpart under `src/assets/`. It is a **minimal router**: header + session start checklist + semantic router + skill registry. It carries no knowledge: it tells the agent which skill to load for the current task.
+On a Node project, `init` also adds `scripts/bump.mjs` and a `bump` script to `package.json`. `--no-bump` skips both.
 
 ---
 
-## .ai/kit/skills/: Engineering Skills (on-demand)
+## AGENTS.md: the router
 
-The skill directory is the **canonical Single Source of Truth** for engineering rules. Each file is a self-contained skill unit with a defined load convention (most load in Phase CODE; `testing.md` also loads in Phase TEST).
+`init` assembles it from the skill catalog, so it has no counterpart file under `src/assets/`. It holds the session start checklist, the Persistence Policy, the cycle prefixes and the skill registry, and no skill bodies: it tells the agent which file to load for the current task.
 
-### skills/code-style.md
+## .ai/kit/skills/
 
-The **Phase CODE core**. Two-line Security-First block, code-style rules (organized as compact tables: Form, Readability, Quality Control), and the `WorkChecklist` rule that Phase TEST verifies:
+Each skill is a self-contained ruleset that opens with `name` and `description` frontmatter. The sources live in [`src/assets/skills/`](../../src/assets/skills/).
 
-- **Form** (loaded at Phase CODE entry, verified at Phase TEST): eight binary items wired to narrative heuristic validators in `governance.mjs` (Pure entry point, Narrative Siblings, Explaining Returns, Revealing Module Pattern, Vertical Density, Boolean prefix, No framework abbreviations, No section banners). Known from the first line, which avoids the CODE → TEST → CODE rework loop; verified at TEST to gate the cycle.
+- **`code-style.md`** loads at every Phase CODE entry. It holds the code style rules, the YAGNI ladder with its never-cut list, and the `WorkChecklist`, whose Form items Phase TEST verifies on every changed file through the heuristics in `governance.mjs`.
+- **Domain skills** (`api-design.md`, `data-access.md`, `sql-style.md`, `ci-cd.md`, `cloud.md`, `ui-ux.md`) load when the task touches that domain. The router groups them as Backend and Frontend.
+- **Surgical skills** (`testing.md`, `security.md`, `observability.md`, `review.md`, `performance.md`, `domain.md`, `visual-density.md`, `writing-soul.md`) load only when the task directly touches their concern. `review.md` also holds the fresh-context review that an `[M]` or `[L]` change gets before the TEST stop.
+- **`versioning.md`** holds the commit subject the `commit-msg` hook enforces, the table that derives MAJOR, MINOR or PATCH from the commit type, and the two release modes a project declares as `release` in `context.md`: `derived`, where CI computes the version and writes `CHANGELOG.md` from the commit bodies, and `manual`, where the bump runs locally. `sdg-end.md` loads it on every Phase END.
+- **The writing skills.** `writing-soul.md` states each voice rule as a defect class plus the test that detects it. `checklist-soul.md` holds the passes that check a draft. `lexicon/<language>.md` holds the concrete instances of each class in one language, which `tooling/hooks/writing-lint.mjs` reads at runtime. `writing-readme.md` governs the banner above a README's first paragraph. `docs:`, `land:` and `end:` load the first two; `docs:` adds `writing-readme.md` when the cycle touches a README.
 
-### skills/testing.md
+## .ai/kit/instructions/
 
-Test principles: structure, regression requirements, red-green-refactor, integration vs. unit boundaries.
+- **`templates/workflow.md`**: the five-phase Working Protocol, the Guardrails table, Task Handoff and Token Discipline. Every cycle command loads it when the cycle opens.
+- **`templates/agent-roles.md`**: the handoff for a subagent that takes CODE and TEST. Loaded only when the agent delegates.
+- **`templates/backlog/`**: the seeds for the files in `.ai/backlog/`, written only when the file does not exist yet.
+- **`flavor/principles.md`**: the architectural flavor chosen at init (`vertical-slice`, `mvc`, `lite` or `legacy`), which says where logic belongs. The quick reference lists [the pipeline of each one](CHEATSHEET.md#architecture-flavors---flavor).
+- **`competencies/delivery.md`**: both sides of the delivery contract. Its Backend section holds the BFF response envelope and the execution flow; its Frontend section holds the wireframe discipline and the HTTP integration path. A `feat:` SPEC loads the half that matches the task.
 
-### skills/security.md
+There is no idiom catalog per language. The stack lives in `.ai/backlog/stack.md`, written by the `land:` cycle.
 
-Security rules: configuration isolation, PII handling, secret management, and the security pipeline (pre-commit hooks, dependency scanning, static analysis).
+## .ai/kit/commands/
 
-### skills/api-design.md · data-access.md · observability.md · ci-cd.md · cloud.md · sql-style.md · ui-ux.md · review.md · performance.md · domain.md
+One file per cycle, loaded when its prefix opens the cycle: `sdg-feat.md`, `sdg-fix.md`, `sdg-docs.md`, `sdg-audit.md`, `sdg-land.md` and `sdg-end.md`. None of them loads at session start.
 
-Domain skills. Each covers its concern end-to-end. For example, `api-design.md` defines the response envelope, error code table, REST hierarchy, and standardization protocols. Loaded only when the current task touches the relevant domain. The operational trio (`review.md`, `performance.md`, `domain.md`) covers PR/review craft, complexity budget + hot-path discipline, and DDD-Lite vocabulary.
+## .ai/kit/tooling/
 
-### skills/versioning.md
+A catalog copied in and wired to nothing. The developer activates each piece by hand, following [`tooling/README.md`](../../src/assets/tooling/README.md).
 
-Commit shape and release mechanics. It holds the subject format the `commit-msg` hook enforces, the table that derives MAJOR / MINOR / PATCH from the commit types, and the two release modes a project declares as `release` in `context.md`: `derived`, where CI computes the version and generates `CHANGELOG.md` from the commit bodies, and `manual`, where `npm run bump` runs locally and the release commit carries the number. An absent key reads as `manual`.
-
-Loaded by command rather than by the router: `sdg-end.md` loads it on every Phase END, `sdg-land.md` loads it to ask a new project which mode it wants. `code-style.md`, `ci-cd.md`, `review.md` and `workflow.md` cite it instead of restating the format.
-
-### skills/writing-readme.md
-
-The banner above the first paragraph, which `writing-soul.md` does not describe: logo dimensions, the title inside the centered block, the tagline and its link to the translated README, badge grouping in the order identity, stack, meta. Everything under the banner is prose the soul governs unchanged. Loaded by `sdg-docs.md` when the cycle touches a README.
-
-### skills/writing-soul.md · checklist-soul.md · lexicon/
-
-The voice governance, loaded on `docs:`, `land:` and `end:`, and on any Phase CODE task that writes prose.
-
-`writing-soul.md` holds the rules, in English, each stated as a defect class plus the test that detects it. `checklist-soul.md` holds the passes: Part 1 settles audience, goal and language before the first line, Part 2 sweeps the draft after the last line of the cycle. `lexicon/<language>.md` holds the concrete instances of each class in one language, keyed by the class name.
-
-The split is what makes an English rule fire on a document delivered in another language. A rule written as a test crosses languages; a rule written as a word does not. `tooling/hooks/writing-lint.mjs` reads the lexicon at runtime, so adding a term or a whole language is a text edit, never a code change. A project that wants a different voice from the canon swaps its lexicon and leaves the rules alone.
-
----
-
-## .ai/kit/instructions/: Non-skill rulesets
-
-### instructions/templates/
-
-- `workflow.md`: The 5-phase Working Protocol (SPEC → PLAN → CODE → TEST → END), Task Handoff rule, Token Discipline rule. This is the **only** file that is always in context beyond `AGENTS.md`.
-- `agent-roles.md`: Multi-agent handoff protocol (Planning + Fast roles).
-- `context.md`, `tasks.md`, `learned.md`, `troubleshoot.md`: templates for the `.ai/backlog/` files.
-
-### instructions/flavors/
-
-Rules for the project's architectural pattern. Defines where logic belongs. For example, whether business logic lives in UseCases, Services, or Controllers. One flavor per project: `vertical-slice`, `mvc`, `lite`, `legacy`.
-
-### instructions/competencies/
-
-A single file, `delivery.md`, covering both sides of the delivery contract with internal discriminators:
-
-- `## Backend (load if the task is server-side)`: BFF response envelope (SSOT), execution flow (Validate → Load Dep → Business Rules → Core Logic → Persist → Filter → Envelope), typed layer results, entry-point discipline.
-- `## Frontend (load if the task is UI)`: Design Thinking, wireframe discipline, visual layers, HTTP integration via `apiClient → Service → useApi → Component`, component hierarchy rules.
-
-Loaded on demand by the SPEC phase of a `feat:` cycle when the cycle command requests it. The agent picks whichever half matches the task.
-
-> **Stack specificity.** Static language idiom catalogs were retired in v5.0. Stack lives in `.ai/backlog/stack.md`, written by the `land:` cycle, so the agent reads it on every session to know which languages and versions the project uses.
-
----
-
-## .ai/kit/commands/: Cycle Command Files
-
-Context files loaded on demand when a specific cycle is triggered:
-
-- `sdg-feat.md`: loaded when the agent enters a `feat:` cycle
-- `sdg-fix.md`: loaded when the agent enters a `fix:` cycle
-- `sdg-docs.md`: loaded when the agent enters a `docs:` cycle
-- `sdg-audit.md`: loaded when the agent enters an `audit:` cycle
-- `sdg-land.md`: loaded when the agent enters a `land:` cycle
-- `sdg-end.md`: loaded when the agent enters the `end:` phase
-
-These files are not loaded on session start, only when the relevant cycle begins.
-
----
+| Directory             | What it holds                                                                              |
+| :-------------------- | :----------------------------------------------------------------------------------------- |
+| `hooks/`              | `git-guard.mjs`, the enforced half of the commit gate, and the advisory `writing-lint.mjs` |
+| `husky/`              | `commit-msg` and `pre-commit` hooks                                                        |
+| `eslint-rules/`       | The local ESLint rules behind the Form check                                               |
+| `eslint-config/`      | An ESLint snippet and a `.prettierrc`                                                      |
+| `scripts/`            | `bump.mjs` and `prune-backlog.mjs`                                                         |
+| `line-endings/`       | A `.gitattributes` and an `.editorconfig` that agree on LF                                 |
+| `gitignore/`          | The managed `.gitignore` block                                                             |
+| `github-actions/`     | A release-please workflow and its config, for the `derived` release mode                   |
+| `biome/`, `sqlfluff/` | Baseline configs for Biome and SQLFluff                                                    |
 
 ## .ai/backlog/
 
-Committed, except the two volatile files. You and the agent write this directory, and it persists state across sessions so any agent, in any session, can pick up where the last one stopped, and it is versioned so the team sees what the project learned instead of one machine keeping it.
+The developer and the agent write this directory. It carries state across sessions, so any agent in any session can continue where the last one stopped, and it is versioned so the team reads what the project learned.
 
-**context.md**: written on first run, maintained by the agent at the END of each cycle. Captures:
-
-- Vision, architectural decisions, and their rationale
-- Developer metadata (`## Partner`)
-
-**stack.md**: placeholder written on install, populated by the `land:` cycle. Single source of truth for project stack (languages, runtimes, frameworks, versions) grouped by role (Backend / Frontend / Data / Scripts). Phase CODE reads this file on every session.
-
-**tasks.md**: the queue and its record, committed. `## Backlog` holds the work not yet taken, with the reasoning behind each decision, and `## Done` the closed entries the `prune` keeps to the last three. A backlog entry is the one thing here no other file carries, which is why the file is versioned.
-
-**session.md**: where this cycle stopped, for this developer, gitignored. `## Now` holds the objective and `## Active` the task in flight, marked `[IN_PROGRESS]` with the phase the banner reads. It stays local because two developers in two tasks would collide on the one line that matters, and the conflict would land inside markdown the agent reads as instruction.
-
-The agent reads both at session start before accepting new work.
-
-**learned.md**: the "Brain" of successful patterns. Captures:
-
-- Research findings and validated hypotheses
-- Reusable architecture patterns that worked well for this project
-- Specialized terminology and "Staff" level engineering insights
-
-**troubleshoot.md**: the "Immune System" of the project. Captures:
-
-- **Root Cause Analysis (RCA)** for every fix executed
-- Failure logs and "gotchas" discovered during development
-- Technical debt and fragile areas to be avoided in future cycles
-
-**impact-map.md**: the "Blast-Radius Filter" of the active cycle. Volatile by design:
-
-- **Created** at Phase PLAN via `git diff --name-only HEAD` + import scanning
-- **Read** at Phase CODE: the agent loads only the files listed here, ignoring the rest of the codebase
-- **Cleared** at Phase END: reset to an idle state so the next cycle starts clean
-- **Regenerated** at Session Start if missing: the agent rebuilds it from `git diff` if an `[IN_PROGRESS]` task is detected in `session.md`
-
-The map contains three sections: `## Changed` (files directly modified), `## Blast Radius` (files that import or call a changed file), and `## Tests at Risk` (test files covering blast-radius files). A `## Safe` section optionally marks directories that can be skipped entirely.
-
-This design is inspired by the structural philosophy of [code-review-graph](https://github.com/tirth8205/code-review-graph), a knowledge graph tool that uses Tree-sitter ASTs and MCP to give AI agents precise context. Instead of parsing ASTs or running a Python server, the Impact Map achieves the same goal through a lightweight protocol: the agent uses `git diff` and import scanning to build a minimal read-list at the start of every cycle. No external tools and no extra dependencies: a markdown file and a disciplined workflow.
+- **`context.md`**: the project brief. Vision, the project's commands and declarations (`test`, `lint`, `build`, `release`, `bump`, `eol`), decisions and their reasons, and the developer's details under `## Partner`.
+- **`stack.md`**: languages, runtimes, frameworks and versions grouped by role (Backend, Frontend, Data, Scripts). A placeholder until `land:` fills it; edit it directly when versions change.
+- **`tasks.md`**: the queue and its record. `## Backlog` holds work not yet taken, with the reasoning behind each item; `## Done` holds closed cycles, pruned to the last three.
+- **`session.md`**: where this cycle stopped, for this developer. `## Now` holds the objective and `## Active` the plan, with the task in flight marked `[IN_PROGRESS]` and the phase the banner reads. It stays local because two developers in two tasks would collide on the one line that matters.
+- **`learned.md`**: patterns and findings worth reusing, one lesson per entry with its origin, pruned when it stops being true.
+- **`troubleshoot.md`**: failures with their root cause, each naming the regression test that pins it.
+- **`impact-map.md`**: written at Phase PLAN and reset at Phase END. `## Changed` lists the files the tasks will touch, `## Blast Radius` what imports them, then `## Tests at Risk` and `## Safe`.
 
 ---
 
-## How the Files Are Used Per Phase
+## What loads, and when
 
-| Phase         | Files read                                                                                                 |
-| :------------ | :--------------------------------------------------------------------------------------------------------- |
-| Session Start | `.ai/backlog/context.md`, `.ai/backlog/stack.md`, `.ai/backlog/tasks.md`                                   |
-| SPEC          | `commands/sdg-<cycle>.md`, `.ai/backlog/context.md`, `.ai/backlog/tasks.md`                                |
-| PLAN          | `.ai/backlog/tasks.md`, `.ai/backlog/impact-map.md` (written here via `git diff`)                          |
-| CODE          | `skills/code-style.md` + domain skills + `competencies/delivery.md` on demand, `.ai/backlog/impact-map.md` |
-| TEST          | `skills/testing.md`, including **Audit Gate** (drift detection) and **Circuit Breaker** (3-strike rule)    |
-| END           | `.ai/backlog/context.md`, `.ai/backlog/tasks.md`, `learned.md`, `troubleshoot.md`, `commands/sdg-end.md`   |
+`AGENTS.md` and the three files Session Start reads are in context from the first message. Everything else loads when a phase or a domain calls for it.
+
+| Moment        | Files read                                                                                                |
+| :------------ | :-------------------------------------------------------------------------------------------------------- |
+| Session start | `AGENTS.md`, `.ai/backlog/context.md`, `stack.md`, `session.md`                                           |
+| SPEC          | `templates/workflow.md`, `commands/sdg-<cycle>.md`, `competencies/delivery.md` on a `feat:` that needs it |
+| PLAN          | writes `session.md` and `impact-map.md`                                                                   |
+| CODE          | `skills/code-style.md`, `flavor/principles.md`, the domain skills the task touches                        |
+| TEST          | the Form items of `code-style.md`; `review.md` for the fresh-context review of an `[M]` or `[L]` change   |
+| END           | `commands/sdg-end.md`, `versioning.md`, the writing skills, `tasks.md`, `learned.md`, `troubleshoot.md`   |
+
+### What it costs
+
+English prose runs at roughly four bytes per token, code at roughly three. A session costs the router and the Session Start files, plus `workflow.md` once a cycle opens, plus the skills each phase loads. Two tests hold that cost to a number someone raises on purpose:
+
+- **Token Budget Guard**, in [`instruction-assembler.test.mjs`](../../src/engine/lib/domain/instruction-assembler.test.mjs), caps the size of `AGENTS.md`.
+- **Phase CODE budget**, in [`context-budget.test.mjs`](../../src/engine/lib/domain/context-budget.test.mjs), caps the router, `workflow.md`, `code-style.md` and the largest flavor measured together.
+
+Each test holds its ceiling and the reason behind it; this page does not repeat the numbers.
