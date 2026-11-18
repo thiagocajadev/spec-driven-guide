@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+- **The backlog carries an audit of what the agent-skills ecosystem has to offer.** Five read-only passes covered the most-starred skill repositories, `akitaonrails/ai-memory` and `ai-jail`, `mattpocock/skills`, ponytail, the November 2026 guidance for the Claude 5 family and GPT-6.2, and accounts from Anthropic staff. Eleven concepts became backlog items, each with its source and the file it lands in, and most of them remove text: current models treat emphasis and recited checklists as noise, and a rule that cannot bend belongs in a hook. Five were refused with their reason under `Decided against`, among them unattended loops as a default and memory kept outside the repository. No shipped file changed.
+
 ### Fixed
 
 ## [11.0.1] - 2026-10-18
