@@ -21,12 +21,14 @@
 
 | Signal                                                      | Bump  |
 | :---------------------------------------------------------- | :---- |
-| `feat:`                                                     | MINOR |
-| `fix:`, `perf:`                                             | PATCH |
 | `!` after the type or scope, or a `BREAKING CHANGE:` footer | MAJOR |
-| `docs`, `chore`, `refactor`, `test`, plus `audit`, `land`   | none  |
+| `feat:`                                                     | MINOR |
+| `fix:`, `perf:`, `docs:`, `land:`, `audit:`, `refactor:`    | PATCH |
+| `chore:`, `test:`                                           | none  |
 
 MAJOR breaks a published contract, MINOR adds one, PATCH holds it. The table decides which; judgment decides nothing.
+
+A type releases when its cycle writes a changelog entry, and `chore` and `test` are the two that do not. The release-please config hides exactly those two, `bump.mjs` applies the same levels in both its forms, and `version-table.test.mjs` holds the three to this table.
 
 ## Release mode
 

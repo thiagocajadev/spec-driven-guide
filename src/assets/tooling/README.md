@@ -28,8 +28,9 @@ promotes `## [Unreleased]` in `CHANGELOG.md` to that version, dated today.
 node .ai/kit/tooling/scripts/bump.mjs <feat|fix|docs|land|audit|major|patch|minor|auto>
 ```
 
-- A cycle type maps to a level: `feat` and `audit` to MINOR, `fix`, `docs` and
-  `land` to PATCH, `major` to MAJOR. `patch` and `minor` pass through.
+- A cycle type maps to a level by the table in `versioning.md`: `feat` to
+  MINOR, `fix`, `docs`, `land` and `audit` to PATCH, `major` to MAJOR. `patch`
+  and `minor` pass through.
 - `auto` reads the commits since the last tag and applies the table
   `release-please` runs in CI, so a project that starts on a local bump and
   later wires the action keeps producing the same numbers.

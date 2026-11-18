@@ -126,7 +126,7 @@ describe("bump.mjs", () => {
     it("maps the cycle types to a semver level", () => {
       const noCommits = () => [];
 
-      const expectedLevels = ["minor", "patch", "patch", "minor", "major"];
+      const expectedLevels = ["minor", "patch", "patch", "patch", "major"];
       const actualLevels = ["feat", "fix", "land", "audit", "major"].map(
         (type) => resolveLevel(type, noCommits),
       );
@@ -163,8 +163,8 @@ describe("bump.mjs", () => {
   });
 
   describe("detectBumpType()", () => {
-    it("returns patch for fix and chore commits", () => {
-      const inputMessages = ["fix: corrige typo", "chore: atualiza deps"];
+    it("returns patch for fix and docs commits", () => {
+      const inputMessages = ["fix: corrige typo", "docs: corrige o readme"];
 
       const expectedTypes = ["patch", "patch"];
       const actualTypes = inputMessages.map(detectBumpType);
@@ -203,10 +203,24 @@ describe("bump.mjs", () => {
       assert.equal(actualType, expectedType);
     });
 
-    it("returns skip for chore: bump version commits", () => {
-      const inputMessage = "chore: bump version to 1.2.3";
+    it("returns skip for chore and test commits, scoped or not", () => {
+      const inputMessages = [
+        "chore: bump version to 1.2.3",
+        "chore(deps): atualiza deps",
+        "test: cobre o parser",
+      ];
 
-      const expectedType = "skip";
+      const expectedTypes = ["skip", "skip", "skip"];
+      const actualTypes = inputMessages.map(detectBumpType);
+
+      assert.deepEqual(actualTypes, expectedTypes);
+    });
+
+    it("returns major for a chore that breaks a contract", () => {
+      const inputMessage =
+        "chore: remove o script legado\n\nBREAKING CHANGE: sem bump-version.mjs";
+
+      const expectedType = "major";
       const actualType = detectBumpType(inputMessage);
 
       assert.equal(actualType, expectedType);
@@ -231,10 +245,11 @@ describe("bump.mjs", () => {
       assert.throws(deriveEmpty, expectedError);
     });
 
-    it("refuses a range made only of bump commits", () => {
-      const deriveSkipped = () => deriveLevel(["chore: bump version to 2.0.0"]);
+    it("refuses a range where no commit releases", () => {
+      const deriveSkipped = () =>
+        deriveLevel(["chore: bump version to 2.0.0", "test: cobre o parser"]);
 
-      const expectedError = /itself a bump/;
+      const expectedError = /chore and test never do/;
 
       assert.throws(deriveSkipped, expectedError);
     });

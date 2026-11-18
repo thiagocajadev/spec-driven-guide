@@ -26,7 +26,7 @@ const LEVEL_BY_TYPE = {
   fix: "patch",
   docs: "patch",
   land: "patch",
-  audit: "minor",
+  audit: "patch",
   major: "major",
   patch: "patch",
   minor: "minor",
@@ -95,25 +95,28 @@ export function deriveLevel(commitMessages) {
   const strongestLevel = selectStrongestLevel(detectedTypes);
 
   if (strongestLevel === null) {
-    throw new Error("Every commit since the last tag is itself a bump.");
+    throw new Error(
+      "No commit since the last tag releases: chore and test never do.",
+    );
   }
 
   return strongestLevel;
 }
 
 /**
- * why: the same table release-please applies in CI. A project that starts on a
- * local bump and later wires the action keeps producing the same numbers, so
- * moving between the two modes never renumbers a release.
+ * why: the table in `versioning.md`, which the release-please config applies
+ * in CI. A project that starts on a local bump and later wires the action keeps
+ * producing the same numbers, so moving between the two modes never renumbers
+ * a release. `version-table.test.mjs` holds this function to that table.
  */
 export function detectBumpType(commitMessage) {
   const [firstLine] = commitMessage.split("\n");
   const footer = commitMessage.split("\n").slice(1).join("\n");
 
   const BUMP_RULES = [
-    { test: () => /^chore:\s*bump version/i.test(firstLine), value: "skip" },
     { test: () => /^[a-z]+(\([^)]+\))?!:/.test(firstLine), value: "major" },
     { test: () => /BREAKING CHANGE:/m.test(footer), value: "major" },
+    { test: () => /^(chore|test)(\([^)]+\))?:/.test(firstLine), value: "skip" },
     { test: () => /^feat(\([^)]+\))?:/.test(firstLine), value: "minor" },
   ];
 

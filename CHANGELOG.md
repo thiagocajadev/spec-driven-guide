@@ -9,11 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+## [11.0.2] - 2026-11-18
+
 ### Changed
 
 - **The backlog carries an audit of what the agent-skills ecosystem has to offer.** Five read-only passes covered the most-starred skill repositories, `akitaonrails/ai-memory` and `ai-jail`, `mattpocock/skills`, ponytail, the November 2026 guidance for the Claude 5 family and GPT-6.2, and accounts from Anthropic staff. Eleven concepts became backlog items, each with its source and the file it lands in, and most of them remove text: current models treat emphasis and recited checklists as noise, and a rule that cannot bend belongs in a hook. Five were refused with their reason under `Decided against`, among them unattended loops as a default and memory kept outside the repository. No shipped file changed.
 
 ### Fixed
+
+- **One bump table, and a test that holds the copies to it.** `versioning.md` said `docs`, `audit` and `land` release nothing, `bump.mjs` released `audit` as MINOR and the other two as PATCH, `auto` released every commit type including `chore` and `test`, and the self-audit failed any cycle that left its changelog entry unreleased. The last `audit:` cycle followed the table, and `npm run gate` went red on `main`. The table now reads: `feat` MINOR; `fix`, `perf`, `docs`, `land`, `audit` and `refactor` PATCH; `chore` and `test` nothing. A type releases when its cycle writes a changelog entry, which is also what the release-please config already expressed by hiding exactly `chore` and `test`. `version-table.test.mjs` reads the table and fails when `bump.mjs`, in either form, or the release-please config disagrees with it. A `chore:` carrying `BREAKING CHANGE:` still releases MAJOR.
 
 ## [11.0.1] - 2026-10-18
 
