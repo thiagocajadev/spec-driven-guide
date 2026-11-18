@@ -288,25 +288,25 @@ function isScopedPath(filePath) {
     return isInvalid;
   }
 
-  const basename = path.basename(filePath);
+  // why: Windows sends backslashes, which path.sep leaves alone on Linux CI.
+  const normalizedPath = filePath.replace(/\\/g, "/");
+  const basename = path.posix.basename(normalizedPath);
 
   if (EXCLUDED_BASENAMES.has(basename)) {
     const isExcluded = false;
     return isExcluded;
   }
 
-  if (isLexiconPath(filePath)) {
+  if (isLexiconPath(normalizedPath)) {
     const isLexicon = false;
     return isLexicon;
   }
 
-  const isInScope = SCOPE_REGEXES.some((regex) => regex.test(filePath));
+  const isInScope = SCOPE_REGEXES.some((regex) => regex.test(normalizedPath));
   return isInScope;
 }
 
-function isLexiconPath(filePath) {
-  const normalizedPath = filePath.split(path.sep).join("/");
-
+function isLexiconPath(normalizedPath) {
   const isInLexiconTree = normalizedPath.includes("/skills/lexicon/");
   return isInLexiconTree;
 }

@@ -116,6 +116,34 @@ describe("writing-lint.isScopedPath", () => {
 
     assert.ok(actualIsRejected);
   });
+
+  it("accepts an absolute Windows path, which Claude Code sends with backslashes", () => {
+    const inputPath = "D:\\repo\\docs\\reference\\GUIDE.md";
+    const actualIsScoped = isScopedPath(inputPath);
+
+    assert.ok(actualIsScoped);
+  });
+
+  it("accepts a relative path written with backslashes", () => {
+    const inputPath = "src\\assets\\skills\\code-style.md";
+    const actualIsScoped = isScopedPath(inputPath);
+
+    assert.ok(actualIsScoped);
+  });
+
+  it("rejects the lexicon when its path uses backslashes", () => {
+    const inputPath = "D:\\repo\\.ai\\kit\\skills\\lexicon\\en.md";
+    const actualIsRejected = !isScopedPath(inputPath);
+
+    assert.ok(actualIsRejected);
+  });
+
+  it("rejects a working-state filename when its path uses backslashes", () => {
+    const inputPath = "D:\\repo\\docs\\learned.md";
+    const actualIsRejected = !isScopedPath(inputPath);
+
+    assert.ok(actualIsRejected);
+  });
 });
 
 describe("writing-lint.extractContent", () => {

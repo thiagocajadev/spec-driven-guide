@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [11.1.2] - 2026-11-18
+
+### Fixed
+
+- **`writing-lint` fires on Windows.** Claude Code on Windows sends `file_path` with backslashes, and `isScopedPath` tested it against patterns written for `/`, so every Markdown write fell out of scope and the hook exited without a word. The path is now normalized once, before the excluded names, the lexicon check and the scope patterns. It replaces backslashes directly rather than splitting on `path.sep`, which is `/` on Linux and leaves a backslash path as it came; four tests feed backslash paths and run on both CI systems.
+
 ## [11.1.1] - 2026-11-18
 
 ### Fixed

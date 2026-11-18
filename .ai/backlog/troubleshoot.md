@@ -4,6 +4,13 @@
 
 ## Failure Records (RCA)
 
+- **2026-11-18 `writing-lint` silent on Windows**:
+  - **Issue**: The hook never reported a hit on Windows. Every Markdown write fell out of scope and the hook exited 0.
+  - **Root Cause**: `isScopedPath` tested the raw `file_path` against scope patterns written for `/`, and Claude Code on Windows sends backslashes. Only `isLexiconPath` normalized, and it split on `path.sep`, which is `/` on Linux.
+  - **Gotcha**: `path.sep` normalizes only for the platform the code runs on. A path that crosses platforms, such as a hook payload or a test fixture, needs the backslash replaced directly.
+  - **Fix**: RESOLVED in v11.1.2. `isScopedPath` normalizes once and feeds the result to the basename, lexicon and scope checks.
+  - **Pinned by**: `src/assets/tooling/hooks/writing-lint.test.mjs`, "accepts an absolute Windows path, which Claude Code sends with backslashes", with three sibling backslash cases under `writing-lint.isScopedPath`.
+
 - **2026-04-09 npm publish missing files**:
   - **Issue**: 5 critical runtime files in `src/engine/bin/` were missing from the published npm package.
   - **Root Cause**: The `files` field in `package.json` was prunable and didn't explicitly include the `bin` directory or its subfolders correctly after the monorepo extraction.
