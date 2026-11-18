@@ -1,4 +1,4 @@
-# Troubleshooting & RCA Logs — sdg-agents-cli
+# Troubleshooting & RCA Logs: spec-driven-guide
 
 > Persistent repository for failure records, Root Cause Analysis (RCA), and technical debt.
 
@@ -57,5 +57,4 @@
 
 ## Technical Debt & Risks
 
-- **CLAUDE.md tracking**: Since `CLAUDE.md` is at the repo root and used for governance, it is tracked by git. Local testing of `sdg init` can accidentally overwrite it. Always use a `/tmp/` target for CLI functional testing.
-- **Prettier Debt**: Over 1000 quote-style violations exist. Fixing these in a single commit would create massive git noise. Plan a dedicated `chore: format cleanup` cycle.
+- _(none)_

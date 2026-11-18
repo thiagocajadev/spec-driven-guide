@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [11.1.3] - 2026-11-18
+
+### Fixed
+
+- **The backlog holds no open item.** Risk-tiered gates, the last open question, moved to the decided-against list with its reason. A gate here is a stop, not a queue of reviewers, and what Anthropic's review tiers by risk is already tiered: the SPEC scales with the demand, and the fresh-context review runs only on larger changes or ones that touch auth, data or money. Two technical-debt entries in `troubleshoot.md` described a `CLAUDE.md` the repository no longer has and formatting violations Prettier no longer reports, so they are gone, and `stack.md` declares the stack it was missing, pointing at `engines.node` instead of a version number.
+
 ## [11.1.2] - 2026-11-18
 
 ### Fixed
