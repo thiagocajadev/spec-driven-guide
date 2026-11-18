@@ -1,8 +1,11 @@
+---
+name: security
+description: AppSec tactics and the DevSecOps pipeline. Load in Phase CODE for auth, validation, secrets or other security-sensitive code, and in Phase TEST or CI for pipeline gates.
+---
+
 # Security: AppSec Tactics & DevSecOps Pipeline
 
 <ruleset name="Security">
-
-> Load in **Phase CODE** for security-sensitive code, **Phase TEST / CI** for pipeline gates.
 
 ## Baseline
 
@@ -57,7 +60,7 @@ A10 is the category most easily mistaken for a style concern. It covers improper
 
 ## Part 2: DevSecOps Pipeline (Staff Lifecycle)
 
-> **FAIL CLOSED POLICY**: Any security gate failure MUST block artifact promotion.
+> **Fail closed**: a failing security gate blocks the artifact from being promoted. A gate that only warns gets read once and then ignored, and the artifact ships with the finding inside.
 
 **Mandatory Principles**: Secure by Default (Deny-All) | Least Privilege | Zero Trust | Everything Auditable
 
@@ -126,7 +129,7 @@ Fail Closed if: untrusted signature or critical CVE.
 
 <rule name="ObservabilityIR">
 
-**Logging**: Log logins, logouts, auth failures, sensitive actions. NEVER log secrets/PII.
+**Logging**: Log logins, logouts, auth failures, sensitive actions. Secrets and PII stay out of every log line, since logs travel to places the data was never cleared for.
 
 **Incident Response**:
 

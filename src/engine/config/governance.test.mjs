@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { NARRATIVE_CHECKLIST } from "./governance.mjs";
+import { NARRATIVE_CHECKLIST, parseWorkChecklist } from "./governance.mjs";
 
 const EXPECT_PASS = true;
 const EXPECT_FAIL = false;
@@ -47,6 +47,34 @@ describe("governance.NARRATIVE_CHECKLIST", () => {
 
       assert.ok(isPresent, failureMessage);
     }
+  });
+});
+
+describe("governance.parseWorkChecklist", () => {
+  it("refuses a code-style without the WorkChecklist rule", () => {
+    const parseMissingRule = () => parseWorkChecklist("# Code Style\n");
+
+    const expectedError = /no <rule name="WorkChecklist">/;
+
+    assert.throws(parseMissingRule, expectedError);
+  });
+
+  it("refuses a WorkChecklist rule without a Form section", () => {
+    const content = '<rule name="WorkChecklist">\n\n## Work Checklist\n</rule>';
+    const parseMissingForm = () => parseWorkChecklist(content);
+
+    const expectedError = /no ### Form section/;
+
+    assert.throws(parseMissingForm, expectedError);
+  });
+
+  it("refuses a Form section that lists no items", () => {
+    const content = '<rule name="WorkChecklist">\n### Form\n\nprose\n</rule>';
+    const parseEmptyForm = () => parseWorkChecklist(content);
+
+    const expectedError = /lists no items/;
+
+    assert.throws(parseEmptyForm, expectedError);
   });
 });
 

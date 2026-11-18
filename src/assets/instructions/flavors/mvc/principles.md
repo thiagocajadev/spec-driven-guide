@@ -1,6 +1,6 @@
 # MVC Architecture Principles
 
-> Inherits Security, Reliability, Narrative from code-style.md.
+> Inherits Security, Reliability, Narrative and the YAGNI ladder (with its never-cut list) from code-style.md.
 
 ## MVC Pipeline
 
@@ -10,7 +10,7 @@
 - **Controller**: HTTP entry. Receives Request, calls Service, returns Response/View.
 - **Service**: Business orchestration. Returns `Result<T>`.
 - **Repository**: Persistence only. Returns raw entities.
-- **Response/ViewModel**: External contract. Raw entities NEVER exposed.
+- **Response/ViewModel**: External contract. Raw entities stay behind it, so a new column never reaches a client by accident.
 
 ## Thin Controllers & Services
 
@@ -44,4 +44,4 @@
 
 **DO NOT**: Business logic in Controllers · Access Repository from Controllers (bypass Service) · Return raw entities · Mix HTTP concerns in Services.
 
-> DO NOT rules ALWAYS override DO rules.
+> When a DO and a DO NOT pull in opposite directions, the DO NOT wins: it names a failure already paid for.

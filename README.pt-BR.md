@@ -46,9 +46,10 @@ O agente propõe a SPEC a partir do contexto que ele já tem do projeto, e você
 | :----------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Ciclo**          | Uma unidade de trabalho, aberta por um prefixo (`feat:`, `fix:`, `docs:`, `audit:`, `land:`) e fechada por `end:`                                                                                                             |
 | **Fase**           | Um dos cinco passos que o ciclo percorre: SPEC, PLAN, CODE, TEST, END                                                                                                                                                         |
+| **Onda**           | Num ciclo com um pedido amplo, um grupo de tarefas do PLAN que mexem nos mesmos arquivos, para cada arquivo ser editado uma vez só; cada onda termina com os testes verdes                                                    |
 | **Skill**          | Um conjunto de regras sobre um assunto, em `.ai/kit/skills/`, carregado só quando o domínio do ciclo pede                                                                                                                     |
 | **Flavor**         | O formato arquitetural do projeto, escolhido na instalação: vertical slice, MVC, lite ou legacy                                                                                                                               |
-| **Work Checklist** | A barreira binária em `code-style.md`: itens de Intent recitados ao entrar em CODE, itens de Form conferidos em TEST                                                                                                          |
+| **Work Checklist** | Os itens de Form em `code-style.md`: a forma que o código tem desde a primeira linha, conferida em TEST                                                                                                                       |
 | **Backlog**        | `.ai/backlog/`, o que você e o agente escrevem sobre este projeto: resumo, stack, padrões, falhas e a fila de tarefas. Versionado, para o time ler                                                                            |
 | **Kit**            | `.ai/kit/`, o que o CLI instala: skills, protocolo, comandos e ferramentas. Reescrito a cada instalação e restaurado a partir do manifesto, por isso fica fora do git                                                         |
 | **Harness**        | Tudo em volta do modelo: os guias que o orientam antes de agir, os sensores que o conferem depois, e a memória que ele carrega. O SDG é a camada portátil disso; Claude Code, Cursor ou Codex é o runtime onde ele se instala |
@@ -58,9 +59,9 @@ O agente propõe a SPEC a partir do contexto que ele já tem do projeto, e você
 <details>
 <summary><strong>O que o conjunto de instruções cobre</strong></summary>
 
-- **Protocolo de trabalho**: um ciclo de 5 fases (SPEC → PLAN → CODE → TEST → END). Ele traz um **Work Checklist** (lista de verificação que o agente recita antes de escrever código) e um **Circuit Breaker** (disjuntor · para o agente após 3 tentativas na mesma falha). Você aprova SPEC e PLAN antes de qualquer linha ser escrita, e revisa o resultado depois do TEST.
+- **Protocolo de trabalho**: um ciclo de 5 fases (SPEC → PLAN → CODE → TEST → END). Ele traz um **Work Checklist** (itens de forma que o código cumpre, conferidos na fase TEST) e um **Circuit Breaker** (disjuntor · para o agente após 3 tentativas na mesma falha). Você aprova SPEC e PLAN antes de qualquer linha ser escrita, e revisa o resultado depois do TEST.
 
-- **Estilo de código e quality gates** (barreiras de qualidade): uma regra só, o `WorkChecklist` em `code-style.md`. Ela se divide em itens de Intent (intenção · recitados ao entrar na fase CODE) e de Form (forma · verificados na fase TEST).
+- **Estilo de código e quality gates** (barreiras de qualidade): uma regra só, o `WorkChecklist` em `code-style.md`. Seus itens de Form (forma) são verificados na fase TEST pelas heurísticas de `governance.mjs`.
 
 - **Skills sob demanda**: cada skill (habilidade · um arquivo de regras sobre um assunto) carrega somente quando o ciclo precisa dela. Há skills para code style, testes, segurança, API, acesso a dados, observabilidade, CI/CD, cloud, SQL, UI/UX, revisão, performance, modelagem de domínio, versionamento e escrita de README.
 
@@ -194,7 +195,7 @@ O protocolo assume as rédeas em dez pontos, para que você não seja quem pega 
 | **Mensagem classificada**  | Um recado no meio do ciclo reabrindo ele em silêncio como um ciclo novo                         |
 | **Assumptions declaradas** | Uma leitura não dita entregue como se fosse o pedido. Onde duas leituras divergem, ele pergunta |
 | **Gates de SPEC e PLAN**   | Código escrito antes de você concordar com o contrato                                           |
-| **Work Checklist**         | Um arquivo escrito antes dos padrões estarem na cabeça do agente                                |
+| **Form check**             | Código fora dos padrões chegando à revisão                                                      |
 | **Trava de escopo**        | A refatoração que ninguém pediu, pegando carona no fix                                          |
 | **Blocker à vista**        | Um contorno inventado em silêncio no lugar de uma pergunta feita em voz alta                    |
 | **Circuit Breaker**        | O loop: 3 TESTs falhos, 3 erros iguais, ou 3 turnos sem progresso, e então para                 |

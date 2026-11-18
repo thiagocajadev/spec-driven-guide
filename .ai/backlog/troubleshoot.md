@@ -16,6 +16,7 @@
     1. **Protocol**: Failed to follow Step 150 of the SDG constitution (Explicit Push Approval).
     2. **Parity**: Over-specified the PT-BR README by including internal tooling files that are not part of the standard CLI installation.
   - **Fix**: RESOLVED. Reverted PT-BR README to match EN mirror; logged the breach to enforce stricter Command/Control loops.
+  - **Pinned by**: `src/assets/tooling/hooks/git-guard.test.mjs`, "refuses git push in every form the harness may send" (v11.1.0), where the hook recipe is installed.
 
 - **2026-04-10 Changelog Version Mismatch**:
   - **Issue**: Cycle terminators (\`end:\`) were defaulting to \`## [Unreleased]\` headers, causing a disconnect in projects with automated versioning (\`auto-bump\`).
@@ -33,6 +34,7 @@
   - **Root Cause**: The `bump.mjs` script contained internal `execSync('git commit ...')` logic, which was executed by the agent as part of the normal `end:` cycle, bypassing the mandatory approval gate.
   - **Fix**: RESOLVED. Decoupled versioning from committing. Modified `bump.mjs`, `auto-bump.mjs` and templates to remove automatic git operations. Updated `sdg-end.md` to mandate manual commit with approval after bumping.
   - **Gotcha**: High-level project scripts can mask unauthorized operations. Always audit script contents before execution if they interact with Git.
+  - **Pinned by**: `src/assets/tooling/scripts/bump.test.mjs`, "never runs a git command that writes".
 
 - **2026-04-12 CHANGELOG Date Timezone Drift**:
   - **Issue**: Promoted dates in `CHANGELOG.md` were jumping +1 day ahead for developers in negative timezones (e.g. UTC-3) when releasing late at night.

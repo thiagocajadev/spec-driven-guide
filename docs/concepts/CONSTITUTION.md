@@ -14,7 +14,7 @@ This document is the mental model for developers. The operational rules the agen
 
 **Project-specific rules override general AI training.**
 
-Before any code is written, the agent recites the `WorkChecklist`: the **Intent** section (Mental Reset, Target Files, Naming, Narrative, Comments, Tests planned, Security, Blockers) names the training default being suspended and confirms targets, while the **Form** section primes the agent on what the result must look like (Pure entry point, Explaining Returns, Vertical Density, Boolean prefix, etc.). Training bias is purged at every phase transition (SPEC → PLAN → CODE → TEST → END).
+Phase CODE opens by loading `code-style.md`, whose `WorkChecklist` **Form** section says what the result must look like (Pure entry point, Explaining Returns, Vertical Density, Boolean prefix, etc.). Phase TEST verifies those items on every changed file through the `governance.mjs` heuristics. Earlier releases also had the agent recite the list before the first write; current models treat a recited checklist as noise, so the check moved to where something outside the model reads it. Training bias is purged at every phase transition (SPEC → PLAN → CODE → TEST → END).
 
 ## 2. Hardening (Security Execution)
 

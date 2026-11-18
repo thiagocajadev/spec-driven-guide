@@ -1,6 +1,10 @@
+---
+name: writing-readme
+description: The banner above a README's first paragraph. Load in any docs cycle that touches a README, alongside writing-soul.md and checklist-soul.md.
+---
+
 # Writing README: the banner above the first paragraph
 
-> Load for: any `docs:` cycle that touches a README, alongside `writing-soul.md` and `checklist-soul.md`.
 > The soul governs every line of prose in the file. This skill governs the block above the first paragraph, which the soul does not describe.
 > The shape below was derived from repositories that already converge on it.
 

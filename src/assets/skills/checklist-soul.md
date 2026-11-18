@@ -1,60 +1,58 @@
-# Checklist Soul: the writing gate that runs before and after
+---
+name: checklist-soul
+description: The passes that check a draft against writing-soul.md before a checkpoint. Load with writing-soul.md for any perennial artifact, such as a README, a guide or a changelog.
+---
 
-> Operational companion to `writing-soul.md`. The soul holds the rules; this file holds the ritual that makes them fire.
+# Checklist Soul: the passes that check a draft
+
+> Operational companion to `writing-soul.md`. The soul holds the rules; this file holds the passes that check a draft against them.
 > Load both for: any `docs:` cycle, and any Phase CODE task that writes prose.
 
 ---
 
 ## Why this file exists
 
-A model writing prose falls back on its training default: polished sentences, balanced rhythm, a closing line that sounds like a verdict. That default survives a single reading of the rules, because reading a rule is not the same as suspending a habit. The soul states what good writing looks like. This checklist forces a stop before the habit runs.
-
-The ritual has two halves. **Recite Part 1 before every file**, once per file, not once per cycle. **Run Part 2 after the last line of the cycle is written.**
+A model writing prose falls back on its training default: polished sentences, balanced rhythm, a closing line that sounds like a verdict. That default survives a single reading of the rules, because reading a rule is not the same as dropping a habit. The habit shows in the draft, so that is where this file catches it: Part 1 settles the three facts that shape a draft before its first line, and Part 2 re-reads the draft once per defect class before the checkpoint. Nothing here is recited; Part 2 is checked.
 
 ## Fundamental concepts
 
 | Concept          | What it is                                                                                  |
 | :--------------- | :------------------------------------------------------------------------------------------ |
-| **Mental reset** | Naming the training default being suspended, out loud, before the first write               |
-| **Recitation**   | Emitting the checklist as text, item by item, so the gate is auditable                      |
 | **Pass**         | One focused re-read of a draft hunting a single class of defect                             |
 | **Lexicon**      | `lexicon/<language>.md`, the concrete instances of each defect class in one language        |
 | **writing-lint** | The advisory hook that reads the lexicon, scans Markdown writes, and reports hits to stderr |
 
 ---
 
-## Part 1: recite before writing (blocking)
+## Part 1: before the first line
 
-Emit these items before the first `Write` or `Edit` of each file.
+Three facts shape every draft, and each is settled before writing starts:
 
-### Mental reset
+- **Audience**: a senior engineer explaining to the colleague at the next desk. Plain sentence, concrete example.
+- **Goal**: understanding on the first pass. Clarity outranks brevity, and clarity outranks elegance.
+- **Delivery language**, and whether a lexicon exists for it. A document in a language with no lexicon gets no automated gate, and the manual passes in Part 2 carry the whole load.
 
-- [ ] **Training default suspended**, and named: impressive prose, balanced rhythm, a closing line that lands. None of it ships.
-- [ ] **Audience fixed**: a senior engineer explaining to the colleague at the next desk. Plain sentence, concrete example.
-- [ ] **Goal fixed**: understanding on the first pass. Clarity outranks brevity, and clarity outranks elegance.
-- [ ] **Delivery language fixed**, and the lexicon for it exists. A document in a language with no lexicon gets no automated gate, and Part 2 carries the whole load.
+### While writing
+
+These are procedural, so they live here rather than in the soul.
+
+- **Gloss coverage judged by the reader, not by the term's shape.** A term gets a gloss on first occurrence when it would stop a newcomer, acronym or not. Re-gloss when the term returns far from where it was introduced.
+- **Link anchors are explicit and ASCII.** A heading that is a link target carries `<a id="ascii-slug"></a>` above it. An anchor generated from accented or renamed heading text breaks on the next edit.
+- **Fenced code blocks stay byte-identical during a prose pass.** A prose revision that edits an example is a scope change, and it gets recorded before it happens.
+- **Good examples dogfood the code style.** An example labeled Good obeys `code-style.md` in full: no logic in the `return`, blank line before the `return`, boolean prefix, no framework abbreviations.
+
+---
+
+## Part 2: sweep before the checkpoint (blocking)
 
 ### Rule passes
 
-Each item is one focused re-read against a section of `writing-soul.md`. Read the section, do not recall it.
+Each item is one focused re-read of the draft against a section of `writing-soul.md`. Read the section, do not recall it.
 
 - [ ] **Vocabulary pass** (§ Defect classes: vocabulary). Twelve classes, instances in the lexicon.
 - [ ] **Voice pass** (§ Default voice, § How to write). Active sentences, one idea each, conclusion first, no em dash, peer tone.
 - [ ] **Structure pass** (§ Default structure for perennial artifacts). Intro paragraph after the H1, concepts table at three or more technical terms, blocks broken before they become walls.
 - [ ] **Formatting pass** (§ Formatting rules). Emphasis marks, long examples inside `<details>`, counted lists ordered, links pointing at a verified anchor.
-
-### Checks the soul does not cover
-
-These are procedural, so they live here.
-
-- [ ] **Gloss coverage judged by the reader, not by the term's shape.** A term gets a gloss on first occurrence when it would stop a newcomer, acronym or not. Re-gloss when the term returns far from where it was introduced.
-- [ ] **Link anchors are explicit and ASCII.** A heading that is a link target carries `<a id="ascii-slug"></a>` above it. An anchor generated from accented or renamed heading text breaks on the next edit.
-- [ ] **Fenced code blocks stay byte-identical during a prose pass.** A prose revision that edits an example is a scope change, and it gets recorded before it happens.
-- [ ] **Good examples dogfood the code style.** An example labeled Good obeys `code-style.md` in full: no logic in the `return`, blank line before the `return`, boolean prefix, no framework abbreviations.
-
----
-
-## Part 2: sweep before the checkpoint (blocking)
 
 ### Sweep order
 

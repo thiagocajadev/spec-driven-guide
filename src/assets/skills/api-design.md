@@ -1,8 +1,11 @@
+---
+name: api-design
+description: Endpoint design, response envelopes and API contracts. Load in Phase CODE when designing or changing an endpoint, an envelope, or a contract between services.
+---
+
 # API Design: Consistency, Resilience, and Contracts
 
 <ruleset name="Universal API Design Standard">
-
-> Load in Phase CODE when designing endpoints, response envelopes, or API contracts.
 
 ## API Contract Resilience
 

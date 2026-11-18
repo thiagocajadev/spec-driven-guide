@@ -11,9 +11,11 @@ entry: src/engine/bin/index.mjs
 test: `npm test`
 lint: `npm run lint` (`npm run lint:fix` to auto-fix)
 build: `npm run build`
+ssot: `npm run ssot` (the canon agreement tests plus the self-audit: every rule restated outside its source, held to it)
 gate: `npm run gate` (npm audit + lint + test + self-audit, the full CI gate)
 release: `manual`. Single maintainer, the bump runs locally and the release commit carries the version. See `versioning.md`, `VersionControl`.
 bump: `npm run bump <type>`
+eol: `lf`, declared by `.gitattributes` (`* text=auto eol=lf`), `.editorconfig` and `.prettierrc`. Every checkout is LF, `core.autocrlf` included; code never needs to normalize CRLF.
 
 ## Decisions
 

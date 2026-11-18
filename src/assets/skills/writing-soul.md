@@ -1,8 +1,12 @@
+---
+name: writing-soul
+description: Voice for UI copy and perennial artifacts. Load for UI copy, READMEs, guides, changelogs, commit messages and technical documentation.
+---
+
 # Writing Soul: voice for UI copy and perennial artifacts
 
-> Load for: UI copy, READMEs, guides, changelogs, commit messages, technical documentation.
 > Triggered by: `docs:` command, or any Phase CODE task involving written content.
-> Load `checklist-soul.md` alongside this file. It holds the ritual that makes these rules fire: a mental reset before each file, and a validation pass before each checkpoint.
+> Load `checklist-soul.md` alongside this file. It holds the passes that check a draft against these rules: three facts settled before the first line, and one re-read per defect class before each checkpoint.
 > Instances live in `lexicon/<language>.md`. This file holds the rules, in English, and never lists words.
 
 ---

@@ -110,11 +110,11 @@ Ten constraints the protocol enforces on every cycle. Full text in `.ai/kit/inst
 | Mid-cycle classification | `workflow.md`, Mid-cycle Messages                    |
 | Assumptions stated       | Phase SPEC, Assumptions                              |
 | SPEC and PLAN gates      | Phase SPEC and Phase PLAN, Approval Gate             |
-| Work Checklist           | Phase CODE, Work Checklist, blocking every write     |
+| Form check               | Phase TEST, Form items verified on changed files     |
 | Scope lock               | Phase CODE, Plan Adherence                           |
 | Blocker surface          | Phase CODE, Blocker Surface                          |
 | Circuit Breaker          | Phase TEST, Circuit Breaker                          |
-| Commit gate              | Phase END, Commit, SOVEREIGN GATE                    |
+| Commit gate              | Phase END, Commit; `git-guard` hook where installed  |
 | Evidence                 | Rule Guardrails, binding SPEC research, TEST and END |
 
 ---

@@ -11,6 +11,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [11.1.0] - 2026-11-18
+
+### Added
+
+- **`git-guard`, the enforced half of the commit gate.** A PreToolUse hook in `tooling/hooks/` refuses `git push` and `git reset --hard`, inside chains, behind environment variables and after git's global options, and hands the reason back to the agent. The tooling README carries the recipe: the hook, an `ask` permission on `git commit`, and an optional Stop hook that runs the tests. `init` never writes harness settings; the developer registers it.
+- **The Guardrails table says which gates are enforced.** A new column names what holds each gate, a hook, a test or nothing but the text, so an advisory rule no longer reads as a guarantee.
+- **A contract for unattended runs.** A run with no developer between turns starts with a verifiable done condition, a scope, a turn or spend cap and a sign-off, enforced by the harness (`/goal`, a Stop hook) rather than reimplemented, and it ends at a proposed commit.
+- **A fresh-context review on two axes.** `review.md` gains the review an [M] or [L] change gets before the Review Gate: a reader with the SPEC and the diff, and not the conversation, reports fidelity to the SPEC and code quality apart, and every finding is answered. Delegation in `agent-roles.md` moves from task size to criteria: parallel work, noisy output, independent review.
+- **Waves for broad requests.** When one cycle takes several items, Phase PLAN groups the tasks by the files they share, letters each wave, and ends each with the suite green. The banner names the wave, and the end of a wave is where a session hands over.
+- **Clarification as numbered questions.** Phase SPEC settles every fact the repository can answer, and asks only for decisions, each with a recommended answer.
+- **The YAGNI ladder and a never-cut list**, once in `code-style.md` and referenced by the four flavors: does it need to exist, does the codebase, the standard library or an installed dependency have it, is it a one-liner, and only then the minimal code. Validation at trust boundaries, data-loss handling, security and accessibility are never cut.
+- **Skill frontmatter.** Every skill opens with `name` and `description` in the Agent Skills format, and the description replaced the "Load in" line it duplicated.
+- **Canon agreement tests and `npm run ssot`.** Each rule restated outside its source is now read from both sides by a test: the changelog section mapping against release-please, the commit types against the hook, the router against the command files, the five phases, the Guardrails table and its three copies, and skill frontmatter against the router. Every check was proven by planting the defect it catches. `npm run ssot` runs them with the self-audit.
+- **A byte budget on what Phase CODE loads.** The router, `workflow.md`, `code-style.md` and the largest flavor are measured together and held to 32800 bytes, so the kit growing shows up as a number someone raises on purpose.
+- **A line-ending recipe and an `eol` declaration.** `tooling/line-endings/` ships a `.gitattributes` and an `.editorconfig` that agree on LF with the batch-file exceptions, and `land:` records what a project declares as `eol` in `context.md`, so the agent knows before it writes code to convert endings.
+- **Model currency in `audit:`.** When a new model generation ships, `audit:` re-reads the kit for instructions written for an older one, with `/doctor prompt-audit` where the harness has it.
+- **Every `troubleshoot.md` entry names the test that pins it**, so past incidents run on every change instead of being remembered.
+- **Credits for the November 2026 audit.** `docs/reference/REFERENCES.md` names each source the kit drew on and what it gave.
+
+### Changed
+
+- **The Work Checklist is no longer recited.** Phase CODE opens on loading `code-style.md`, whose Form items Phase TEST verifies on every changed file; the Intent section and the recitation gate are gone. Current models treat a recited checklist as noise, and a check outside the model already reads the Form items. `checklist-soul.md` follows the same line: three facts settled before the first line, and the rule passes moved into the sweep that runs on the draft.
+- **Terse Mode covers working notes only.** SPEC, PLAN, the TEST report, the END summary and handoffs are written in full sentences for a reader who was not there.
+- **Absolute rules carry a scope and a reason instead of capital letters**, across the workflow, the commands, the flavors and the skills, since current models read "never" as absolute and over-apply emphasis.
+- **Memory never authorizes.** The Persistence Policy in `AGENTS.md` gains its precedence, developer instruction, then `AGENTS.md`, then the backlog, and a file an agent or a PR can write may narrow what an agent does, never widen it. The router's byte budget rose from 3200 to 3360 for that line, with its reason in the test.
+- **`learned.md` has entry rules.** One lesson per entry, with its date, cycle and origin, deleted when its reason no longer holds, and promoted to the canon only by a developer.
+
+### Fixed
+
+- **The Form check could pass on nothing.** `governance.mjs` returned an empty checklist when `code-style.md` lost its Form section, and TEST then verified zero items and passed. It fails at load now.
+- **Two documents described behavior the code had dropped**: the tooling README still said the managed `.gitignore` kept `.claude/` out of git, which v10 reversed, and `visual-density.md` still said its rule was recited at CODE entry.
+
 ## [11.0.2] - 2026-11-18
 
 ### Changed

@@ -1,8 +1,11 @@
+---
+name: testing
+description: Testing strategy, naming, structure and test doubles. Load in Phase CODE or TEST when writing, reviewing or refactoring tests.
+---
+
 # Testing: Quality without Overengineering
 
 <ruleset name="Testing Governance">
-
-> Load in **Phase CODE / Phase TEST** when writing, reviewing, or refactoring tests.
 
 ## Rule: Testing Strategy (The Testing Diamond)
 

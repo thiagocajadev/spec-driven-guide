@@ -28,19 +28,28 @@ const NARRATIVE_VALIDATION_STRATEGIES = {
 
 function loadDynamicRules() {
   const content = fileSystem.readFileSync(STANDARDS_PATH, "utf8");
+  const dynamicRules = parseWorkChecklist(content);
+  return dynamicRules;
+}
+
+/**
+ * why: an empty checklist used to come back when the section was missing, and
+ * TEST then verified nothing and passed. A Form check with nothing to inspect
+ * is the vacuous pass this project exists to prevent, so a missing section
+ * fails loudly at load instead.
+ */
+export function parseWorkChecklist(content) {
   const ruleSection = content.match(
     /<rule name="WorkChecklist">([\s\S]*?)<\/rule>/,
   );
 
   if (!ruleSection) {
-    const emptyChecklist = [];
-    return emptyChecklist;
+    throw new Error('code-style.md has no <rule name="WorkChecklist">.');
   }
 
   const formSection = ruleSection[1].match(/### Form[^\n]*\n([\s\S]+)/);
   if (!formSection) {
-    const noFormSection = [];
-    return noFormSection;
+    throw new Error("The WorkChecklist rule has no ### Form section.");
   }
 
   const checklistItemRegex =
@@ -48,8 +57,7 @@ function loadDynamicRules() {
 
   const ruleLines = formSection[1].match(checklistItemRegex);
   if (!ruleLines) {
-    const noRulesFound = [];
-    return noRulesFound;
+    throw new Error("The WorkChecklist Form section lists no items.");
   }
 
   const singleItemRegex =

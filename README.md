@@ -46,9 +46,10 @@ The agent proposes the SPEC from the context it already holds about the project,
 | :----------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Cycle**          | One unit of work, opened by a prefix (`feat:`, `fix:`, `docs:`, `audit:`, `land:`) and closed by `end:`                                                                                                                         |
 | **Phase**          | One of the five steps a cycle runs through: SPEC, PLAN, CODE, TEST, END                                                                                                                                                         |
+| **Wave**           | In a cycle that takes a broad request, a group of PLAN tasks that touch the same files, so each file is edited once; each wave ends with the tests green                                                                        |
 | **Skill**          | A self-contained ruleset in `.ai/kit/skills/`, loaded only when the cycle's domain calls for it                                                                                                                                 |
 | **Flavor**         | The architectural shape of the project, chosen at install: vertical slice, MVC, lite, or legacy                                                                                                                                 |
-| **Work Checklist** | The binary gate in `code-style.md`: Intent items recited at CODE entry, Form items verified at TEST                                                                                                                             |
+| **Work Checklist** | The Form items in `code-style.md`: the shape the code takes from its first line, verified at TEST                                                                                                                               |
 | **Backlog**        | `.ai/backlog/`, what you and the agent write about this project: brief, stack, patterns, failures and the task queue. Versioned, so the team reads it                                                                           |
 | **Kit**            | `.ai/kit/`, what the CLI installs: skills, protocol, commands and tooling. Rewritten on every install and restored from the manifest, so it stays out of git                                                                    |
 | **Harness**        | Everything around the model: the guides that steer it before it acts, the sensors that check it after, and the memory it carries. SDG is the portable layer of it; Claude Code, Cursor or Codex is the runtime it installs into |
@@ -58,9 +59,9 @@ The agent proposes the SPEC from the context it already holds about the project,
 <details>
 <summary><strong>What the instruction set covers</strong></summary>
 
-- **Working protocol**: a 5-phase cycle (SPEC → PLAN → CODE → TEST → END) with a unified Work Checklist and a 3-strike Circuit Breaker that stops regression loops. The agent stops for you at SPEC, at PLAN and after TEST.
+- **Working protocol**: a 5-phase cycle (SPEC → PLAN → CODE → TEST → END) with Form items verified at TEST and a 3-strike Circuit Breaker that stops regression loops. The agent stops for you at SPEC, at PLAN and after TEST.
 
-- **Code style and quality gates**: one `WorkChecklist` in `code-style.md`, split into Intent items (recited at CODE entry) and Form items (verified at TEST), wired to the narrative heuristics in `governance.mjs`.
+- **Code style and quality gates**: one `WorkChecklist` in `code-style.md`, whose Form items are verified at TEST and wired to the narrative heuristics in `governance.mjs`.
 
 - **Skills, on-demand**: self-contained skill units loaded only when the cycle needs them, covering code style, testing, security, API design, data access, observability, CI/CD, cloud, SQL style, UI/UX, review, performance, domain modeling, versioning, and README writing.
 
@@ -194,7 +195,7 @@ The protocol holds the reins in ten places, so you are not the one catching thes
 | **Mid-cycle classification** | A follow-up message silently reopening the cycle as a new one                        |
 | **Assumptions stated**       | An unstated reading shipped as the request. Where two readings diverge, it asks      |
 | **SPEC and PLAN gates**      | Code written before you agreed to the contract                                       |
-| **Work Checklist**           | A file written before the standards are in the agent's head                          |
+| **Form check**               | Code that drifts from the standards reaching review                                  |
 | **Scope lock**               | The refactor nobody asked for, riding along with the fix                             |
 | **Blocker surface**          | A workaround invented in silence instead of a question asked out loud                |
 | **Circuit Breaker**          | The loop: 3 failed TESTs, 3 identical errors, or 3 turns without progress, then stop |

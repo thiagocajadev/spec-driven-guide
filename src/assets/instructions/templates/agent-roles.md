@@ -15,7 +15,7 @@ The default on every harness:
 - **Planning mindset** during SPEC/PLAN (MODE: PLANNING, stop for approval). Focus on analysis/constraints.
 - **Fast mindset** during CODE/TEST (MODE: FAST, no strategic detours). Execute the contract only.
 - Mode annotations = behavioral discipline markers, not execution boundaries. Do not deviate from approved PLAN during CODE.
-- **[LOCKED: COMMIT-GATE]**: Strictly forbidden from `git commit` without explicit verbal approval for the specific commit message. Non-negotiable governance barrier.
+- **Commit gate**: no `git commit` until the developer approves that specific message, in every mode. A commit is where the work leaves the agent's hands; the `git-guard` recipe in `tooling/README.md` enforces it where the harness runs hooks.
 
 ## Extension: Multi-Agent Mode (Native Orchestration)
 
@@ -25,7 +25,13 @@ For harnesses that can spawn a subagent:
 Dev → Planning: SPEC+PLAN → [approval] → spawn Fast: CODE+TEST → return → Planning: Review+Report → [approval] → END
 ```
 
-**Delegation**: [M]/[L] tasks → spawn Fast. [S] tasks → Planning executes directly (overhead exceeds benefit).
+**Delegation, by criteria rather than size.** A subagent does not make an answer better by itself: it buys a clean context and parallel hands, and pays for them with a cold start and a handoff. Spawn when one of these holds:
+
+- **Parallel work**: independent tasks that share no files.
+- **Noisy output**: a wide search, a long test run, a log read, where the main context needs the conclusion and not the detail.
+- **Independent review**: a fresh-context reviewer (`review.md`, Fresh-Context Review), which reads the SPEC and the diff without the author's reasoning.
+
+Otherwise Planning executes directly. A sequential change, whatever its size, is usually cheaper in one context.
 
 **Handoff payload.** A subagent starts cold: it sees neither the conversation nor, on some harnesses, `AGENTS.md`. Everything it needs travels in the payload, by path or verbatim:
 
@@ -42,6 +48,7 @@ Dev → Planning: SPEC+PLAN → [approval] → spawn Fast: CODE+TEST → return 
 
 - Every PLAN task complete
 - `WorkChecklist` Form items verified on the changed files
+- For an [M] or [L] change, a fresh-context review on its two axes (`review.md`), every finding answered
 - Tests pass (no regressions)
 - Linter clean
 

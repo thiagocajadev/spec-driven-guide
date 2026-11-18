@@ -1,8 +1,12 @@
+---
+name: data-access
+description: Repositories, connections, queries and transactions. Load in Phase CODE when touching the database layer.
+---
+
 # Data Access: Performance, Safety, and Scalability
 
 <ruleset name="Data Access Standards">
 
-> Load in Phase CODE when touching repositories, DB connections, queries, or transactions.
 > For SQL style/indentation, see `.ai/kit/skills/sql-style.md`.
 
 ## Result-Driven Repositories

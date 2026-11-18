@@ -5,7 +5,7 @@
 
 ## Failure Records (RCA)
 
-- [date] [topic]: [what failed, why, and the "gotcha" to avoid]
+- [date] [topic]: [what failed, why, and the "gotcha" to avoid]. Pinned by: [test file and test name]
 
 ## Technical Debt & Risks
 

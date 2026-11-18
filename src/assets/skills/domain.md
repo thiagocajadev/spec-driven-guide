@@ -1,8 +1,11 @@
+---
+name: domain
+description: DDD-Lite modeling with aggregates, entities, value objects and the ubiquitous language. Load in Phase CODE when modeling a new aggregate, or where the business language is the leverage point.
+---
+
 # Domain Modeling: DDD-Lite
 
 <ruleset name="DomainModeling">
-
-> Load in **Phase CODE** when modeling new aggregates, defining entities / value objects, or working in a use case where the business language is the leverage point.
 
 ---
 

@@ -9,6 +9,7 @@ const ASSETS = path.join(__dirname, "..", "..", "..", "assets");
 
 const WORKFLOW = path.join(ASSETS, "instructions", "templates", "workflow.md");
 const CODE_STYLE = path.join(ASSETS, "skills", "code-style.md");
+const CHECKLIST_SOUL = path.join(ASSETS, "skills", "checklist-soul.md");
 const LAND_COMMAND = path.join(
   ASSETS,
   "instructions",
@@ -58,44 +59,37 @@ describe("Skill Content: Governance Layer", () => {
       );
     });
 
-    it("exposes a WorkChecklist rule with Intent before Form sections", () => {
+    it("exposes a WorkChecklist rule holding a Form section", () => {
       const input = readAsset(CODE_STYLE);
 
       const ruleIndex = input.indexOf('<rule name="WorkChecklist">');
-      const intentIndex = input.indexOf("### Intent");
       const formIndex = input.indexOf("### Form");
       const actualRuleExists = ruleIndex !== -1;
-      const actualOrdered = intentIndex > ruleIndex && formIndex > intentIndex;
+      const actualOrdered = formIndex > ruleIndex;
       const actual = actualRuleExists && actualOrdered;
 
-      assert.ok(actual, "WorkChecklist must exist with Intent before Form");
+      assert.ok(actual, "WorkChecklist must exist with its Form section");
     });
 
-    it("enumerates the eight Intent concerns", () => {
+    // why: current models treat a recited checklist as noise, and the Form
+    // items are verified at TEST, where a check outside the model reads them.
+    it("asks for no recitation before writing", () => {
       const input = readAsset(CODE_STYLE);
 
-      const expectedFragments = [
-        "Mental Reset",
-        "Target Files",
-        "Naming",
-        "Narrative",
-        "Comments",
-        "Tests planned",
-        "Security",
-        "Blockers",
-      ];
+      const expectedRecitations = [];
+      const actualRecitations = input.match(/\brecit\w*/gi) ?? [];
 
-      const actualMissing = expectedFragments.filter(
-        (fragment) => !input.includes(fragment),
-      );
+      assert.deepEqual(actualRecitations, expectedRecitations);
+    });
 
-      const expectedEmpty = [];
+    it("leaves the writing passes in checklist-soul.md unrecited too", () => {
+      const input = readAsset(CHECKLIST_SOUL);
 
-      assert.deepEqual(
-        actualMissing,
-        expectedEmpty,
-        "Intent section must cover all eight concerns",
-      );
+      const expectedInstructions = [];
+      const actualInstructions =
+        input.match(/\brecite\b|\bmental reset\b|\britual\b/gi) ?? [];
+
+      assert.deepEqual(actualInstructions, expectedInstructions);
     });
 
     it("enumerates the eight Form items wired to heuristics", () => {
@@ -261,20 +255,27 @@ describe("Skill Content: Governance Layer", () => {
   });
 
   describe("workflow.md Phase CODE", () => {
-    it("routes Phase CODE through the Work Checklist", () => {
+    it("opens Phase CODE on the context load, with no recitation", () => {
       const input = readAsset(WORKFLOW);
 
-      const expectedMarker = "Work Checklist (BLOCKING)";
+      const expectedFirstStep = "1. **Context Load**";
+      const expectedRecitations = [];
+      const phaseCode = input.match(
+        /<rule name="PhaseCODE">([\s\S]*?)<\/rule>/,
+      );
 
-      const actual = input.includes(expectedMarker);
+      const actualFirstStep = phaseCode[1].trim().split("\n").at(0);
+      const isContextLoadFirst = actualFirstStep.startsWith(expectedFirstStep);
+      const actualRecitations = input.match(/\brecit\w*/gi) ?? [];
 
-      assert.ok(actual, "Phase CODE step 1 must be the Work Checklist");
+      assert.ok(isContextLoadFirst);
+      assert.deepEqual(actualRecitations, expectedRecitations);
     });
 
-    it("still names the blocked write tools", () => {
+    it("points the Form check at the WorkChecklist TEST verifies", () => {
       const input = readAsset(WORKFLOW);
 
-      const expectedFragments = ["Edit", "Write", "NotebookEdit"];
+      const expectedFragments = ["`WorkChecklist`", "**Form**"];
       const actualMissing = expectedFragments.filter(
         (fragment) => !input.includes(fragment),
       );
@@ -284,7 +285,7 @@ describe("Skill Content: Governance Layer", () => {
       assert.deepEqual(
         actualMissing,
         expectedEmpty,
-        "Phase CODE must name blocked write tools",
+        "Phase CODE and TEST must name the Form items they verify",
       );
     });
 

@@ -1,8 +1,11 @@
+---
+name: ci-cd
+description: Pipeline, deployment and release tooling standards. Load in Phase CODE when touching pipeline YAML, deployment config or release tooling.
+---
+
 # CI/CD & Automation Principles
 
 <ruleset name="CI/CD Standards">
-
-> Load in Phase CODE when touching pipeline YAML, deployment config, or release tooling.
 
 ## Pipeline Architecture
 

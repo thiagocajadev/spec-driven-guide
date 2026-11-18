@@ -1,8 +1,12 @@
+---
+name: versioning
+description: Commit shape, release modes and the bump table. Load in Phase END, and in any task that writes a commit message, wires a release pipeline or opens a pull request.
+---
+
 # Versioning: commit shape, release modes, and who decides the number
 
 <ruleset name="Versioning">
 
-> Load in **Phase END**, and in any task that writes a commit message, wires a release pipeline, or opens a pull request.
 > Canonical for commit shape. `code-style.md`, `ci-cd.md`, `review.md` and `workflow.md` Phase END cite this file. Do not restate the format anywhere else.
 
 <rule name="VersionControl">

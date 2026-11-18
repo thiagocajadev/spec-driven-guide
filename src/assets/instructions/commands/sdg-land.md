@@ -123,6 +123,13 @@ Both modes compute the same bump from the same commit types, and they differ onl
 
 Default to `manual` when the answer is unclear: it needs no infrastructure, and moving to `derived` later is copying three files.
 
+### 5. Declare the line endings
+
+Read `.gitattributes` and `.editorconfig` at the project root, and write what they declare as `eol` in `context.md`: `lf`, `crlf`, or `undeclared`.
+
+- **Declared** → record it. From then on the agent writes in that ending and never adds code that converts between endings, because the repository already guarantees them.
+- **Undeclared** → say so, and offer the recipe in `.ai/kit/tooling/line-endings/` (README, "Activate line endings"). Without it, a Windows checkout with `core.autocrlf` turns text files into CRLF, and every tool that compares bytes (hooks, linters, manifests, budgets) disagrees with the one that wrote them. Applying it is the developer's call, since it renormalizes every text file in one commit.
+
 ## Phase: BACKLOG → MODE: PLANNING
 
 ### 1. Update `context.md`

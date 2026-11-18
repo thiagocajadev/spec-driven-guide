@@ -589,8 +589,14 @@ describe("InstructionAssembler", () => {
      * declared once and a bare filename after it. Sixty-nine bytes is what that
      * reliability costs in the always-loaded file, and it buys the whole tree
      * leaving version control.
+     *
+     * why: raised again from 3200 when the Persistence Policy gained its
+     * precedence line. A rule that says what memory may never authorize has to
+     * sit where it outranks the memory files, which is this file and not a
+     * skill. The line and the review entry's longer label cost 155 bytes over
+     * the old ceiling; the budget took exactly that, rounded to the next ten.
      */
-    const TOKEN_BUDGET_BYTES = 3200;
+    const TOKEN_BUDGET_BYTES = 3360;
 
     it(`should stay under ${TOKEN_BUDGET_BYTES} bytes`, () => {
       const actual = buildMasterInstructions(WORST_CASE_INPUT);

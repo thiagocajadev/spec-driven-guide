@@ -1,6 +1,6 @@
 # Vertical Slice Architecture
 
-> Inherits Security, Reliability, Narrative from code-style.md.
+> Inherits Security, Reliability, Narrative and the YAGNI ladder (with its never-cut list) from code-style.md.
 
 ## Backend Pipeline
 
@@ -61,7 +61,7 @@ Presenter maps entity → Response DTO. Sensitive/internal fields never reach cl
 ## Layer Rules
 
 - **Isolation**: Each layer = single responsibility. No mixing.
-- **Data Shielding**: Raw DB entities NEVER returned to client. Presenter is mandatory filter.
+- **Data Shielding**: Raw DB entities are not returned to the client; the Presenter filters every response, so a new column never reaches a client by accident.
 - **Validate Before Domain**: Reject invalid input at Validator (Fail Fast).
 - **Statelessness**: Horizontally scalable, resilient to retries.
 - **Dependency Inversion**: Interfaces/abstractions for testable seams.
@@ -72,4 +72,4 @@ Presenter maps entity → Response DTO. Sensitive/internal fields never reach cl
 
 **DO NOT**: Business logic in Handler · Access Repository from Handler/Domain · Skip Validator · Return DB entities to client.
 
-> DO NOT rules ALWAYS override DO rules.
+> When a DO and a DO NOT pull in opposite directions, the DO NOT wins: it names a failure already paid for.

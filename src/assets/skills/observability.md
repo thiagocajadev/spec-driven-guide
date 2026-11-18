@@ -1,8 +1,11 @@
+---
+name: observability
+description: Logging, tracing, metrics and health checks. Load in Phase CODE when adding or changing any of them.
+---
+
 # Observability: Logging, Tracing & Monitoring
 
 <ruleset name="Observability Engineering">
-
-> Load in Phase CODE when adding logging, tracing, metrics, or health checks.
 
 ## Universal Principles
 

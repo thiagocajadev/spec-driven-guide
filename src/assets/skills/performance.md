@@ -1,8 +1,11 @@
+---
+name: performance
+description: Complexity budget, hot paths and profiling. Load in Phase CODE when touching request handlers, list iteration, queries or render loops, or when the SPEC sets latency or throughput targets.
+---
+
 # Performance: Complexity Budget & Hot Paths
 
 <ruleset name="Performance">
-
-> Load in **Phase CODE** when touching hot paths (request handlers, list iteration, DB queries, render loops) or when SPEC declares latency / throughput targets.
 
 ---
 

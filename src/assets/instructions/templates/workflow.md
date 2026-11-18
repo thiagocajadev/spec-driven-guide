@@ -26,7 +26,7 @@ Every turn inside an active cycle opens with one line, before anything else:
 
 `SDG · <intent>: · Phase <NAME> · task <N/total>`
 
-For example: `SDG · fix: · Phase CODE · task 2/5`.
+For example: `SDG · fix: · Phase CODE · task 2/5`. A cycle planned in waves names the wave too: `SDG · feat: · Phase CODE · wave B · task 1/2`.
 
 It reads its state from `.ai/backlog/session.md`, not from the conversation, which is what lets it survive a new session. One line is the whole cost, and it is what makes a skipped phase visible while it is happening instead of at the review.
 
@@ -44,7 +44,7 @@ Prefixes route through `AGENTS.md`. Inside an active cycle, a message is Q&A (an
 2. **Goal**: One sentence saying what will be built and why.
 3. **Domain & Contracts**: Backend/Frontend/Fullstack. Inputs and outputs.
 4. **Verification Checklist**: Up to 5 yes/no checkpoints.
-5. **Assumptions**: every reading the request left open, stated as a decision taken. `none` is a valid answer; an unstated assumption is not. Where two readings would produce materially different work, ask instead of assuming.
+5. **Assumptions and questions**: settle every fact the repository can answer by reading it, then state each reading the request left open as a decision taken. `none` is a valid answer; an unstated assumption is not. Where two readings would produce materially different work, ask instead of assuming: numbered questions, decisions only, each with the answer you recommend and why, so the developer can settle them in one line.
 6. **Approval Gate**: Stop. Wait for approval.
 
 </rule>
@@ -57,9 +57,10 @@ Prefixes route through `AGENTS.md`. Inside an active cycle, a message is Q&A (an
 2. **Logical Sequencing**: Order by dependency.
 3. **Effort Tagging**: `[S]` small, `[M]` medium, `[L]` large (must split).
 4. **Sub-task Split**: Every `[L]` → numbered steps (1.1, 1.2...).
-5. **Session Sync**: Write the objective to `## Now` and the task list to `## Active` in `.ai/backlog/session.md`, first task `[IN_PROGRESS]` with its phase. The plan is this developer's working state, so it stays out of the versioned `tasks.md` until END records the outcome.
-6. **Impact Map**: Write `.ai/backlog/impact-map.md`. `## Changed` lists the files the tasks will touch; trace their imports for `## Blast Radius`, then `## Tests at Risk` and `## Safe`.
-7. **Approval Gate**: Stop. Wait for approval.
+5. **Waves** (broad requests only): when one cycle takes several items or domains, group the tasks into waves by the files they share, so each file is edited once instead of once per item. Waves run in dependency order, each is lettered with its tasks numbered inside it (A1, A2, B1...), and each ends with the `test` command green, which keeps a break inside the wave that caused it. A cycle with one item has no waves; the plan is a plain list.
+6. **Session Sync**: Write the objective to `## Now` and the task list to `## Active` in `.ai/backlog/session.md`, first task `[IN_PROGRESS]` with its phase. The plan is this developer's working state, so it stays out of the versioned `tasks.md` until END records the outcome.
+7. **Impact Map**: Write `.ai/backlog/impact-map.md`. `## Changed` lists the files the tasks will touch; trace their imports for `## Blast Radius`, then `## Tests at Risk` and `## Safe`.
+8. **Approval Gate**: Stop. Wait for approval.
 
 </rule>
 
@@ -67,13 +68,10 @@ Prefixes route through `AGENTS.md`. Inside an active cycle, a message is Q&A (an
 
 <rule name="PhaseCODE">
 
-1. **Work Checklist (BLOCKING)**: Recite `WorkChecklist` from `code-style.md` BEFORE the first file write (`Edit` / `Write` / `NotebookEdit`, or the harness equivalent). Both sections cited at CODE entry. No write tool fires without it. **Intent** items (binary): Mental Reset, Target Files, Naming, Narrative, Comments, Tests planned, Security, Blockers. **Form** items (binary, verified at TEST): Pure entry point, Narrative Siblings, Explaining Returns, Revealing Module Pattern, Vertical Density, Boolean prefix, No framework abbreviations, No section banners.
-2. **Context Load**: Read `code-style.md` + domain skills relevant to the task.
-3. **Plan Adherence**: Follow plan. No extras.
-4. **Blocker Surface**: Raise blockers immediately. Never work around silently.
-5. **Delegation**: handing CODE and TEST to a subagent? Load `.ai/kit/instructions/templates/agent-roles.md` first. Otherwise skip it.
-
-> **Circuit Breaker**: Any write tool call without a preceding `Work Checklist` recitation auto-fails Phase TEST; remediation is re-entry into Phase CODE with the checklist emitted.
+1. **Context Load**: Read `code-style.md` and the domain skills the task touches. The Form items of its `WorkChecklist` are what TEST verifies on every changed file, so the code takes that shape from its first line.
+2. **Plan Adherence**: Follow plan. No extras.
+3. **Blocker Surface**: Raise blockers immediately. A workaround found in silence is a decision the developer never saw.
+4. **Delegation**: handing CODE and TEST to a subagent? Load `.ai/kit/instructions/templates/agent-roles.md` first. Otherwise skip it.
 
 </rule>
 
@@ -85,9 +83,9 @@ Prefixes route through `AGENTS.md`. Inside an active cycle, a message is Q&A (an
 2. **Regression Check**: For `fix:`, the bug is gone and nothing else broke. Run the `test` command declared in `context.md`.
 3. **Audit Gate**: Modified files vs **Form** section of `WorkChecklist` (`code-style.md`).
 4. **Lint Fix**: Run the `lint` command declared in `context.md`, fix what's possible.
-5. **Circuit Breaker**: Fail → Phase CODE → re-TEST. Max 3 attempts. 3rd failure → stop + Failure Report.
-6. **Report**: Result per checklist item + lint + audit status.
-7. **Review Gate**: Stop. The developer reviews the result and settles the last details. END runs only on `end:` or an explicit go-ahead.
+5. **Circuit Breaker**: Fail → Phase CODE → re-TEST. An ordinary obstacle (a failing test, a wrong path, a missing import) is diagnosed and fixed. A deliberate blocker (a denied permission, a hook refusal, a gate, a decision the SPEC left open) is a stop: ask, because getting around it undoes the reason it exists. Max 3 attempts; the 3rd failure stops with a Failure Report.
+6. **Report**: Result per checklist item + lint + audit status, grouped by wave when the plan has waves.
+7. **Review Gate**: Stop. For an [M] or [L] change, a fresh-context review on two axes, fidelity to the SPEC and code quality, runs first (`review.md`, Fresh-Context Review). The developer reviews the result and settles the last details. END runs only on `end:` or an explicit go-ahead.
 
 </rule>
 
@@ -103,10 +101,8 @@ Prefixes route through `AGENTS.md`. Inside an active cycle, a message is Q&A (an
 3. **Backlog Sync**: The cycle → one `- [DONE] ...` entry under `## Done` in `tasks.md`; remove its `## Backlog` item if it came from the queue. Then run `node .ai/kit/tooling/scripts/prune-backlog.mjs`, which keeps the last 3 entries in `## Done` (history lives in CHANGELOG + git log). A lesson worth keeping goes to `learned.md`, a failure with its cause to `troubleshoot.md`, and neither goes to the harness memory store: `AGENTS.md`, Persistence Policy.
 4. **Session Reset**: Clear `## Active` in `session.md`. Set `## Now` to the next objective, or leave it empty.
 5. **Map Reset**: Overwrite `impact-map.md` with idle state. Missing → skip.
-6. **Commit [LOCKED]**: Read `release` in `context.md`. On `derived`, skip the bump, since CI computes the version, and propose `<type>: <description>`. On `manual`, run the `bump` command from `context.md` first (absent: `npm run bump <type>`), then propose `<type>: release v<version> - <description>`. Stage only the files this cycle changed (impact map `## Changed`, plus CHANGELOG and backlog), never `git add .`, which sweeps in whatever else sits in the tree. `versioning.md`, `VersionControl`, owns the shape. **STOP: await explicit approval before `git commit`.**
-7. **Session Gate [HARD STOP]**: Stop: _"Cycle complete. **Open a new session**. Next: [objective]."_
-
-> **SOVEREIGN GATE**: Never bypass human verification for commits.
+6. **Commit**: Read `release` in `context.md`. On `derived`, skip the bump, since CI computes the version, and propose `<type>: <description>`. On `manual`, run the `bump` command from `context.md` first (absent: `npm run bump <type>`), then propose `<type>: release v<version> - <description>`. Stage only the files this cycle changed (impact map `## Changed`, plus CHANGELOG and backlog), not `git add .`, which sweeps in whatever else sits in the tree. `versioning.md`, `VersionControl`, owns the shape. Then stop until the developer approves that message. This holds in every mode, unattended runs included: a commit is where the work leaves the agent's hands, and one nobody read becomes history anyway.
+7. **Session Gate**: Stop: _"Cycle complete. Open a new session. Next: [objective]."_
 
 </rule>
 
@@ -116,18 +112,22 @@ Prefixes route through `AGENTS.md`. Inside an active cycle, a message is Q&A (an
 
 What the protocol takes off the agent's hands, so the developer is not the one catching it in review.
 
-| Guardrail                    | What it prevents                                                                      |
-| :--------------------------- | :------------------------------------------------------------------------------------ |
-| **Prefix required**          | A cycle guessed from a loose ask. No prefix, ask which one                            |
-| **Mid-cycle classification** | A follow-up message silently reopening the cycle as a new one                         |
-| **Assumptions stated**       | An unstated reading shipped as the request. Two readings that diverge materially: ask |
-| **SPEC and PLAN gates**      | Code written before the contract is agreed                                            |
-| **Work Checklist**           | A write tool firing before the standards are in the agent's head                      |
-| **Scope lock**               | The refactor nobody asked for, riding along with the fix                              |
-| **Blocker surface**          | A workaround invented in silence instead of a question asked out loud                 |
-| **Circuit Breaker**          | The loop: 3 failed TESTs, 3 identical errors, or 3 turns without progress, then stop  |
-| **Commit gate**              | A commit the developer never approved                                                 |
-| **Evidence**                 | A claim about this codebase asserted from memory                                      |
+| Guardrail                    | What it prevents                                                                      | Enforced by                                      |
+| :--------------------------- | :------------------------------------------------------------------------------------ | :----------------------------------------------- |
+| **Prefix required**          | A cycle guessed from a loose ask. No prefix, ask which one                            | advisory                                         |
+| **Mid-cycle classification** | A follow-up message silently reopening the cycle as a new one                         | advisory                                         |
+| **Assumptions stated**       | An unstated reading shipped as the request. Two readings that diverge materially: ask | advisory                                         |
+| **SPEC and PLAN gates**      | Code written before the contract is agreed                                            | advisory                                         |
+| **Form check**               | Code that drifts from the standards reaching review                                   | `audit` Code Style check and the ESLint rules    |
+| **Scope lock**               | The refactor nobody asked for, riding along with the fix                              | advisory                                         |
+| **Blocker surface**          | A workaround invented in silence instead of a question asked out loud                 | advisory                                         |
+| **Circuit Breaker**          | The loop: 3 failed TESTs, 3 identical errors, or 3 turns without progress, then stop  | advisory; a Stop hook can cap continuations      |
+| **Commit gate**              | A commit the developer never approved, or a push nobody reviewed                      | `git-guard` hook and an `ask` permission, if set |
+| **Evidence**                 | A claim about this codebase asserted from memory                                      | advisory                                         |
+
+**Advisory or enforced.** An advisory gate is text the model reads and follows; an enforced one is a check outside the model that refuses. The text stays either way, as the reason the check exists. A gate that has to hold every time, on every harness that supports it, gets its hook: `tooling/README.md` carries the `git-guard` recipe for the commit gate.
+
+**Unattended runs.** A run with no developer between turns (a `/goal`, a loop, a scheduled agent) starts only with four things written down: a done condition a command can verify, the scope it may touch, a cap on turns or spend, and who signs off the result. The harness enforces them (`/goal`, a Stop hook that runs the done check, the permission mode); the protocol does not reimplement them. Automatic continuations stop after three without progress, and the run ends at a proposed commit, never a pushed one.
 
 **Evidence, in full.** A statement about this repository is grounded in a file read this session and carries its `file:line`, or it ships marked unverified. Absent means unverified: not read is not the same as not there, and "I did not check" is a cheap and valid answer. This binds the research behind a SPEC, the report that closes TEST, and the summary at END. Outside the repository, only the `land:` allow-list is fetchable, and a source is never invented.
 
@@ -141,7 +141,7 @@ What the protocol takes off the agent's hands, so the developer is not the one c
 
 `.ai/backlog/session.md` is the SSOT for where the cycle stopped, and `.ai/backlog/tasks.md` for the queue behind it. Any agent, any session can continue.
 
-**Checkpoint** (after each atomic task): In `## Active` of `session.md`, mark the finished task done and the next one `- [IN_PROGRESS]` with a context note. `tasks.md` is written once, at END.
+**Checkpoint** (after each atomic task): In `## Active` of `session.md`, mark the finished task done and the next one `- [IN_PROGRESS]` with a context note. The end of a wave is the natural point to hand over to a new session, since the suite is green there. `tasks.md` is written once, at END.
 
 The `## Active` entry carries the current phase, which is what the Phase Banner reads. A cycle whose phase lives only in the conversation does not survive a new session, and recovering it costs more than writing it did.
 
@@ -155,13 +155,15 @@ The `## Active` entry carries the current phase, which is what the Phase Banner 
 
 <rule name="TokenDiscipline">
 
-**Terse Mode is default.** Maximize technical density. Start with conclusions.
+**Terse Mode covers working notes**: progress lines, tool narration, the chat between steps. SPEC, PLAN, the TEST report, the END summary and any handoff are read later by someone who lacks this context (a developer, a reviewer, a fresh session), so they are written in full sentences, conclusions first, every term defined once.
+
+In working notes:
 
 1. **Articles die**: drop "a", "an", "the" where natural.
 2. **Filler die**: no "Certainly!", "Great question", no re-summarizing.
-3. **Hedging die**: no "I think", "It seems", "Perhaps". State facts or code.
+3. **Hedging die**: no "I think", "It seems", "Perhaps". State facts, or mark the claim unverified.
 4. **Fragments allowed**: "Fix bug. Task done." > "I have fixed the bug and the task is now done."
-5. **Technical integrity preserved**: Never compress paths, code blocks, identifiers.
+5. **Technical integrity preserved**: paths, code blocks and identifiers stay whole, since a compressed path is a wrong path.
 6. **Pedagogical opt-in**: only when dev asks "why" or "explain".
 
 **Operational:** After END, suggest new session. Use `file:line` refs.

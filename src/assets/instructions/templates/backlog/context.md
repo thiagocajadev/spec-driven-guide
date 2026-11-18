@@ -13,6 +13,7 @@ lint: [command that lints and auto-fixes]
 build: [command that produces the artifact, or `none`]
 release: [`derived` if CI computes the version from the commits, `manual` if a maintainer runs the bump locally. See `versioning.md`, `VersionControl`.]
 bump: [on `manual`, the command that bumps the version, such as `npm run bump <type>`; otherwise `none`]
+eol: [`lf` or `crlf` as `.gitattributes` / `.editorconfig` declare it, or `undeclared`. Write in that ending and never add code that converts between endings.]
 
 ## Decisions
 

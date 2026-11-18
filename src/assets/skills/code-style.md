@@ -1,8 +1,13 @@
+---
+name: code-style
+description: The SDG code style and the Form items Phase TEST verifies on every changed file. Load at every Phase CODE entry, before the first line of code.
+---
+
 # Code Style: SDG Essentials
 
 <ruleset name="CodeStyle">
 
-> Load in **Phase CODE**. SQL aesthetics in `sql-style.md`; UI copy voice in `writing-soul.md`; visual density in depth in `visual-density.md`; commit shape and release modes in `versioning.md`, which Phase END loads instead of this file.
+> SQL aesthetics in `sql-style.md`; UI copy voice in `writing-soul.md`; visual density in depth in `visual-density.md`; commit shape and release modes in `versioning.md`, which Phase END loads instead of this file.
 
 ## Security first
 
@@ -17,6 +22,21 @@
 - **Files** under 500 lines. One concern per module (SRP). Follow framework convention (Rails, Django, Next.js, Astro). Don't reinvent the tree.
 - **Formatter**: language default (`prettier`, `gofmt`, `black`, `cargo fmt`, `rubocop -A`). No style debates beyond that. No alignment padding for `=` or `:`. Visual density (grouping blanks, dot-chain breaks) layers **on top**: the formatter handles wrapping and indentation; blank lines between statements are the developer's signal layer and are never reformatted by the tool.
 - **Logging**: Structured JSON for debug / observability (one event per line, stable keys). Plain text only for user-facing CLI output.
+
+---
+
+## Before writing code: the YAGNI ladder
+
+Climb it in order and stop at the first rung that answers:
+
+1. **Does it need to exist?** A requirement nobody stated is not one.
+2. **Does the codebase already have it?** Search before writing; a second copy is a second place to fix.
+3. **Does the standard library?**
+4. **Does a dependency already installed?** A new dependency is a decision for the SPEC, not for CODE.
+5. **Is it a one-liner?**
+6. **Then write the minimum** that meets the SPEC.
+
+**Never cut**, however lean the change: validation at trust boundaries, handling of data loss, security controls, and accessibility. Leaving them out is not simplicity; it moves the cost onto the user.
 
 ---
 
@@ -91,24 +111,9 @@
 
 ## Work Checklist
 
-> Recite at Phase CODE entry, **before** the first `Edit` / `Write` / `NotebookEdit`. Both sections are binary, with no partial credit.
->
-> **Intent** establishes what you are about to do. **Form** establishes what the result must look like. Code aware of the final form avoids the CODE → TEST → CODE rework loop.
->
-> Phase TEST verifies the **Form** section against `governance.mjs` heuristics. TEST verifies; it should not discover.
+> Phase TEST checks every file the cycle changed against these items, through the `governance.mjs` heuristics, and each one is pass or fail. They are written here so the code takes this shape from its first line. The linter table below already enforces part of them mechanically.
 
-### Intent (recite at CODE entry)
-
-- [ ] **Mental Reset**: named which training default is being suspended for this task (verbose prose, dense walls, auto-summarize, taboo verbs).
-- [ ] **Target Files**: explicit path list from approved Plan; no drift.
-- [ ] **Naming**: no banned verbs / nouns / abbreviations; booleans carry semantic prefix; files follow `domain.operation.ext`; single-letter imports aliased with intent name.
-- [ ] **Narrative**: Stepdown, SLA, Explaining Returns, control-flow tool matches shape, ≤2 indent levels.
-- [ ] **Comments**: WHY only; one-liner; no what-comments; docstring on public surfaces; drift compacts.
-- [ ] **Tests planned**: new function → test; bug fix → regression test; external I/O mocked; AAA phases explicit.
-- [ ] **Security**: boundary inputs validated; no string-concat into queries / commands / paths.
-- [ ] **Blockers**: `none` or enumerated.
-
-### Form (recite at CODE entry; verified at Phase TEST)
+### Form (verified at Phase TEST)
 
 - [ ] **Pure entry point**: `run()` as headline caller only (single-statement or canonical 2-statement form).
 - [ ] **Narrative Siblings**: one-use helpers as siblings below callers.
@@ -118,8 +123,6 @@
 - [ ] **Boolean prefix**: `is` / `has` / `can` / `should` / `did` / `needs` / `supports` / `allows`.
 - [ ] **No framework abbreviations**: `req` / `res` / `ctx` forbidden; plus SDG taboos (banned verbs / nouns / abbrs).
 - [ ] **No section banners**: no `// --- Section ---` dividers.
-
-> **Circuit Breaker**: any write tool call without a preceding Work Checklist recitation auto-fails Phase TEST; remediation is re-entry into Phase CODE with the checklist emitted.
 
 </rule>
 

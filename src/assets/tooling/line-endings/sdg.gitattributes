@@ -1,0 +1,23 @@
+# spec-driven-guide line-ending recipe. Copy to `.gitattributes` at the project
+# root, then run `git add --renormalize .` once and commit the result.
+#
+# why: agents, hooks, linters and byte budgets all compare bytes. Without a
+# declaration, a Windows checkout with core.autocrlf turns every text file into
+# CRLF, and every tool that reads a file disagrees with the one that wrote it.
+# This makes the repository the authority instead of each machine's git config.
+* text=auto eol=lf
+
+# cmd.exe reads batch files with CRLF; with LF, labels and `goto` can break.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binaries are stored and checked out byte for byte.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.woff binary
+*.woff2 binary

@@ -1,15 +1,18 @@
+---
+name: ui-ux
+description: Design system, presets and UI copy. Load in Phase CODE when building UI surfaces, choosing design presets, writing UI copy, or producing perennial artifacts such as a README or docs.
+---
+
 # UI/UX: Design System, Presets & Writing Soul
 
 <ruleset name="UI/UX">
-
-> Load in **Phase CODE** when building UI surfaces, choosing design presets, writing UI copy, or producing perennial artifacts (README, docs, changelogs).
 
 ---
 
 ## Part 1: Design Thinking (Phase 0, Mandatory)
 
 > [!IMPORTANT]
-> **Phase 0 is not optional.** Complete it before writing any UI code.
+> Complete Phase 0 before writing any UI code: palette, type and spacing decided after the first screen get retrofitted into every screen built before them.
 
 ### Phase 0.1: Palette Setup (First-Time Rule)
 
@@ -305,7 +308,7 @@ Cannot fill Palette and Preset → ask before generating code.
 1. Components are **declarative** (render only)
 2. UI state, mapping, conditional logic → ViewModel hook (`useXxxVM`)
 3. Pure transformations live outside components
-4. Business/domain logic MUST NOT live in ViewModel
+4. Business and domain logic stays out of the ViewModel, which shapes data for one screen and gets rewritten with it
 5. Trivial components (<10 lines, no logic) skip ViewModel
 
 **ViewModel pattern:** Component receives props → calls `useXxxVM(props)` → VM returns derived state → Component renders. VM handles: UI state (loading/empty/error), derived state (isActive→color), mapping (API→UI). Domain logic stays in services. Formatting stays in utils.
@@ -526,6 +529,6 @@ Decompose multi-stage flows via **steps** / **tabs** / **modals**. >3 concerns w
 
 ## Part 5: Writing Soul (UI Copy & Perennial Artifacts)
 
-> Load `.ai/kit/skills/writing-soul.md` (rules) and `.ai/kit/skills/checklist-soul.md` (ritual) for all non-code writing: UI copy, READMEs, changelogs, guides, commit messages.
+> Load `.ai/kit/skills/writing-soul.md` (rules) and `.ai/kit/skills/checklist-soul.md` (passes) for all non-code writing: UI copy, READMEs, changelogs, guides, commit messages.
 
 </ruleset>

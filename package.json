@@ -1,6 +1,6 @@
 {
   "name": "spec-driven-guide",
-  "version": "11.0.2",
+  "version": "11.1.0",
   "description": "Spec-driven governance for AI coding agents. A CLI that installs AGENTS.md and on-demand skills so Claude Code, Cursor, Copilot, Codex, Gemini and Windsurf follow one protocol: spec, plan, code, test, end.",
   "type": "module",
   "main": "./src/engine/bin/index.mjs",
@@ -19,6 +19,7 @@
     "prune": "node src/assets/tooling/scripts/prune-backlog.mjs",
     "test": "node --test \"src/engine/**/*.test.mjs\" \"src/assets/tooling/**/*.test.mjs\" \"scripts/**/*.test.mjs\"",
     "test:watch": "node --test --watch \"src/engine/**/*.test.mjs\" \"src/assets/tooling/**/*.test.mjs\" \"scripts/**/*.test.mjs\"",
+    "ssot": "node --test src/engine/lib/domain/canon-agreement.test.mjs src/engine/lib/domain/skill-frontmatter.test.mjs src/engine/lib/domain/context-budget.test.mjs src/assets/tooling/scripts/version-table.test.mjs src/assets/tooling/github-actions/release-config.test.mjs src/assets/tooling/gitignore/gitignore-sample.test.mjs src/assets/tooling/line-endings/line-endings-sample.test.mjs && node src/engine/bin/index.mjs audit --skip-hygiene",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "links": "node scripts/check-links.mjs",

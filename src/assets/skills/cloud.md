@@ -1,8 +1,11 @@
+---
+name: cloud
+description: Container and cloud infrastructure standards. Load in Phase CODE when touching a Dockerfile, compose or Kubernetes manifests, IAM, or cloud config.
+---
+
 # Cloud & Containers: Infrastructure Standards
 
 <ruleset name="Cloud & Container Standards">
-
-> Load in Phase CODE when touching Dockerfile, compose/K8s manifests, IAM, or cloud config.
 
 ## Cloud Architecture
 

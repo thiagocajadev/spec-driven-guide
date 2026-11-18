@@ -1,0 +1,13 @@
+# spec-driven-guide line-ending recipe. Copy to `.editorconfig` at the project
+# root. `.gitattributes` decides what git stores and checks out; this file makes
+# the editor save the same way, so a file never changes endings between save and
+# commit.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+
+[*.{bat,cmd}]
+end_of_line = crlf

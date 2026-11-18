@@ -112,7 +112,7 @@ The agent sequences the spec into atomic, estimable tasks.
 
 High-density execution following strict architectural standards.
 
-- **Work Checklist**: recited before the first file write, Intent items at entry and Form items verified at TEST.
+- **Work Checklist**: the Form items in `code-style.md`, loaded with the skill at CODE entry and verified on every changed file at TEST. Nothing is read aloud before a write.
 - **Delegation**: a subagent taking CODE and TEST gets the approved SPEC and PLAN verbatim plus the paths it needs, never commits and never writes the backlog. `agent-roles.md` holds the payload.
 - **Plan Adherence**: No "bonus" features or refactors (YAGNI).
 - **Blocker Surface**: The agent flags issues immediately rather than working around them.

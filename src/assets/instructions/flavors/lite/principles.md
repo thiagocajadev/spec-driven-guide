@@ -7,7 +7,7 @@
 
 1. **Direct Implementation**: Logic at point of interaction (main file or route handler).
 2. **Flat Hierarchy**: Minimize file hopping. Related logic together in single file when possible.
-3. **No Boilerplate**: Only write what is executed. No future-proofing (YAGNI).
+3. **No Boilerplate**: Only write what is executed. No future-proofing: the YAGNI ladder and its never-cut list in `code-style.md` decide what gets written.
 
 > SRP is inherited from `code-style.md` **Small functions** (one responsibility, one level of abstraction). It applies in every flavor, not duplicated here.
 

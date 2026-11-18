@@ -15,5 +15,6 @@ Follow Phase SPEC from Working Protocol. Context charges:
   - **Compliance Check**: Highlight `WorkChecklist` violations from `code-style.md` (narrative, observability, component architecture).
   - **Correction Plan**: Structured plan of adjustments/refactorings to realign with standards.
   - **Canon Coverage**: Read `.ai/backlog/learned.md` and report every voice defect class recorded there with no counterpart in `.ai/kit/skills/writing-soul.md` or `.ai/kit/skills/lexicon/`. A class that stayed in `learned.md` is a finding the next writer will repeat.
+  - **Model Currency**: when a new model generation ships, re-read the kit for instructions written to compensate for an older one: emphasis, repeated warnings, recited checklists, "keep going" prompts. Current models over-apply that text instead of needing it. Where the harness has a prompt audit (Claude Code: `/doctor prompt-audit`), run it on `AGENTS.md` and the loaded skills and weigh its findings like any other drift.
   - **Security Baseline Currency**: Read the edition named under `## Baseline` in `.ai/kit/skills/security.md` and check it against the source in the `sdg-land.md` allow-list. A superseded edition is drift like any other, and it is the one kind the repository cannot detect from its own contents.
 - **Verification**: All gaps have actionable correction tasks, no regressions.

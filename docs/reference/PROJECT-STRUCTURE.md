@@ -11,7 +11,7 @@ your-project/
 │   ├── .sdg-manifest.json       ← The pin: version, selections, one hash per file (committed)
 │   ├── kit/                     ← The CLI writes it, and rewrites it on every install. Gitignored
 │   │   ├── skills/              ← Engineering skills (loaded on-demand per cycle phase)
-│   │   │   ├── code-style.md    ← Code style + Work Checklist (Intent + Form), Phase CODE core
+│   │   │   ├── code-style.md    ← Code style + Work Checklist (Form), Phase CODE core
 │   │   │   ├── testing.md       ← Test principles (loaded in Phase CODE/TEST)
 │   │   │   ├── security.md      ← Security boundaries + pipeline rules
 │   │   │   ├── api-design.md    ← API contracts and envelopes
@@ -26,7 +26,7 @@ your-project/
 │   │   │   ├── domain.md        ← DDD-Lite: aggregates, VOs, ubiquitous language
 │   │   │   ├── visual-density.md ← Visual-density readability, in depth
 │   │   │   ├── writing-soul.md  ← Voice rules for prose, stated as tests, English
-│   │   │   ├── checklist-soul.md ← The writing gate: recite before, sweep after
+│   │   │   ├── checklist-soul.md ← The writing passes: settle before, sweep after
 │   │   │   └── lexicon/         ← Defect instances, one file per language
 │   │   ├── instructions/
 │   │   │   ├── templates/       ← Working protocol (workflow.md), agent roles, backlog seeds
@@ -64,10 +64,9 @@ The skill directory is the **canonical Single Source of Truth** for engineering 
 
 ### skills/code-style.md
 
-The **Phase CODE core**. Two-line Security-First block, code-style rules (organized as compact tables: Form, Readability, Quality Control), and the unified `WorkChecklist` rule the agent must recite at CODE entry:
+The **Phase CODE core**. Two-line Security-First block, code-style rules (organized as compact tables: Form, Readability, Quality Control), and the `WorkChecklist` rule that Phase TEST verifies:
 
-- **Intent** (Phase CODE entry, before the first `Edit` / `Write`): Mental Reset, Target Files, Naming, Narrative, Comments, Tests planned, Security, Blockers.
-- **Form** (Phase CODE entry **and** verified at Phase TEST): eight binary items wired to narrative heuristic validators in `governance.mjs` (Pure entry point, Narrative Siblings, Explaining Returns, Revealing Module Pattern, Vertical Density, Boolean prefix, No framework abbreviations, No section banners). Recited at CODE entry to avoid the CODE → TEST → CODE rework loop; verified at TEST to gate the cycle.
+- **Form** (loaded at Phase CODE entry, verified at Phase TEST): eight binary items wired to narrative heuristic validators in `governance.mjs` (Pure entry point, Narrative Siblings, Explaining Returns, Revealing Module Pattern, Vertical Density, Boolean prefix, No framework abbreviations, No section banners). Known from the first line, which avoids the CODE → TEST → CODE rework loop; verified at TEST to gate the cycle.
 
 ### skills/testing.md
 
@@ -95,7 +94,7 @@ The banner above the first paragraph, which `writing-soul.md` does not describe:
 
 The voice governance, loaded on `docs:`, `land:` and `end:`, and on any Phase CODE task that writes prose.
 
-`writing-soul.md` holds the rules, in English, each stated as a defect class plus the test that detects it. `checklist-soul.md` holds the ritual: Part 1 recited before the first write of each file, Part 2 swept after the last line of the cycle. `lexicon/<language>.md` holds the concrete instances of each class in one language, keyed by the class name.
+`writing-soul.md` holds the rules, in English, each stated as a defect class plus the test that detects it. `checklist-soul.md` holds the passes: Part 1 settles audience, goal and language before the first line, Part 2 sweeps the draft after the last line of the cycle. `lexicon/<language>.md` holds the concrete instances of each class in one language, keyed by the class name.
 
 The split is what makes an English rule fire on a document delivered in another language. A rule written as a test crosses languages; a rule written as a word does not. `tooling/hooks/writing-lint.mjs` reads the lexicon at runtime, so adding a term or a whole language is a text edit, never a code change. A project that wants a different voice from the canon swaps its lexicon and leaves the rules alone.
 

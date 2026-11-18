@@ -159,6 +159,25 @@ so is the lexicon tree, which is a list of banned terms by definition.
 Always exits 0; reports go to stderr. When no lexicon resolves, the hook says so
 and names every path it tried, because a run that loaded no list proves nothing.
 
+### `hooks/git-guard.mjs`
+
+Blocking PreToolUse hook for shell commands. Refuses `git push` and
+`git reset --hard`, including inside a chain (`npm test && git push`), behind
+environment variables, and after git's global options (`git -C dir push`).
+
+It is the enforced half of the commit gate in `workflow.md`: the text asks the
+agent to stop before the work leaves its hands, and this hook refuses when the
+agent does not. A refusal exits 2 with the reason on stderr, which Claude Code
+hands back to the agent. Every other command exits 0, and so does a payload the
+hook cannot parse, with a warning on stderr: a guard that breaks the session on
+a malformed payload costs more than the one command it might miss.
+
+### `line-endings/sdg.gitattributes` and `line-endings/sdg.editorconfig`
+
+One line-ending policy for git and for the editor: every text file is LF,
+except `.bat` and `.cmd`, which `cmd.exe` reads as CRLF, and binaries, which
+are never touched. A test keeps the two samples on the same policy.
+
 ## Activation recipes
 
 ### Activate ESLint rules
@@ -410,6 +429,91 @@ cp .ai/kit/tooling/biome/biome.json biome.json
 
 Or ask your agent: "wire Biome into my project."
 
+### Activate line endings
+
+Without a declaration in the repository, each machine's git config decides the
+line endings, and a Windows checkout with `core.autocrlf` turns every text file
+into CRLF. Hooks, linters, manifest hashes and byte budgets then disagree with
+the files they read, and agents spend turns normalizing what the repository
+should have settled.
+
+1. Copy the samples to the project root, merging with any file already there:
+
+```bash
+cp .ai/kit/tooling/line-endings/sdg.gitattributes .gitattributes
+cp .ai/kit/tooling/line-endings/sdg.editorconfig .editorconfig
+```
+
+2. Renormalize once, so the files already in git follow the new rule, and
+   commit that change alone:
+
+```bash
+git add --renormalize .
+git commit -m "chore: one line ending, declared in the repository"
+```
+
+3. Record `eol: lf` in `.ai/backlog/context.md`, which is where the agent reads
+   it at session start.
+
+Projects that must stay on CRLF (some Windows-only .NET solutions) write
+`eol=crlf` instead and record `eol: crlf`; the point is that the repository
+declares it, not which ending it picks.
+
+### Activate git-guard hook
+
+The commit gate in `workflow.md` is advisory until a check outside the model
+holds it. Three pieces make it enforced on Claude Code; take any of them.
+
+1. Register the hook and the `ask` permission in `.claude/settings.json`
+   (shared with the team) or `~/.claude/settings.json` (yours alone):
+
+```json
+{
+  "permissions": {
+    "ask": ["Bash(git commit:*)"]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .ai/kit/tooling/hooks/git-guard.mjs"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+- The `PreToolUse` hook refuses `git push` and `git reset --hard`.
+- The `ask` permission makes the harness ask you before every `git commit`,
+  whatever the agent decided.
+
+2. Optional: a `Stop` hook that runs the test suite each time the agent ends a
+   turn, so a turn that broke the build says so before you read it. It costs
+   one suite run per turn; skip it where the suite is slow.
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [{ "type": "command", "command": "npm test --silent" }]
+      }
+    ]
+  }
+}
+```
+
+3. Test by asking the agent to run `git push`: the call is refused with
+   `git-guard: blocked.` and the reason.
+
+`init` never writes these files. Harness configuration is the developer's, and
+the hook runs from where the install already put it.
+
 ### Activate writing-lint hook
 
 Advisory hook that scans Markdown writes against the lexicons in
@@ -442,8 +546,9 @@ the install already put it.
 ```
 
 2. A project-level `.claude/settings.json` works the same way and is your call.
-   The managed `.gitignore` block keeps that directory out of the repository:
-   governance lives in `.ai/`, harness configuration does not enter git.
+   SDG takes no position on that directory: the managed `.gitignore` block
+   leaves it alone, so a team that shares its settings commits them like any
+   other file.
 
 3. Test by editing a scoped file (e.g. `docs/test.md`) with a banned term.
    Stderr should show `<file>:<line> <class> (<language>): "<term>"`, plus

@@ -1,8 +1,11 @@
+---
+name: review
+description: PR craft, the reviewer checklist and the fresh-context review. Load when reviewing a pull request, producing one for human review, or running the Review Gate on an [M] or [L] change.
+---
+
 # Code Review: Practice & Craft
 
 <ruleset name="CodeReviewCraft">
-
-> Load in **Phase CODE** when reviewing pull requests, or in any task that produces a PR/MR for human review.
 
 ---
 
@@ -23,7 +26,7 @@
 
 ## Reviewer Checklist (binary, in this order)
 
-> Recite at the start of every review. Stop at the first unmet item; ask the author to fix before continuing.
+> Work through it in order. Stop at the first unmet item and ask the author to fix it before continuing, since everything after it reviews code that is about to change.
 
 - [ ] **Scope**: does the PR do what its title claims? Out-of-scope changes flagged or split.
 - [ ] **Tests**: every new function tested; bug fix has regression test; AAA explicit (see `testing.md`).
@@ -37,6 +40,23 @@
 </rule>
 
 ---
+
+<rule name="FreshContextReview">
+
+## Fresh-Context Review
+
+The agent that wrote the code reads its own intent into the diff. A fresh context, meaning a subagent, a new session, or a developer who has not seen the conversation, reads only what is there. That is what makes a second read worth paying for: delegating the same reasoning to another agent does not improve it, an independent reader does.
+
+- **When it earns its cost**: an [M] or [L] change, anything touching auth, data or money, or a change its author is unsure of. A typo does not need one.
+- **What the reviewer receives**: the approved SPEC and the diff. Not the conversation and not the author's summary, which is the reading the review exists to check.
+- **Two axes, reported apart**:
+  1. **Fidelity to the SPEC**: each verification item met or not, with `file:line`; anything in the diff the SPEC did not ask for; anything the SPEC asked for that the diff lacks.
+  2. **Code quality**: the Reviewer Checklist above, plus correctness bugs.
+- **Every finding gets an answer**: fixed, or declined with a reason. A finding nobody answered is still open at the Review Gate.
+
+On a harness with subagents, the handoff payload in `agent-roles.md` applies, with the SPEC and the diff in place of the PLAN.
+
+</rule>
 
 ## Review Tone
 

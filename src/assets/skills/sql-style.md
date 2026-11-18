@@ -1,8 +1,12 @@
+---
+name: sql-style
+description: SQL formatting and query style. Load in Phase CODE when writing, reviewing or refactoring SQL.
+---
+
 # SQL Style
 
 <ruleset name="SQLStyle">
 
-> Load in Phase CODE when writing, reviewing, or refactoring SQL.
 > Formatting is owned by **SQLFluff**: enforce via CI, not review comments.
 > For structural data access rules (pooling, transactions, indexes), see `.ai/kit/skills/data-access.md`.
 

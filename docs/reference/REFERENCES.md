@@ -1,13 +1,13 @@
 # Credits and Philosophies
 
-SDG Agents is built on the shoulders of giants. We incorporate and adapt philosophies from the open-source community to create a resilient and efficient engineering environment for AI agents.
+spec-driven-guide is built on the shoulders of giants. It adapts ideas from the open-source community and from the people who build the models, and each entry below says what was taken and where it landed, so the credit and the reason travel together.
 
 ## Core Philosophies
 
 ### [Caveman](https://github.com/JuliusBrussee/caveman)
 
 **Maximize technical density, minimize linguistic fluff.**
-Caveman philosophy (by Julius Brussee) advocates for a high-density, low-token interaction style that prioritizes conclusions and technical fragments over conversational filler, maximizing the agent's contextual efficiency.
+Caveman philosophy (by Julius Brussee) advocates for a high-density, low-token interaction style that prioritizes conclusions and technical fragments over conversational filler, maximizing the agent's contextual efficiency. Since v11.1.0 SDG applies it to working notes only: a SPEC, a plan or a handoff is read later by someone without the context, and gets full sentences.
 
 ### [Context-mode](https://github.com/mksglu/context-mode)
 
@@ -44,6 +44,51 @@ Progressive disclosure names what SDG has done since v3: `AGENTS.md` is a regist
 
 **Content decides whether the file helps or costs.**
 Two 2026 studies reached opposite conclusions on `AGENTS.md`. One measured roughly 20 percent higher inference cost when context was added without curation. The other measured roughly 29 percent shorter runtime and 17 percent fewer output tokens across 10 repositories and 124 pull requests. The rule that reconciles them: an instruction earns its place only when it changes a command, a limit, a risk, a patch style or an acceptance criterion. SDG passed as a router and failed on one count, since it named no commands. `context.md` now declares `test`, `lint`, `build` and `release`, so Phase TEST stops rediscovering the build every cycle.
+
+---
+
+## Subtraction and enforcement, November 2026
+
+The 2026-11-18 `audit:` read the skill ecosystem and current vendor guidance for what the kit could gain without growing heavier. The sources agreed more on what to remove than on what to add, and v11.1.0 shipped both halves.
+
+### [Claude Code best practices](https://code.claude.com/docs/en/best-practices) and [memory](https://code.claude.com/docs/en/memory)
+
+**If something has to happen every time, make it a hook.**
+The "What you can stop doing" table lists emphasis, recited checklists and delegation for its own sake as advice current models no longer need. The Work Checklist stopped being recited, absolute rules now carry a scope and a reason instead of capital letters, and the commit gate gained an enforced half in the `git-guard` hook. The memory page set the frame for the `AGENTS.md` byte budget and named the `/doctor prompt-audit` that `audit:` now runs when a model ships. The [goal](https://code.claude.com/docs/en/goal) page shaped the contract for unattended runs.
+
+### [Solving code review at Anthropic](https://claude.dev/blog/solving-code-review-at-anthropic)
+
+**A second reader helps only when it reads fresh.**
+The fresh-context review in `review.md`, with its two axes, fidelity to the SPEC and code quality, follows this account. So does the rule that every `troubleshoot.md` entry names the regression test that pins it, which turns past incidents into cases the suite runs on every change. Its risk-tiered approval is recorded in the backlog as an open question rather than adopted.
+
+### Vendor prompting guides
+
+**Write for the reader who was not there.**
+Anthropic's guides for the Claude 5 family and OpenAI's guide for its latest models both favor full sentences for anything a later reader depends on, and warn that current models read "never" as absolute. Terse Mode was scoped to working notes, and the unattended-run contract separates an ordinary obstacle from a deliberate blocker.
+
+### [mattpocock/skills](https://github.com/mattpocock/skills)
+
+**Guardrails as code, questions with answers attached.**
+Matt Pocock's `git-guardrails-claude-code` is the model for `git-guard`, and his grilling skill is the model for Phase SPEC asking numbered questions, each with a recommended answer.
+
+### [akitaonrails/ai-memory](https://github.com/akitaonrails/ai-memory) and [ai-jail](https://github.com/akitaonrails/ai-jail)
+
+**Memory informs; it never authorizes.**
+Fabio Akita's design notes on rule promotion and poisoned memory gave `learned.md` its entry rules: one lesson, its origin, pruned when untrue, promoted only by a developer. The `ai-jail` principle that untrusted repository config may only tighten became the precedence line in the Persistence Policy. Both projects keep memory or isolation outside the repository, which SDG declined; their review rules were what it took.
+
+### [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail)
+
+**Climb the ladder before writing.**
+The YAGNI ladder in `code-style.md` and its never-cut list come from the ponytail `AGENTS.md`.
+
+### Agent Skills format
+
+**A skill describes itself.**
+The `name` and `description` frontmatter on every skill follows the format published at [agentskills.io](https://agentskills.io) and used by [anthropics/skills](https://github.com/anthropics/skills) and [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills), whose routing evaluations also suggested the test that holds the router to the skills it names.
+
+### Also read
+
+superpowers (two-stage review, brainstorming), gstack (labels that mark a gate as enforced or advisory), [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill), and Simon Willison's coverage of Anthropic staff talks, including an "always verify" rule misfiring on small changes and incidents turned into a daily eval set.
 
 ---
 

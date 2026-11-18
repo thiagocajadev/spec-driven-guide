@@ -1,6 +1,6 @@
 # Legacy Architecture Principles
 
-> Inherits Security, Reliability, Narrative from code-style.md.
+> Inherits Security, Reliability, Narrative and the YAGNI ladder (with its never-cut list) from code-style.md.
 
 ## Pipeline
 

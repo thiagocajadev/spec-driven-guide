@@ -1,8 +1,13 @@
+---
+name: visual-density
+description: Visual density in depth, the blank-line rhythm that groups statements. Load when a change is mostly about grouping and spacing; the core rule is already in code-style.md.
+---
+
 # Visual Density
 
 > Scope: cross-cutting. Applies to any language or stack in the project.
 >
-> The router files this under Surgical, which describes this file and not the rule. The core rule is already recited on every Phase CODE entry, as **Vertical Density** in the `WorkChecklist`, and verified at Phase TEST. What loads on demand is the depth below: the cases, the counter-examples, and the per-language notes.
+> The router files this under Surgical, which describes this file and not the rule. The core rule already loads with `code-style.md` on every Phase CODE entry, as **Vertical Density** in the `WorkChecklist`, and Phase TEST verifies it. What loads on demand is the depth below: the cases, the counter-examples, and the per-language notes.
 
 Code gets read far more often than it gets written. **Visual density** (how the eye scans through code) is about grouping what belongs together and separating what is distinct, without needing comments to guide the reader.
 
