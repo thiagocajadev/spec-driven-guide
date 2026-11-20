@@ -268,9 +268,9 @@ function renderSummaryFooter() {
 }
 
 function printHeader(version) {
-  console.log(`\n  Spec-Driven Guide: Agents v${version}`);
+  console.log(`\n  Spec-Driven Guide v${version}`);
   console.log(`  ${"─".repeat(50)}`);
-  console.log("  A working protocol and engineering rules for your AI agent.");
+  console.log("  Your spec guide for developers and agents.");
   console.log("  Press Ctrl+C to exit.\n");
 }
 
@@ -287,7 +287,7 @@ function printFooter() {
 function printHelp(version) {
   console.log(`
   spec-driven-guide v${version}
-  Spec-driven governance for AI coding agents: one protocol for every project.
+  Your spec guide for developers and agents: one cycle for every project.
 
   Usage:
     npx spec-driven-guide [command] [options]

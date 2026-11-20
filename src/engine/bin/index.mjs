@@ -236,11 +236,11 @@ async function startInteractiveMode(args) {
         message: "What would you like to do?",
         choices: [
           {
-            name: "1. 🏗️  Build Project: Inject staff-level engineering rules",
+            name: "1. 🏗️  Install the guide: protocol, skills and backlog",
             value: "init",
           },
           {
-            name: "2. ⚙️  Settings: Audit, update rules, and maintenance",
+            name: "2. ⚙️  Settings: audit, update and maintenance",
             value: "settings",
           },
           { name: "3. ❌ Exit", value: "exit" },

@@ -1,13 +1,13 @@
 <!-- prettier-ignore-start -->
 <div align="center">
-  <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/sdg-agents-icon-light.svg" alt="Spec-Driven Guide" width="480" height="480" style="border-radius: 1rem;">
-  <h1 align="center">Spec-Driven Guide: Agents</h1>
+  <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/sdg-logo.svg" alt="Spec-Driven Guide" width="360" height="360">
+  <h1 align="center">Spec-Driven Guide</h1>
   <p align="center">
-    Um CLI (Command Line Interface · interface de linha de comando) que instala um conjunto de instruções para agentes de IA no seu projeto.<br>
+    Seu guia de especificação para desenvolvedores e agentes.<br>
     <a href="README.md">Read in English</a>
   </p>
   <p align="center">
-      Leia o manifesto e o guia visual em <a href="https://specdrivenguide.org">specdrivenguide.org</a>
+    Leia ao vivo em <a href="https://specdrivenguide.org">specdrivenguide.org</a>
   </p>
   <a href="https://www.npmjs.com/package/spec-driven-guide"><img src="https://img.shields.io/npm/v/spec-driven-guide?style=flat-square&logo=npm&color=cb3837" alt="versão npm" /></a>
   <a href="https://www.npmjs.com/package/spec-driven-guide"><img src="https://img.shields.io/npm/dm/spec-driven-guide?style=flat-square&logo=npm&color=cb3837" alt="downloads npm" /></a>
@@ -21,23 +21,26 @@
 
 <br>
 
-`spec-driven-guide` instala arquivos de instrução em markdown no seu projeto. Agentes de IA (Claude Code, Cursor, Windsurf, Copilot, Codex e outros) leem esses arquivos e seguem o protocolo em cada tarefa.
+Spec-Driven Guide (SDG) é um guia para trabalhar com agentes de IA. O `npx spec-driven-guide` instala arquivos de instrução em markdown no seu projeto, e o agente que você já usa (Claude Code, Hermes Agent, Codex, Cursor, Copilot e outros) lê esses arquivos e passa cada tarefa pelas mesmas cinco fases: SPEC, PLAN, CODE, TEST e END. Você toma as decisões, e o agente segue o processo que o guia descreve.
 
-Quem chega ao projeto pela primeira vez lê de cima para baixo: o Início Rápido instala, e Como o Protocolo Funciona explica o que muda na conversa com o agente depois disso. Quem vai alterar o conjunto de instruções lê a partir de O Que É Instalado, onde cada arquivo gerado é nomeado e apontado para a sua origem.
+Quem chega ao guia pela primeira vez lê de cima para baixo: Thiago e Cadija mostram o ciclo, e o Início Rápido instala. Quem vai alterar o conjunto de instruções lê a partir de O Que É Instalado, onde cada arquivo gerado é nomeado e apontado para a sua origem.
 
-## Comece por um prefixo
-
-Instrua o agente do mesmo jeito que você escreveria uma mensagem de commit.
-
-| Como você pede         | O que você escreve                                                | O que volta                                                                                              |
-| :--------------------- | :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
-| Um pedido solto        | `conserta o login`                                                | O agente adivinha o escopo e começa a escrever. Você descobre o que ele decidiu revisando tudo depois    |
-| Uma spec escrita à mão | contrato, critérios de aceite e casos de borda, escritos por você | Funciona bem. Detalhe ajuda, e o agente pode escrever esse detalhe junto com você                        |
-| ✅ Um prefixo          | `fix:` login aceita senha vazia                                   | O agente escreve a spec, para para você aprovar, e então planeja, codifica e testa dentro do mesmo ciclo |
-
-O agente propõe a SPEC a partir do contexto que ele já tem do projeto, e vocês alinham juntos antes de qualquer código. Onde houver risco, detalhe o quanto puder.
-
-**A spec escala com a demanda. Os gates não.** Um typo rende três linhas; um domínio novo rende um contrato. É esse o equilíbrio que o framework existe para dar: a engenharia que muda o resultado, sem a cerimônia que faz um protocolo ser pulado.
+<!-- prettier-ignore-start -->
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/dev-desk-typing.webp" alt="Thiago, o desenvolvedor, digitando na mesa" width="220" height="220"><br>
+      <strong>Thiago</strong>, o desenvolvedor<br>
+      Decide o que será construído e aprova cada passo.
+    </td>
+    <td align="center" width="50%">
+      <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/cadija-pointing.webp" alt="Cadija, a agente, apontando o caminho" width="220" height="220"><br>
+      <strong>Cadija</strong>, a agente<br>
+      Segue o guia: escreve a spec, planeja, codifica e testa, e para em cada ponto de aprovação.
+    </td>
+  </tr>
+</table>
+<!-- prettier-ignore-end -->
 
 <details>
 <summary><strong>Conceitos fundamentais</strong></summary>
@@ -52,14 +55,76 @@ O agente propõe a SPEC a partir do contexto que ele já tem do projeto, e você
 | **Work Checklist** | Os itens de Form em `code-style.md`: a forma que o código tem desde a primeira linha, conferida em TEST                                                                                                                       |
 | **Backlog**        | `.ai/backlog/`, o que você e o agente escrevem sobre este projeto: resumo, stack, padrões, falhas e a fila de tarefas. Versionado, para o time ler                                                                            |
 | **Kit**            | `.ai/kit/`, o que o CLI instala: skills, protocolo, comandos e ferramentas. Reescrito a cada instalação e restaurado a partir do manifesto, por isso fica fora do git                                                         |
-| **Harness**        | Tudo em volta do modelo: os guias que o orientam antes de agir, os sensores que o conferem depois, e a memória que ele carrega. O SDG é a camada portátil disso; Claude Code, Cursor ou Codex é o runtime onde ele se instala |
+| **Harness**        | Tudo em volta do modelo: os guias que o orientam antes de agir, os sensores que o conferem depois, e a memória que ele carrega. O SDG é a camada portátil disso; Claude Code, Hermes Agent ou Codex é o runtime onde ele se instala |
 
 </details>
+
+## Um guia, sem burocracia
+
+O SDG é um guia flexível. O protocolo, as fases e as verificações estão nos arquivos de instrução, então você escreve uma linha com um prefixo e o agente conduz o processo. Não há pasta de documentos de spec para manter, nem template para preencher por causa de um typo.
+
+**A spec escala com a demanda. Os gates não.** Um typo rende três linhas; um domínio novo rende um contrato. É esse o equilíbrio que o guia existe para dar: a engenharia que muda o resultado, sem a cerimônia que faz um protocolo ser pulado.
+
+Evite lixo de IA (AI slop): tudo o que o agente escreve tem motivo para existir.
+
+## Comece por um prefixo
+
+Instrua o agente do mesmo jeito que você escreveria uma mensagem de commit.
+
+| Como você pede         | O que você escreve                                                | O que volta                                                                                              |
+| :--------------------- | :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| ✅ Um prefixo          | `fix:` login aceita senha vazia                                   | O agente escreve a spec, para para você aprovar, e então planeja, codifica e testa dentro do mesmo ciclo |
+| Uma spec escrita à mão | contrato, critérios de aceite e casos de borda, escritos por você | Funciona bem. Detalhe ajuda, e o agente pode escrever esse detalhe junto com você                        |
+| ❌ Um pedido solto     | `conserta o login`                                                | O agente adivinha o escopo e começa a escrever. Você descobre o que ele decidiu revisando tudo depois    |
+
+O agente propõe a SPEC a partir do contexto que ele já tem do projeto, e vocês alinham juntos antes de qualquer código. Onde houver risco, detalhe o quanto puder.
+
+## SPEC e PLAN vêm primeiro
+
+<!-- prettier-ignore-start -->
+<p align="center">
+  <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/cadija-screen-planning.webp" alt="Cadija segurando o plano como checklist" width="200" height="200">
+  <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/dev-desk-approving.webp" alt="Thiago aprovando com o polegar para cima" width="200" height="200">
+</p>
+<!-- prettier-ignore-end -->
+
+SPEC e PLAN são as fases de maior peso no ciclo, e as duas acontecem antes de qualquer código.
+
+- **SPEC**: o agente filtra o pedido até o que vai virar uma feature, um sistema ou uma correção. Ele escreve o objetivo, o contrato e o checklist que diz quando o trabalho está pronto, e faz as perguntas que só você pode responder.
+- **PLAN**: o agente transforma esse acordo em tarefas pequenas, em ordem, cada uma possível de seguir sozinha.
+
+Nas duas, o agente espera a sua aprovação, então não constrói em cima de um palpite. Sem elas, é mais provável que o agente siga um caminho duvidoso: o agente preenche as lacunas com a própria leitura, e você encontra essa leitura na revisão, depois que o código já existe. Você corrige uma leitura errada pega na SPEC editando um parágrafo.
+
+O hábito também vale fora do código. Um processo de negócio, o lançamento de um produto ou um plano de produção passam pelos mesmos dois passos: combinar o quê e o porquê, e depois os passos em ordem. O que muda é o que vem depois do plano.
+
+## O ciclo como conversa
+
+Um ciclo `feat:`, do jeito que Thiago e Cadija conduzem. Cada ⏸ é uma parada em que a Cadija espera pelo Thiago.
+
+<!-- prettier-ignore-start -->
+
+| Fase | | Mensagem |
+| :--- | :-: | :------- |
+| | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-thiago.webp" alt="Thiago" width="40" height="40"> | `feat: login com Google` |
+| SPEC | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-cadija.webp" alt="Cadija" width="40" height="40"> | Oi, Thiago! Li o contexto do projeto e escrevi a SPEC: objetivo, contrato e checklist de verificação. Aprova antes de eu planejar? ⏸ |
+| | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-thiago.webp" alt="Thiago" width="40" height="40"> | Aprovado, Cadija. Pode planejar. |
+| PLAN | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-cadija.webp" alt="Cadija" width="40" height="40"> | O plano tem três tarefas pequenas, na ordem. Bora pro código? ⏸ |
+| | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-thiago.webp" alt="Thiago" width="40" height="40"> | Pode seguir. |
+| CODE | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-cadija.webp" alt="Cadija" width="40" height="40"> | Programando tarefa por tarefa, conforme o plano. |
+| TEST | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-cadija.webp" alt="Cadija" width="40" height="40"> | Checklist conferido, testes e lint passando. Revisa o resultado? ⏸ |
+| | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-thiago.webp" alt="Thiago" width="40" height="40"> | `end:` revisei, faz o que combinamos. |
+| END | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-cadija.webp" alt="Cadija" width="40" height="40"> | Changelog e backlog atualizados. Faço o commit? ⏸ |
+| | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-thiago.webp" alt="Thiago" width="40" height="40"> | Aprovado, pode commitar. |
+| | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-cadija.webp" alt="Cadija" width="40" height="40"> | Commit feito. Ciclo fechado, nos vemos na próxima sessão. |
+
+<!-- prettier-ignore-end -->
+
+A mesma conversa roda fase por fase em [specdrivenguide.org](https://specdrivenguide.org).
 
 <details>
 <summary><strong>O que o conjunto de instruções cobre</strong></summary>
 
-- **Protocolo de trabalho**: um ciclo de 5 fases (SPEC → PLAN → CODE → TEST → END). Ele traz um **Work Checklist** (itens de forma que o código cumpre, conferidos na fase TEST) e um **Circuit Breaker** (disjuntor · para o agente após 3 tentativas na mesma falha). Você aprova SPEC e PLAN antes de qualquer linha ser escrita, e revisa o resultado depois do TEST. Um pedido amplo é planejado em **waves** (ondas · grupos de tarefas que mexem nos mesmos arquivos), cada uma fechada com os testes verdes.
+- **Protocolo de trabalho**: um ciclo de 5 fases (SPEC → PLAN → CODE → TEST → END). Ele traz um **Work Checklist** (itens de forma que o código cumpre, conferidos na fase TEST) e um **Circuit Breaker** (disjuntor · para o agente após 3 tentativas na mesma falha). Você aprova SPEC e PLAN antes de qualquer linha ser escrita, revisa o resultado depois do TEST e aprova o commit. Um pedido amplo é planejado em **waves** (ondas · grupos de tarefas que mexem nos mesmos arquivos), cada uma fechada com os testes verdes.
 
 - **Fresh-context review** (revisão com contexto limpo): antes da parada do TEST, uma mudança `[M]` ou `[L]` passa por um segundo leitor que recebe a SPEC e o diff, mas não a conversa, e reporta separadamente a fidelidade à SPEC e a qualidade do código.
 
@@ -71,7 +136,7 @@ O agente propõe a SPEC a partir do contexto que ele já tem do projeto, e você
 
 - **Contexto de stack dinâmico**: o ciclo `land:` pergunta o seu stack (o conjunto de linguagens, runtimes e frameworks do projeto) e escreve `.ai/backlog/stack.md`. A fase CODE lê esse arquivo como fonte única de verdade. Não há catálogo de linguagens para manter.
 
-- **Compatível com qualquer agente**: um `AGENTS.md` na raiz do repositório, que Claude Code, Codex, Cursor, Copilot, Windsurf e a maioria dos agentes leem nativamente. Um arquivo escrito por você nunca é sobrescrito.
+- **Compatível com qualquer agente**: um `AGENTS.md` na raiz do repositório, que Claude Code, Hermes Agent, Codex, Cursor, Copilot, Grok, Windsurf, OpenCode e a maioria dos agentes leem nativamente. Um arquivo escrito por você nunca é sobrescrito.
 
 - **Memória entre sessões**: a pasta `.ai/backlog/` (lista de trabalho e memória do projeto) guarda o resumo, o stack, o estado das tarefas e o conhecimento que o time acumulou. Um **Impact Map** (mapa de impacto) lista os arquivos que o ciclo atual altera, o que os importa e os testes em risco.
 
@@ -90,7 +155,7 @@ npx spec-driven-guide
 ```
 
 <p align="left">
-  <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/sdg-agents-menu.png" alt="Spec Driven Guide CLI em ação" /></kbd>
+  <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/sdg-menu.svg" alt="O menu do spec-driven-guide no terminal: instalar o guia, configurações, sair" width="600" height="330">
 </p>
 
 O assistente interativo pede o **flavor** (sabor · o padrão estrutural que o projeto segue). O stack vem depois, pelo ciclo `land:`, porque você declara melhor com o projeto já definido.
@@ -119,7 +184,7 @@ Depois de instalar, abra o chat do agente e escreva `land: <visão>`. O agente p
 
 O `AGENTS.md` é um roteador e o único arquivo sempre em contexto: ele lista as skills e manda carregar cada uma na hora certa. O `workflow.md` (o protocolo de 5 fases) entra quando um ciclo começa, e o resto só quando o ciclo pede.
 
-Claude Code, Codex, Cursor, Copilot e a maioria dos agentes leem o `AGENTS.md` da raiz nativamente, então nada mais é escrito ao lado dele. Os poucos que pedem uma linha de configuração estão em "Usando com outros agentes" abaixo.
+Claude Code, Hermes Agent, Codex, Cursor, Copilot e a maioria dos agentes leem o `AGENTS.md` da raiz nativamente, então nada mais é escrito ao lado dele. Os poucos que pedem uma linha de configuração estão em "Usando com outros agentes" abaixo.
 
 > **Clonou um projeto que já usa o SDG?** O `.ai/kit/` não vai para o git. Rode `npx spec-driven-guide restore` uma vez depois do clone: ele reconstrói o kit a partir do manifest versionado, na versão fixada. O `AGENTS.md` diz o mesmo ao agente quando o kit falta.
 
@@ -165,7 +230,12 @@ Você começa a mensagem com um prefixo, e o agente entra no ciclo correspondent
 | `end: <instrução opcional>`  | Fecha o ciclo    | Resume o que foi feito, atualiza o changelog e commita. Também recupera o ciclo se o agente perder o fio no meio da conversa |
 | Sem prefixo                  | n/a              | O agente pergunta: "land, feat, fix, docs ou audit?"                                                                         |
 
-O agente **para e espera por você** três vezes: em SPEC e em PLAN antes de escrever qualquer código, e de novo depois do TEST, onde ele relata o que verificou e você resolve os últimos detalhes antes de o `end:` fechar o ciclo.
+O agente **para e espera por você** quatro vezes:
+
+1. Em SPEC, antes de qualquer plano.
+2. Em PLAN, antes de qualquer código.
+3. Depois do TEST, onde ele relata o que verificou e você resolve os últimos detalhes. O seu `end:` abre o END.
+4. Antes do commit, que espera você aprovar a mensagem.
 
 ```
   SPEC    o contrato       o que e por quê, escrito       ⏸  você aprova
@@ -174,9 +244,9 @@ O agente **para e espera por você** três vezes: em SPEC e em PLAN antes de esc
    │
   CODE    a execução       o plano, nada além dele
    │
-  TEST    a verificação    o feito bate com o combinado   ⏸  você revisa
+  TEST    a verificação    o feito bate com o combinado   ⏸  você revisa, depois end:
    │
-  END     a entrega        changelog, backlog, commit     ▸  você escreve end:
+  END     a entrega        changelog, backlog, commit     ⏸  você aprova o commit
 ```
 
 Para cada fase, suas regras e o diagrama dos pontos de parada e dos loops, veja o [Spec-Driven Guide](docs/concepts/SPEC-DRIVEN-GUIDE.md).
@@ -257,18 +327,22 @@ O agente pergunta as suas linguagens e versões, classifica cada uma por papel e
 
 O `spec-driven-guide` escreve um único arquivo de governança, o `AGENTS.md`, na raiz do repositório. A maioria dos agentes lê esse arquivo sem passo extra, e o [site do AGENTS.md](https://agents.md) mantém a lista atual.
 
-<details>
-<summary><strong>Os agentes que pedem uma linha</strong></summary>
+| Agente         | Lê o `AGENTS.md` | O que saber                                                                                                                      |
+| :------------- | :--------------- | :------------------------------------------------------------------------------------------------------------------------------- |
+| Claude Code    | nativamente      | Lê enquanto não existe um `CLAUDE.md`. Um `CLAUDE.md` seu precisa de `@AGENTS.md` na primeira linha; o `init` avisa quando falta |
+| Hermes Agent   | nativamente      | Carrega um arquivo de contexto do projeto por sessão, e um `.hermes.md` tem prioridade sobre o `AGENTS.md`                       |
+| Codex          | nativamente      |                                                                                                                                  |
+| Cursor         | nativamente      |                                                                                                                                  |
+| GitHub Copilot | nativamente      |                                                                                                                                  |
+| Gemini CLI     | uma linha        | `.gemini/settings.json`: `{ "context": { "fileName": "AGENTS.md" } }`                                                            |
+| Grok           | nativamente      | O CLI Grok Build, da xAI. Lê o `CLAUDE.md` também, em cada pasta da raiz para baixo                                              |
+| Windsurf       | nativamente      |                                                                                                                                  |
+| OpenCode       | nativamente      | Lê o `CLAUDE.md` só onde não existe `AGENTS.md`                                                                                  |
+| Aider          | uma linha        | `.aider.conf.yml`: `read: AGENTS.md`                                                                                             |
 
-| Agente      | Onde                              | O que adicionar                                                 |
-| :---------- | :-------------------------------- | :-------------------------------------------------------------- |
-| Claude Code | um `CLAUDE.md` que você já mantém | `@AGENTS.md` como primeira linha. Sem `CLAUDE.md`, nada a fazer |
-| Gemini CLI  | `.gemini/settings.json`           | `{ "context": { "fileName": "AGENTS.md" } }`                    |
-| Aider       | `.aider.conf.yml`                 | `read: AGENTS.md`                                               |
+O **OpenRouter** é um gateway de modelos, não um agente. Um agente da tabela rodando um modelo pelo OpenRouter lê o `AGENTS.md` do mesmo jeito.
 
-O Claude Code só lê o `AGENTS.md` enquanto não existe um `CLAUDE.md` no caminho, por isso um `CLAUDE.md` seu precisa do import. O `init` avisa quando encontra um sem ele.
-
-</details>
+**Assistentes sempre ligados**, como o Claude Duet e o OpenAI Dots, trabalham fora de um repositório, então o CLI não tem onde instalar. O ciclo continua valendo: peça a SPEC e o PLAN, e aprove os dois antes que eles ajam.
 
 > **Precisa de uma regra que o kit não traz?** Escreva em `## Decisions` no `.ai/backlog/context.md`, que o agente lê no início de toda sessão e nenhuma instalação sobrescreve. Uma edição dentro de `.ai/kit/` se perde na próxima instalação; uma mudança que vale para todo projeto vai para o repositório do kit.
 
@@ -317,8 +391,17 @@ Comece pela [Referência Rápida (CHEATSHEET)](docs/reference/CHEATSHEET.md), co
 
 ---
 
+## Faça o seu
+
+<img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/cadija-screen-delivering.webp" alt="Cadija entregando o código pronto numa caixa com selo de aprovado" width="200" height="200" align="right">
+
+Ajuste o guia: clone, faça um fork e altere para atender a sua equipe. Contribuições são bem-vindas.
+
+<br clear="right">
+
 > **Aviso:** Este projeto está em desenvolvimento inicial. Revise e ajuste as regras instaladas aos padrões da sua equipe antes de depender delas.
 
-_O equilíbrio é a chave._
-
-O SDG muda a cada ciclo. Contribuições, forks e críticas são bem-vindos.
+<p align="center">
+  <em>“Evite o complexo, prefira o simples e sofisticado.”</em><br>
+  <a href="https://thiagocaja.dev"><strong>thiagocaja.dev</strong></a>
+</p>

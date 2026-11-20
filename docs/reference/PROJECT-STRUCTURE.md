@@ -56,7 +56,7 @@ your-project/
 │       └── impact-map.md        ← The files the current plan touches (gitignored)
 ```
 
-`AGENTS.md` is the only root file written. Claude Code, Codex, Cursor, Copilot and most other harnesses read it natively; the few that need one line of configuration are listed in the README.
+`AGENTS.md` is the only root file written. Claude Code, Hermes Agent, Codex, Cursor, Copilot and most other harnesses read it natively; the few that need one line of configuration are listed in the README.
 
 The CLI never overwrites it blindly. It recognises its own file by the canonical title line it always emits: without that line the file belongs to the developer, stays untouched, and the governance goes to `AGENTS.sdg.md` for the developer to merge.
 

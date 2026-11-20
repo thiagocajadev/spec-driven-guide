@@ -135,7 +135,7 @@ Every `feat:`, `fix:`, and `docs:` task follows this sequence. For `land:` and `
   END     the delivery        changelog, backlog, commit    ▸  you type end:
 ```
 
-The Agent **stops and waits for the Developer** three times: at SPEC and at PLAN before proceeding, and again after TEST, where it reports the verification and the Developer settles the last details before `end:` runs.
+The Agent **stops and waits for the Developer** four times: at SPEC and at PLAN before proceeding, after TEST, where it reports the verification and the Developer settles the last details before `end:` runs, and before the commit, which waits for the Developer to approve the message.
 
 - **Broad requests**: PLAN groups the tasks into waves by the files they share, lettered A, B, C, each closed with the tests green.
 - **`[M]` and `[L]` changes**: before the TEST stop, a fresh-context review reads the SPEC and the diff, without the conversation, and reports fidelity to the SPEC and code quality apart.

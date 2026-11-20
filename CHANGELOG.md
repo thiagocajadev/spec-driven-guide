@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [11.1.4] - 2026-11-20
+
+### Fixed
+
+- **The README tells the guide the way the website does.** Both READMEs carry the website's logo, the name "Spec-Driven Guide" and its tagline, and Thiago and Cadija walk through the cycle: a pair of portraits after the intro, a `feat:` cycle as a chat with their avatars, and Cadija delivering the finished code at the end. Three sections are new, in English and Brazilian Portuguese: a guide without bureaucracy, with one line asking to avoid AI slop; SPEC and PLAN first, including outside code; and an invitation to clone and fork. The prefix table opens with the prefix and closes with the loose ask, and the closing line quotes the website's footer with a link to thiagocaja.dev.
+- **Agent lists start with Claude Code and Hermes Agent.** Every list follows one order, and "Using with other agents" is a full table, read from each vendor's documentation: Hermes Agent loads one context file per session and lets `.hermes.md` win, Grok Build reads `AGENTS.md` and `CLAUDE.md` in every directory, OpenCode reads `CLAUDE.md` only where no `AGENTS.md` exists. OpenRouter is described as a model gateway, and Claude Duet and OpenAI Dots as assistants that work outside a repository.
+- **Four stops, counted the same everywhere.** The README, the quick reference and the instruction-set summary said the agent stops three times; `workflow.md` stops at SPEC, PLAN, after TEST and before the commit, and all three now say four.
+- **The CLI and the npm page use the same words.** The header prints "Spec-Driven Guide" with the website's tagline, the menu offers "Install the guide", and the `review` message that named the old menu label follows it. The package description and keywords follow the new agent order. The menu screenshot from v8.0.0 is now `docs/img/sdg-menu.svg`, drawn from the CLI's strings without a version number.
+
 ## [11.1.3] - 2026-11-18
 
 ### Fixed

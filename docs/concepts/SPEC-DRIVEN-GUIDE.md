@@ -21,6 +21,8 @@ The developer sets direction and approves decisions. The agent does the executio
 
 **The spec scales with the demand. The gates do not.** A typo earns three lines of SPEC; a new domain earns a contract, its states and its failure modes. The stop before CODE, the stop before the commit and the verification checklist hold at every size, because a small change nobody approved is still unapproved work.
 
+**SPEC and PLAN carry the most weight.** In SPEC the agent narrows the request down to what will become a feature, a system or a fix; in PLAN it turns that agreement into ordered tasks. You fix a wrong reading caught at either gate by editing a paragraph, before any code depends on it. The same two steps work outside code, in a business process or a production plan, and what changes is what comes after the plan.
+
 ---
 
 ## Phase SPEC: the contract

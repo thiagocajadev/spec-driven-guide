@@ -1,13 +1,13 @@
 <!-- prettier-ignore-start -->
 <div align="center">
-  <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/sdg-agents-icon-light.svg" alt="Spec-Driven Guide" width="480" height="480" style="border-radius: 1rem;">
-  <h1 align="center">Spec-Driven Guide: Agents</h1>
+  <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/sdg-logo.svg" alt="Spec-Driven Guide" width="360" height="360">
+  <h1 align="center">Spec-Driven Guide</h1>
   <p align="center">
-    A CLI that installs a structured instruction set for AI agents into your project.<br>
+    Your spec guide for developers and agents.<br>
     <a href="README.pt-BR.md">Versão em Português (Brasil)</a>
   </p>
   <p align="center">
-      Read the manifesto and visual guide at <a href="https://specdrivenguide.org">specdrivenguide.org</a>
+    Read it live at <a href="https://specdrivenguide.org">specdrivenguide.org</a>
   </p>
   <a href="https://www.npmjs.com/package/spec-driven-guide"><img src="https://img.shields.io/npm/v/spec-driven-guide?style=flat-square&logo=npm&color=cb3837" alt="npm version" /></a>
   <a href="https://www.npmjs.com/package/spec-driven-guide"><img src="https://img.shields.io/npm/dm/spec-driven-guide?style=flat-square&logo=npm&color=cb3837" alt="npm downloads" /></a>
@@ -21,23 +21,26 @@
 
 <br>
 
-`spec-driven-guide` installs a set of markdown instruction files into your project. AI agents (Claude Code, Cursor, Windsurf, Copilot, Codex, and others) read these files and follow the defined protocol for every task.
+Spec-Driven Guide (SDG) is a guide for working with AI agents. `npx spec-driven-guide` installs a set of markdown instruction files into your project, and the agent you already use (Claude Code, Hermes Agent, Codex, Cursor, Copilot and others) reads them and runs every task through the same five phases: SPEC, PLAN, CODE, TEST and END. You make the decisions, and the agent follows the process the guide lays out.
 
-A developer meeting the project for the first time reads from the top: Quick Start installs it, and How the Protocol Works explains what changes in the conversation with the agent afterwards. A contributor changing the instruction set reads from What Gets Installed down, where every generated file is named and pointed at its source.
+A developer meeting the guide for the first time reads from the top: Thiago and Cadija walk through the cycle, and Quick Start installs it. A contributor changing the instruction set reads from What Gets Installed down, where every generated file is named and pointed at its source.
 
-## Start with a prefix
-
-Instruct the agent the way you would write a commit message.
-
-| How you ask         | What you type                                                     | What comes back                                                                                                |
-| :------------------ | :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
-| A loose ask         | `fix the login`                                                   | The agent guesses the scope and starts typing. You find out what it decided by reviewing everything afterwards |
-| A hand-written spec | contract, acceptance criteria and edge cases, written out by hand | It works well. Detail helps, and the agent can write that detail with you                                      |
-| ✅ A prefix         | `fix:` login accepts an empty password                            | The agent writes the spec, stops for your approval, then plans, codes and tests inside the same cycle          |
-
-The agent proposes the SPEC from the context it already holds about the project, and you align it together before any code. Where there is risk, spell out as much detail as you can.
-
-**The spec scales with the demand. The gates do not.** A typo earns three lines; a new domain earns a contract. This is the balance the framework exists for: the engineering that changes the outcome, without the ceremony that makes a protocol get skipped.
+<!-- prettier-ignore-start -->
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/dev-desk-typing.webp" alt="Thiago, the developer, typing at the desk" width="220" height="220"><br>
+      <strong>Thiago</strong>, the developer<br>
+      Decides what to build and approves each step.
+    </td>
+    <td align="center" width="50%">
+      <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/cadija-pointing.webp" alt="Cadija, the agent, pointing the way" width="220" height="220"><br>
+      <strong>Cadija</strong>, the agent<br>
+      Follows the guide: writes the spec, plans, codes and tests, and stops at every gate.
+    </td>
+  </tr>
+</table>
+<!-- prettier-ignore-end -->
 
 <details>
 <summary><strong>Fundamental concepts</strong></summary>
@@ -52,14 +55,76 @@ The agent proposes the SPEC from the context it already holds about the project,
 | **Work Checklist** | The Form items in `code-style.md`: the shape the code takes from its first line, verified at TEST                                                                                                                               |
 | **Backlog**        | `.ai/backlog/`, what you and the agent write about this project: brief, stack, patterns, failures and the task queue. Versioned, so the team reads it                                                                           |
 | **Kit**            | `.ai/kit/`, what the CLI installs: skills, protocol, commands and tooling. Rewritten on every install and restored from the manifest, so it stays out of git                                                                    |
-| **Harness**        | Everything around the model: the guides that steer it before it acts, the sensors that check it after, and the memory it carries. SDG is the portable layer of it; Claude Code, Cursor or Codex is the runtime it installs into |
+| **Harness**        | Everything around the model: the guides that steer it before it acts, the sensors that check it after, and the memory it carries. SDG is the portable layer of it; Claude Code, Hermes Agent or Codex is the runtime it installs into |
 
 </details>
+
+## A guide, without the bureaucracy
+
+SDG is a flexible guide. The protocol, the phases and the checks live in the instruction files, so you write one line with a prefix and the agent runs the process. There is no folder of spec documents to maintain and no template to fill in for a typo.
+
+**The spec scales with the demand. The gates do not.** A typo earns three lines; a new domain earns a contract. This is the balance the guide exists for: the engineering that changes the outcome, without the ceremony that makes a protocol get skipped.
+
+Avoid AI slop: everything the agent writes has a reason to exist.
+
+## Start with a prefix
+
+Instruct the agent the way you would write a commit message.
+
+| How you ask         | What you type                                                     | What comes back                                                                                                |
+| :------------------ | :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
+| ✅ A prefix         | `fix:` login accepts an empty password                            | The agent writes the spec, stops for your approval, then plans, codes and tests inside the same cycle          |
+| A hand-written spec | contract, acceptance criteria and edge cases, written out by hand | It works well. Detail helps, and the agent can write that detail with you                                      |
+| ❌ A loose ask      | `fix the login`                                                   | The agent guesses the scope and starts typing. You find out what it decided by reviewing everything afterwards |
+
+The agent proposes the SPEC from the context it already holds about the project, and you align it together before any code. Where there is risk, spell out as much detail as you can.
+
+## SPEC and PLAN come first
+
+<!-- prettier-ignore-start -->
+<p align="center">
+  <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/cadija-screen-planning.webp" alt="Cadija holding the plan as a checklist" width="200" height="200">
+  <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/dev-desk-approving.webp" alt="Thiago approving with a thumbs up" width="200" height="200">
+</p>
+<!-- prettier-ignore-end -->
+
+SPEC and PLAN carry the most weight in the cycle, and both happen before any code.
+
+- **SPEC**: the agent narrows the request down to what will become a feature, a system or a fix. It writes the goal, the contract and the checklist that says when the work is done, and asks the questions only you can answer.
+- **PLAN**: the agent turns that agreement into small tasks in order, each one followable on its own.
+
+At both, the agent stops for your approval, so it does not build on a guess. Skip them and the agent is more likely to take a doubtful path: the agent fills the gaps with its own reading, and you meet that reading in review, after the code exists. You fix a wrong reading caught in the SPEC by editing one paragraph.
+
+The habit works outside code too. A business process, a product launch or a production plan goes through the same two steps: agree on what and why, then on the ordered steps. What changes is what comes after the plan.
+
+## The cycle as a conversation
+
+A `feat:` cycle, as Thiago and Cadija run it. Each ⏸ is a stop where Cadija waits for Thiago.
+
+<!-- prettier-ignore-start -->
+
+| Phase | | Message |
+| :---- | :-: | :------ |
+| | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-thiago.webp" alt="Thiago" width="40" height="40"> | `feat: sign in with Google` |
+| SPEC | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-cadija.webp" alt="Cadija" width="40" height="40"> | Hi, Thiago! I read the project context and wrote the SPEC: goal, contract and verification checklist. Approve it before I plan? ⏸ |
+| | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-thiago.webp" alt="Thiago" width="40" height="40"> | Approved, Cadija. Go ahead and plan. |
+| PLAN | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-cadija.webp" alt="Cadija" width="40" height="40"> | The plan is three small tasks, in order. Shall we get to the code? ⏸ |
+| | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-thiago.webp" alt="Thiago" width="40" height="40"> | Go ahead. |
+| CODE | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-cadija.webp" alt="Cadija" width="40" height="40"> | Programming task by task, following the plan. |
+| TEST | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-cadija.webp" alt="Cadija" width="40" height="40"> | Checklist verified, tests and lint passing. Will you review it? ⏸ |
+| | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-thiago.webp" alt="Thiago" width="40" height="40"> | `end:` reviewed, it does what we agreed. |
+| END | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-cadija.webp" alt="Cadija" width="40" height="40"> | Changelog and backlog are updated. Shall I commit? ⏸ |
+| | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-thiago.webp" alt="Thiago" width="40" height="40"> | Approved, you can commit. |
+| | <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/avatar-cadija.webp" alt="Cadija" width="40" height="40"> | Committed. Cycle closed, see you in the next session. |
+
+<!-- prettier-ignore-end -->
+
+The same conversation plays phase by phase at [specdrivenguide.org](https://specdrivenguide.org).
 
 <details>
 <summary><strong>What the instruction set covers</strong></summary>
 
-- **Working protocol**: a 5-phase cycle (SPEC → PLAN → CODE → TEST → END) with Form items verified at TEST and a 3-strike Circuit Breaker that stops regression loops. The agent stops for you at SPEC, at PLAN and after TEST. A broad request is planned in waves, groups of tasks that share files, each closed with the tests green.
+- **Working protocol**: a 5-phase cycle (SPEC → PLAN → CODE → TEST → END) with Form items verified at TEST and a 3-strike Circuit Breaker that stops regression loops. The agent stops for you at SPEC, at PLAN, after TEST and before the commit. A broad request is planned in waves, groups of tasks that share files, each closed with the tests green.
 
 - **Fresh-context review**: before the TEST stop, an `[M]` or `[L]` change is read by a second reader that gets the SPEC and the diff but not the conversation, and reports fidelity to the SPEC and code quality apart.
 
@@ -71,7 +136,7 @@ The agent proposes the SPEC from the context it already holds about the project,
 
 - **Dynamic stack context**: the `land:` cycle elicits your languages and versions and writes `.ai/backlog/stack.md`, which Phase CODE reads as the single source of truth. No static idiom catalog to maintain.
 
-- **Any-agent compatible**: one canonical `AGENTS.md` at the repo root, which Claude Code, Codex, Cursor, Copilot, Windsurf and most other agents read natively. A file you wrote yourself is never overwritten.
+- **Any-agent compatible**: one canonical `AGENTS.md` at the repo root, which Claude Code, Hermes Agent, Codex, Cursor, Copilot, Grok, Windsurf, OpenCode and most other agents read natively. A file you wrote yourself is never overwritten.
 
 - **Memory across sessions**: `.ai/backlog/` persists the project brief, stack, task state, and accumulated team knowledge. An Impact Map lists the files the active cycle touches, what imports them and the tests at risk.
 
@@ -90,7 +155,7 @@ npx spec-driven-guide
 ```
 
 <p align="left">
-  <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/sdg-agents-menu.png" alt="Spec Driven Guide CLI in action" /></kbd>
+  <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/sdg-menu.svg" alt="The spec-driven-guide menu in a terminal: install the guide, settings, exit" width="600" height="330">
 </p>
 
 The interactive wizard guides you through selecting an architectural flavor. Stack discovery (languages + versions) happens later via the `land:` cycle. It stays out of install so the developer can declare it deliberately, once the project brief is clear.
@@ -119,7 +184,7 @@ After install, open the agent chat and run `land: <vision>`. The agent elicits t
 
 `AGENTS.md` is a minimal router and the one file always in context: it names every skill and loads each on demand. `workflow.md` (the 5-phase protocol) loads when a cycle starts, and everything else only when the cycle needs it.
 
-Claude Code, Codex, Cursor, Copilot and most other agents read the root `AGENTS.md` natively, so nothing else is written beside it. The few that need one line of configuration are listed in "Using with other agents" below.
+Claude Code, Hermes Agent, Codex, Cursor, Copilot and most other agents read the root `AGENTS.md` natively, so nothing else is written beside it. The few that need one line of configuration are listed in "Using with other agents" below.
 
 > **Cloning a project that already uses SDG?** `.ai/kit/` is not in git. Run `npx spec-driven-guide restore` once after the clone: it rebuilds the kit from the committed manifest, at the pinned version. `AGENTS.md` tells the agent the same when the kit is missing.
 
@@ -165,7 +230,12 @@ When you prefix a message to the agent, it enters the corresponding cycle:
 | `end: <optional instruction>`  | Close the cycle | Summarize what was done, update the changelog, and commit. Also recovers a cycle if the agent loses track mid-conversation |
 | No prefix                      | n/a             | Agent asks: "land, feat, fix, docs, or audit?", then proceeds                                                              |
 
-The agent **stops and waits for you** three times: at SPEC and at PLAN before writing any code, and again after TEST, where it reports what it verified and you settle the last details before `end:` closes the cycle.
+The agent **stops and waits for you** four times:
+
+1. At SPEC, before any plan.
+2. At PLAN, before any code.
+3. After TEST, where it reports what it verified and you settle the last details. Your `end:` opens END.
+4. Before the commit, which waits for your approval of the message.
 
 ```
   SPEC    the contract        what and why, in writing      ⏸  you approve
@@ -174,9 +244,9 @@ The agent **stops and waits for you** three times: at SPEC and at PLAN before wr
    │
   CODE    the execution       the plan, nothing more
    │
-  TEST    the verification    built matches agreed          ⏸  you review
+  TEST    the verification    built matches agreed          ⏸  you review, then end:
    │
-  END     the delivery        changelog, backlog, commit    ▸  you type end:
+  END     the delivery        changelog, backlog, commit    ⏸  you approve the commit
 ```
 
 For each phase, its rules and a diagram of the gates and loops, see [Spec-Driven Guide](docs/concepts/SPEC-DRIVEN-GUIDE.md).
@@ -254,18 +324,22 @@ The agent asks for your languages and versions, classifies them by role, and wri
 
 `spec-driven-guide` writes one governance file, `AGENTS.md`, at the repo root. Most agents read it with no extra step, and the [AGENTS.md site](https://agents.md) keeps the current list.
 
-<details>
-<summary><strong>The agents that need one line</strong></summary>
+| Agent          | Reads `AGENTS.md` | What to know                                                                                                                          |
+| :------------- | :---------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| Claude Code    | natively          | Reads it while no `CLAUDE.md` exists. A `CLAUDE.md` of your own needs `@AGENTS.md` as its first line; `init` warns when it is missing |
+| Hermes Agent   | natively          | Loads one project context file per session, and a `.hermes.md` takes precedence over `AGENTS.md`                                      |
+| Codex          | natively          |                                                                                                                                       |
+| Cursor         | natively          |                                                                                                                                       |
+| GitHub Copilot | natively          |                                                                                                                                       |
+| Gemini CLI     | one line          | `.gemini/settings.json`: `{ "context": { "fileName": "AGENTS.md" } }`                                                                 |
+| Grok           | natively          | xAI's Grok Build CLI. Reads `CLAUDE.md` too, in every directory from the root down                                                    |
+| Windsurf       | natively          |                                                                                                                                       |
+| OpenCode       | natively          | Reads `CLAUDE.md` only where no `AGENTS.md` exists                                                                                    |
+| Aider          | one line          | `.aider.conf.yml`: `read: AGENTS.md`                                                                                                  |
 
-| Agent       | Where                          | What to add                                                          |
-| :---------- | :----------------------------- | :------------------------------------------------------------------- |
-| Claude Code | a `CLAUDE.md` you already keep | `@AGENTS.md` as its first line. Without a `CLAUDE.md`, nothing to do |
-| Gemini CLI  | `.gemini/settings.json`        | `{ "context": { "fileName": "AGENTS.md" } }`                         |
-| Aider       | `.aider.conf.yml`              | `read: AGENTS.md`                                                    |
+**OpenRouter** is a model gateway, not an agent. An agent from the table running a model through OpenRouter reads `AGENTS.md` the same way.
 
-Claude Code reads `AGENTS.md` only while no `CLAUDE.md` exists on the path, which is why a `CLAUDE.md` of your own needs the import. `init` warns when it finds one without it.
-
-</details>
+**Always-on assistants** such as Claude Duet and OpenAI Dots work outside a repository, so the CLI has nothing to install into. The cycle still applies: ask them for the SPEC and the PLAN, and approve both before they act.
 
 > **Need a rule the kit does not carry?** Write it under `## Decisions` in `.ai/backlog/context.md`, which the agent reads at every session start and no install overwrites. An edit inside `.ai/kit/` is lost on the next install; a change that belongs to every project goes upstream.
 
@@ -314,8 +388,17 @@ Start with the [Quick Reference (CHEATSHEET)](docs/reference/CHEATSHEET.md) for 
 
 ---
 
+## Make it yours
+
+<img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/cadija-screen-delivering.webp" alt="Cadija delivering the finished code in a box with an approval seal" width="200" height="200" align="right">
+
+Adjust the guide: clone it, fork it and change it to fit your team. Contributions are welcome.
+
+<br clear="right">
+
 > **Warning:** This project is in early development. Review and adjust the installed rules to fit your team's standards before relying on them.
 
-_Balance is the key._
-
-SDG is in constant evolution. There is no perfect solution, only continuous improvement. Feel free to contribute, fork, and share.
+<p align="center">
+  <em>“Avoid the complex; prefer the simple and sophisticated.”</em><br>
+  <a href="https://thiagocaja.dev"><strong>thiagocaja.dev</strong></a>
+</p>

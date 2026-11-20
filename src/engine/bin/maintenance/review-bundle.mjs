@@ -31,7 +31,7 @@ async function orchestrateReview() {
   const manifest = loadManifest(PROJECT_ROOT);
   if (!manifest) {
     console.log(
-      '\n  No manifest found (.ai/.sdg-manifest.json). Run "Build Project Context" first.\n',
+      '\n  No manifest found (.ai/.sdg-manifest.json). Run "Install the guide" first.\n',
     );
 
     const noManifestResult = success();
