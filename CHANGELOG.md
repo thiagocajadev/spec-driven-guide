@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [11.1.5] - 2026-11-20
+
+### Fixed
+
+- **Thiago faces Cadija in the README.** Both picture rows put Thiago on the left and Cadija on the right, as on the website, and his desk art is mirrored so he looks at her, since GitHub drops the CSS flip the website uses. The intro shows Cadija pointing at the plan checklist and calls her the "secret" agent; the baton pose moves to the SPEC and PLAN section.
+
 ## [11.1.4] - 2026-11-20
 
 ### Fixed
