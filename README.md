@@ -34,8 +34,8 @@ A developer meeting the guide for the first time reads from the top: Thiago and 
       Decides what to build and approves each step.
     </td>
     <td align="center" width="50%">
-      <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/cadija-pointing.webp" alt="Cadija, the agent, pointing the way" width="220" height="220"><br>
-      <strong>Cadija</strong>, the agent<br>
+      <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/cadija-screen-planning.webp" alt="Cadija, the agent, pointing at the plan checklist" width="220" height="220"><br>
+      <strong>Cadija</strong>, the “secret” agent<br>
       Follows the guide: writes the spec, plans, codes and tests, and stops at every gate.
     </td>
   </tr>
@@ -83,8 +83,8 @@ The agent proposes the SPEC from the context it already holds about the project,
 
 <!-- prettier-ignore-start -->
 <p align="center">
-  <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/cadija-screen-planning.webp" alt="Cadija holding the plan as a checklist" width="200" height="200">
   <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/dev-desk-approving.webp" alt="Thiago approving with a thumbs up" width="200" height="200">
+  <img src="https://raw.githubusercontent.com/thiagocajadev/spec-driven-guide/main/docs/img/characters/cadija-pointing.webp" alt="Cadija pointing the way with a baton" width="200" height="200">
 </p>
 <!-- prettier-ignore-end -->
 
