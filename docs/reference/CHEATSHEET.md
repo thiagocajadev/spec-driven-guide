@@ -138,7 +138,7 @@ Every `feat:`, `fix:`, and `docs:` task follows this sequence. For `land:` and `
 The Agent **stops and waits for the Developer** four times: at SPEC and at PLAN before proceeding, after TEST, where it reports the verification and the Developer settles the last details before `end:` runs, and before the commit, which waits for the Developer to approve the message.
 
 - **Broad requests**: PLAN groups the tasks into waves by the files they share, lettered A, B, C, each closed with the tests green.
-- **`[M]` and `[L]` changes**: before the TEST stop, a fresh-context review reads the SPEC and the diff, without the conversation, and reports fidelity to the SPEC and code quality apart.
+- **`[M]` and `[L]` changes**: before the TEST stop, a fresh-context review reads the SPEC and the diff, without the conversation, and reports fidelity to the SPEC and code quality apart. How the reviewer was tested: [Reviewer evaluation](REVIEWER-EVAL.md).
 
 The phases in full: [Spec-Driven Guide](../concepts/SPEC-DRIVEN-GUIDE.md).
 

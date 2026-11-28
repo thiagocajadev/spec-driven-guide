@@ -382,6 +382,8 @@ Start with the [Quick Reference (CHEATSHEET)](docs/reference/CHEATSHEET.md) for 
 
 - [Migration guides](docs/guides/): one per breaking release that needs manual steps
 
+- [Reviewer evaluation](docs/reference/REVIEWER-EVAL.md): how the fresh-context reviewer was tested against planted defects, and what a review costs
+
 - [Credits and Philosophies](docs/reference/REFERENCES.md): project influences and research credits
 
 </details>

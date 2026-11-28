@@ -178,6 +178,18 @@ One line-ending policy for git and for the editor: every text file is LF,
 except `.bat` and `.cmd`, which `cmd.exe` reads as CRLF, and binaries, which
 are never touched. A test keeps the two samples on the same policy.
 
+### `agents/reviewer.<harness>.*`
+
+The fresh-context reviewer of `skills/review.md`, defined once per harness so
+its limits travel with every review: read-only access, a turn cap where the
+harness has one, and a model one tier below the author's where it can name one.
+Six adapters carry the same instructions, and a test keeps them identical and
+read-only: Claude Code, Cursor, GitHub Copilot, Gemini CLI, OpenCode and Codex.
+
+The files are named `reviewer.<harness>`, never after the harness, because a
+case-insensitive filesystem reads `claude.md` as `CLAUDE.md` and loads it as
+instructions for whoever works in that directory.
+
 ## Activation recipes
 
 ### Activate ESLint rules
@@ -564,3 +576,53 @@ lexicon tree, which quote banned instances by design.
 using the same `## Class` headings the soul declares. No code change.
 
 Or ask your agent: "wire the writing-lint hook."
+
+### Activate reviewer agent
+
+Copy the adapter of the harness you use to the path it reads, renamed. Copy
+it rather than linking it: a harness may not follow links, and the copy is
+yours to tune.
+
+| Harness        | Copy                        | To                                 |
+| :------------- | :-------------------------- | :--------------------------------- |
+| Claude Code    | `reviewer.claude-code.md`   | `.claude/agents/reviewer.md`       |
+| Cursor         | `reviewer.cursor.md`        | `.cursor/agents/reviewer.md`       |
+| GitHub Copilot | `reviewer.copilot.agent.md` | `.github/agents/reviewer.agent.md` |
+| Gemini CLI     | `reviewer.gemini-cli.md`    | `.gemini/agents/reviewer.md`       |
+| OpenCode       | `reviewer.opencode.md`      | `.opencode/agents/reviewer.md`     |
+| Codex          | `reviewer.codex.toml`       | `.codex/agents/reviewer.toml`      |
+
+1. Set the model. Only the Claude Code adapter names one, `sonnet`, because
+   only Claude Code has a stable alias for it. The others ship on the parent's
+   model, with a comment where the model goes: an ID the harness does not
+   recognize falls back to the parent in silence, and the review then costs
+   what it cost before.
+2. Read-only is enforced by the harness everywhere except Codex. A Codex custom
+   agent cannot narrow the parent's sandbox, so there the instructions ask for
+   it and the sandbox you run Codex in is what holds it. The OpenCode
+   adapter uses the V2 `permissions` list; OpenCode V1 reads a `permission` map
+   instead (`edit: deny`, `bash: deny`).
+3. Harnesses without agent files take one line of configuration instead.
+   Hermes Agent sets the model of every subagent it delegates to, the reviewer
+   included, in `~/.hermes/config.yaml`:
+
+```yaml
+delegation:
+  model: "<a model one tier below the author's>"
+```
+
+4. The Claude Code adapter starts without the `CLAUDE.md` files
+   (`omitClaudeMd`), and the instructions of every adapter tell the reviewer to
+   skip the Session Start of `AGENTS.md` and `.ai/backlog/`: what the author
+   wrote down about the change is the reading the review exists to check.
+5. A harness with no subagents at all runs the review in a new session, with
+   the same payload: the SPEC, `tmp/review.diff` and the new files.
+6. Test by asking for the Review Gate on an [M] change: the agent writes
+   `tmp/review.diff`, hands it to `reviewer`, and the report comes back as
+   findings on two axes.
+
+`init` never writes these paths, for the same reason it never writes the hook
+configuration: harness directories are the developer's. When an upgrade changes
+the template, compare your copy with it and carry over what you did not tune.
+
+Or ask your agent: "activate the reviewer agent."

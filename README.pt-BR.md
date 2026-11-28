@@ -385,6 +385,8 @@ Comece pela [Referência Rápida (CHEATSHEET)](docs/reference/CHEATSHEET.md), co
 
 - [Changelog](CHANGELOG.md): as releases da major atual, com [o arquivo histórico](docs/CHANGELOG-archive.md) guardando todas as anteriores desde a v0.x
 
+- [Avaliação do revisor](docs/reference/REVIEWER-EVAL.md): como o revisor de contexto limpo foi testado contra defeitos plantados, e quanto custa uma revisão
+
 - [Créditos e Filosofias](docs/reference/REFERENCES.md): influências do projeto e créditos de pesquisa
 
 </details>

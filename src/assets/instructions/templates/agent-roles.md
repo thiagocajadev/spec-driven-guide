@@ -29,7 +29,7 @@ Dev → Planning: SPEC+PLAN → [approval] → spawn Fast: CODE+TEST → return 
 
 - **Parallel work**: independent tasks that share no files.
 - **Noisy output**: a wide search, a long test run, a log read, where the main context needs the conclusion and not the detail.
-- **Independent review**: a fresh-context reviewer (`review.md`, Fresh-Context Review), which reads the SPEC and the diff without the author's reasoning.
+- **Independent review**: a fresh-context reviewer (`review.md`, Fresh-Context Review), which reads the SPEC and the diff without the author's reasoning. It gets the payload and the limits `review.md` names, not the handoff below, and never runs as a fork.
 
 Otherwise Planning executes directly. A sequential change, whatever its size, is usually cheaper in one context.
 

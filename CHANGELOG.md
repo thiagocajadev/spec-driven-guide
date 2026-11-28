@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [11.2.0] - 2026-11-28
+
+### Added
+
+- **A cheaper fresh-context reviewer, on every harness.** `review.md` now hands the reviewer only the approved SPEC, `tmp/review.diff` and the paths of new files, instead of the CODE handoff of `agent-roles.md`, and sets the limits that keep a review cheap: one reviewer, a model one tier below the author's, no test or lint runs, the diff before whole files, a findings-only report of at most 400 words, and never a fork. `tooling/agents/` ships one inert reviewer adapter per harness (Claude Code, Cursor, GitHub Copilot, Gemini CLI, OpenCode and Codex) with the same instructions and read-only access where the harness can enforce it, and `tooling/README.md` holds the recipe, including the Hermes Agent configuration line. A test keeps the six identical, read-only and named so no harness loads one as its own `CLAUDE.md` or `GEMINI.md`.
+- **The reviewer was tested before it shipped.** [Reviewer evaluation](docs/reference/REVIEWER-EVAL.md) records five cases with planted defects confirmed by running them: on `sonnet` the reviewer found 10 of 10, on `haiku` 9 of 10, at about 10,000 tokens per review against about 61,000 through a general-purpose agent. The Claude Code adapter stays on `sonnet`, and the instructions now keep `blocking` for an unmet SPEC item, a bug or a security hole.
+
 ## [11.1.5] - 2026-11-20
 
 ### Fixed

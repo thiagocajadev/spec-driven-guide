@@ -45,7 +45,7 @@ your-project/
 │   │   │   ├── flavor/          ← principles.md for the flavor chosen at init
 │   │   │   └── competencies/    ← delivery.md: BFF envelope and UI contract
 │   │   ├── commands/            ← One file per cycle: feat, fix, docs, audit, land, end
-│   │   └── tooling/             ← Hooks, lint rules, release scripts, samples. Nothing wired by default
+│   │   └── tooling/             ← Hooks, lint rules, release scripts, reviewer agents, samples. Nothing wired by default
 │   └── backlog/                 ← The developer and the agent write it, classified by volatility
 │       ├── context.md           ← Project brief: vision, commands, decisions (committed)
 │       ├── stack.md             ← Languages, runtimes and versions, written by land: (committed)

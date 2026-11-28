@@ -4,6 +4,13 @@
 
 ## Failure Records (RCA)
 
+- **2026-11-27 Reviewer adapter loaded as `CLAUDE.md`**:
+  - **Issue**: Right after `tooling/agents/claude.md` was written, Claude Code loaded its text as the instructions for that directory, so any agent working there would have taken the reviewer's role.
+  - **Root Cause**: Windows, and macOS by default, compare file names without case, so `claude.md` is `CLAUDE.md` to the harness. `gemini.md` would collide with `GEMINI.md` the same way, and the kit installs `tooling/` into every project.
+  - **Gotcha**: A file named after a harness is a context file on a case-insensitive filesystem, whatever it was meant to be.
+  - **Fix**: RESOLVED before release. Every adapter is named `reviewer.<harness>.*`.
+  - **Pinned by**: `src/assets/tooling/agents/reviewer-agents.test.mjs`, "names no adapter after a file a harness loads as instructions".
+
 - **2026-11-18 `writing-lint` silent on Windows**:
   - **Issue**: The hook never reported a hit on Windows. Every Markdown write fell out of scope and the hook exited 0.
   - **Root Cause**: `isScopedPath` tested the raw `file_path` against scope patterns written for `/`, and Claude Code on Windows sends backslashes. Only `isLexiconPath` normalized, and it split on `path.sep`, which is `/` on Linux.

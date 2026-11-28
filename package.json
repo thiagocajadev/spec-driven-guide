@@ -1,6 +1,6 @@
 {
   "name": "spec-driven-guide",
-  "version": "11.1.5",
+  "version": "11.2.0",
   "description": "Your spec guide for developers and agents. A CLI that installs AGENTS.md and on-demand skills so Claude Code, Hermes Agent, Codex, Cursor, Copilot, Gemini, Grok, Windsurf and OpenCode follow one cycle: spec, plan, code, test, end.",
   "type": "module",
   "main": "./src/engine/bin/index.mjs",
